@@ -1,0 +1,16 @@
+<feed>
+  <entity repeatable="true">
+    <name>1</name>
+    <clientId>all</clientId>
+    <allowedEntities repeatable="true">rcolline@test.joonix.net</allowedEntities>
+    <allowedEntities>admin@test.joonix.net</allowedEntities>
+    <pattern>http://www.example.com</pattern>
+  </entity>
+  <entity>
+    <name>2</name>
+    <clientId>all</clientId>
+    <allowedEntities repeatable="true">rcolline@test.joonix.net</allowedEntities>
+    <allowedEntities>admin@test.joonix.net</allowedEntities>
+    <pattern>http://.*.google.com/.*</pattern>
+  </entity>
+</feed>

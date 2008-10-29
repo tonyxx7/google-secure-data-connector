@@ -231,20 +231,4 @@ public class SocketResourceConfigEntry extends ResourceConfigEntry {
       return URLID + hostAddress + ":" + port;
     }
   }
-//  
-//  /**
-//   * Creates a {@link SocketResourceConfigEntry} from a colon separated string entry with the 
-//   * format, "hostname:ip".  The key is randomly generated. 
-//   * 
-//   * @param resourceString String formatted "hostname:ip" representing the entry.
-//   * @param allowedEntities comma separated list of the allowed entities (user1,group1)
-//   * @param seqNum the resource seq num
-//   * @returns a created object.
-//   * @throws ResourceConfigException if the format or contents of the string is invalid in anyway.
-//   */
-//  public static SocketResourceConfigEntry createEntryFromString(final String resourceString,
-//      String allowedEntities, int seqNum) 
-//      throws ResourceConfigException {
-//    return new SocketResourceConfigEntry(resourceString, allowedEntities, seqNum);
-//  }
 }

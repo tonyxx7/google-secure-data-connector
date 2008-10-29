@@ -164,20 +164,4 @@ public class UriResourceConfigEntry extends ResourceConfigEntry {
     }
     return jsonObject;
   }
-//  
-//  /**
-//   * Creates a {@link UriResourceConfigEntry} from a colon separated string entry with the 
-//   * format, "hostname:ip".  The key is randomly generated. 
-//   * 
-//   * @param propertyString String formatted "hostname:ip" representing the entry.
-//   * @param allowedEntities comma separated list of the allowed entities (user1,group1)
-//   * @param proxyPort The Secure Link http proxy port associated with this URI.
-//   * @param seqNum the resource seq num
-//   * @returns a created object.
-//   * @throws ResourceConfigException if the format or contents of the string is invalid in anyway.
-//   */
-//  public static UriResourceConfigEntry createEntryFromString(final String propertyString, 
-//      String allowedEntities, final int proxyPort, int seqNum) throws ResourceConfigException {
-//    return new UriResourceConfigEntry(propertyString, allowedEntities, proxyPort, seqNum);
-//  }
 }

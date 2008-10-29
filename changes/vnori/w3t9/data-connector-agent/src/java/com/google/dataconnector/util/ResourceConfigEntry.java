@@ -220,7 +220,6 @@ public abstract class ResourceConfigEntry {
   
   /**
    * returns the seqNum field value from the input Json 
-      throws ResourceConfigException String - sent by the client
    * 
    * @param jsonString part of the registration request string sent by the client
    * @return the seqNum field value, if it exists. otherwise, 0

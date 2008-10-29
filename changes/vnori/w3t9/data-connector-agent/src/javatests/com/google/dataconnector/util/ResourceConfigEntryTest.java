@@ -94,7 +94,7 @@ public class ResourceConfigEntryTest extends TestCase {
     try {
       ClientConf.parseResourceRule("rule user1,group1 src1,src2");
     } catch (ResourceConfigException e) {
-      fail();
+      fail("resource rule parsing failed when appids are included");
     }
     
     // valid case

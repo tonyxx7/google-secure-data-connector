@@ -101,9 +101,6 @@ public class ClientRegistrationUtil {
       
       // create auth request packet
       AuthRequest authRequest = new AuthRequest();
-      //authRequest.setOauthString(AuthRequest.URL_FOR_OAUTH + "?" +
-          //OAuth.formEncode(message.getParameters()) + 
-          //"&" + OAuth.OAUTH_SIGNATURE+"=" + message.getSignature());
       authRequest.setOauthString(AuthRequest.URL_FOR_OAUTH + "?" +
           OAuth.formEncode(message.getParameters()));
       

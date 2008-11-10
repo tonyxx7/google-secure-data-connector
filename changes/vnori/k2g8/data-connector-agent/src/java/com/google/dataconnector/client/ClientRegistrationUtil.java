@@ -101,9 +101,11 @@ public class ClientRegistrationUtil {
       
       // create auth request packet
       AuthRequest authRequest = new AuthRequest();
+      //authRequest.setOauthString(AuthRequest.URL_FOR_OAUTH + "?" +
+          //OAuth.formEncode(message.getParameters()) + 
+          //"&" + OAuth.OAUTH_SIGNATURE+"=" + message.getSignature());
       authRequest.setOauthString(AuthRequest.URL_FOR_OAUTH + "?" +
-          OAuth.formEncode(message.getParameters()) + 
-          "&" + OAuth.OAUTH_SIGNATURE+"=" + message.getSignature());
+          OAuth.formEncode(message.getParameters()));
       
       // send auth request packet
       log.info("Sending login packet: " + authRequest.toJson().toString());

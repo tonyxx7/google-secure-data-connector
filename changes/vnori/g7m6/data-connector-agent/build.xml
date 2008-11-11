@@ -144,7 +144,7 @@ Build File for tunnel-server client and reference server.
         <include name="com/google/dataconnector/json/**" />
       </fileset>
       <manifest>
-        <attribute name="Implementation-Title" value="Secure Link Client Util"/>
+        <attribute name="Implementation-Title" value="Dataconnector Util"/>
         <attribute name="Implementation-Version" value="${version} ${TODAY}"/>
         <attribute name="Implementation-Vendor" value="Google"/>
       </manifest>
@@ -159,7 +159,7 @@ Build File for tunnel-server client and reference server.
         <include name="com/google/dataconnector/json/**" />
       </fileset>
       <manifest>
-        <attribute name="Implementation-Title" value="Secure Data Connector"/>
+        <attribute name="Implementation-Title" value="Dataconnector"/>
         <attribute name="Implementation-Version" value="${version} ${TODAY}"/>
         <attribute name="Implementation-Vendor" value="Google"/>
       </manifest>
@@ -171,7 +171,7 @@ Build File for tunnel-server client and reference server.
     <jar jarfile="${client.jarfile}">
       <fileset dir="${classes}" includes="**"/>
       <manifest>
-        <attribute name="Implementation-Title" value="Secure Link Client"/>
+        <attribute name="Implementation-Title" value="Dataconnector"/>
         <attribute name="Implementation-Version" value="${version} ${TODAY}"/>
         <attribute name="Implementation-Vendor" value="Google"/>
       </manifest>

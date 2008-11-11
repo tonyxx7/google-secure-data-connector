@@ -12,6 +12,7 @@ Build File for tunnel-server client and reference server.
    -util_jar: creates the utility jar - this should be deprecated.
    -source-distro: creates the source.tar.gz for the whole project
    -binary-distro: creates binary.tar.gz
+   -deb: builds a debian package that complies with the LSB FHS
 -->
 
 <project 
@@ -21,6 +22,7 @@ Build File for tunnel-server client and reference server.
 
   <!-- PROPERTIES -->
   <property name="version" value="1.0"/>
+  <property name="version.debian" value="1"/>
 
   <property name="projects.dir" value=".." />
   <property name="COMPILE_DEBUG_FLAG" value="true" />
@@ -182,7 +184,7 @@ Build File for tunnel-server client and reference server.
     </jar>
   </target>
 
-  <target name="source-distro" depends="init">
+  <target name="source-distro" depends="clean,init">
     <tar 
         destfile="${dist}/tunnel-server-${version}-${timestamp}-src.tar.gz"
         longfile="gnu"
@@ -342,9 +344,9 @@ Build File for tunnel-server client and reference server.
           third-party/junit/**,
           third-party/cglib/**,
           third-party/easymock/**,
-          third-party/apache-log4j/**
-	  third-party/java-service-wrapper/*
-	  third-party/java-service-wrapper/windows/**"
+          third-party/apache-log4j/**,
+	      third-party/java-service-wrapper/*,
+	      third-party/java-service-wrapper/windows/**"
         compression="gzip">
       <tarfileset dir="." mode="600">
         <include name="third-party/openssh/etc/*"/>
@@ -366,33 +368,28 @@ Build File for tunnel-server client and reference server.
     </exec>
   </target>
 
-  <target name="all" depends="source-distro,binary-distro,install,test"/>
-  <target name="cygwin" depends="source-distro,binary-distro-win,test,install"/>
-
-  <!-- Start of Testing-related stuff -->
-  <property name="testSrc.home"       value="src/javatests"/>
-  <property name="testClasses.home"   value="${build}/testClasses/"/>
-  <property name="testOutput.home"    value="${build}/testOutput"/>
-  <property name="junit.jar"          location="third-party/junit/junit-4.4.jar"/>
-
-
   <path id="deb-classpath">
-    <fileset dir="third-party/ant-deb-task" includes="ant-deb-0.0.1.jar"/>
+    <fileset dir="third-party/ant-deb" includes="ant-deb-0.0.1.jar"/>
   </path>
 
   <taskdef resource="ant_deb_task.properties" classpathref="deb-classpath"/>
 
-  <target name="deb" depends="jsocks,wpg-proxy,jar,openssh">
-    <mkdir dir="${deb}"/>
-    <deb todir="${deb}"
-         package="securedataconnector"
+  <target name="deb" depends="binary-distro">
+    <mkdir dir="deb"/>
+    <copy file="third-party/openssh/dist/start_sshd.sh.debian"
+      todir="third-party/openssh/bin"/>
+    <deb todir="deb"
+         package="dataconnector"
          section="net"
-         depends="sun-java6-jre">
+         depends="sun-java6-jre"
+         postinst="debian/dataconnector.postinst"
+         prerm="debian/dataconnector.prerm"
+         postrm="debian/dataconnector.postrm">
       <version upstream="1.0" debian="1"/>
       <maintainer name="Sebastian Welsh"
-       email="jedimindtrick@notthedroids.net"/>
-      <description synopsis="The Google securedataconnector client package.">
-Google securedataconnector is used to connect from Google Apps to internal network resources. The client is a java application that
+                  email="sebastian.welsh@gmail.com"/>
+      <description synopsis="The Google dataconnector client package.">
+Google dataconnector is used to connect from Google Apps to internal network resources. The client is a java application that
 - connects to the Google Apps termination service
 - registers the resources published to Apps
 - registers the groups able to access the resources
@@ -402,7 +399,13 @@ The current implementation permits access to http and socket services.
 
 http://code.google.com/
       </description>
-      <tarfileset dir="." prefix="opt/securedataconnector" filemode="640">
+      <conffiles dir="config" prefix="etc/opt/dataconnector" filemode="640">
+        <include name="secureLinkClientTrustStore"/>
+      </conffiles>
+      <conffiles dir="." prefix="etc/opt/dataconnector" filemode="640">
+        <include name="*.properties"/>
+      </conffiles>
+      <tarfileset dir="." prefix="opt/dataconnector" filemode="640">
          <include name="third-party/openssh/CREDITS"/>
          <include name="third-party/openssh/LICENCE"/>
          <include name="third-party/commons-*/*.txt"/>
@@ -422,42 +425,42 @@ http://code.google.com/
          <include name="third-party/apache-log4j/**"/>
       </tarfileset>
       <tarfileset dir="third-party/wpg-proxy/bin/" filemode="640"
-                  prefix="opt/securedataconnector/third-party/wpg-proxy">
+                  prefix="opt/dataconnector/third-party/wpg-proxy">
          <include name="*.jar"/>
       </tarfileset>
       <tarfileset dir="third-party/jsocks/bin/" filemode="640"
-                  prefix="opt/securedataconnector/third-party/jsocks">
+                  prefix="opt/dataconnector/third-party/jsocks">
          <include name="*.jar"/>
       </tarfileset>
-      <tarfileset dir="build/prod/" prefix="opt/securedataconnector" filemode="640">
+      <tarfileset dir="build/prod/" prefix="opt/dataconnector" filemode="640">
       </tarfileset>
-      <tarfileset dir="." prefix="opt/securedataconnector" filemode="640">
+      <tarfileset dir="." prefix="opt/dataconnector" filemode="640">
         <include name="third-party/openssh/etc/*.pub"/>
         <include name="third-party/openssh/etc/sshd_config.debian"/>
         <include name="third-party/openssh/home/woodstock/.ssh/*"/>
       </tarfileset>
-      <tarfileset dir="." prefix="opt/securedataconnector" filemode="600">
+      <tarfileset dir="." prefix="opt/dataconnector" filemode="600">
         <include name="third-party/openssh/etc/*_key"/>
         <include name="third-party/openssh/home/woodstock/.ssh/*"/>
       </tarfileset>
-      <tarfileset dir="." prefix="opt/securedataconnector" filemode="750">
+      <tarfileset dir="." prefix="opt/dataconnector" filemode="750">
         <include name="third-party/openssh/sbin/*"/>
         <include name="third-party/openssh/bin/start_sshd.sh.debian"/>
       </tarfileset>
       <tarfileset dir="debian" prefix="etc/init.d" filemode="755">
-        <include name="securedataconnector"/>
-      </tarfileset>
-      <tarfileset dir="config" prefix="etc/opt/securedataconnector" filemode="640">
-        <include name="*"/>
-      </tarfileset>
-      <tarfileset dir="." prefix="etc/opt/securedataconnector" filemode="640">
-        <include name="*.properties"/>
+        <include name="dataconnector"/>
       </tarfileset>
     </deb>
   </target>
 
+  <target name="all" depends="source-distro,binary-distro,test,deb,install"/>
+  <target name="cygwin" depends="source-distro,binary-distro-win,test,install"/>
 
-
+  <!-- Start of Testing-related stuff -->
+  <property name="testSrc.home"       value="src/javatests"/>
+  <property name="testClasses.home"   value="${build}/testClasses/"/>
+  <property name="testOutput.home"    value="${build}/testOutput"/>
+  <property name="junit.jar"          location="third-party/junit/junit-4.4.jar"/>
 
   <path id="classpath.test">
     <pathelement location="${testClasses.home}" />

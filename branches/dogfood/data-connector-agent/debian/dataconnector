@@ -88,7 +88,7 @@ is_running()
     # There should be a java process running with this PID
     ps -o "args=" $pid | grep -q "java .* $CLIENT" && return 0
     # Otherwise the service is dead. Remove the pidfile
-    rm $PIDIFLE && return 1
+    rm $PIDFILE && return 1
   else
     return 1
   fi
@@ -104,7 +104,7 @@ get_rules()
     # Only process the log until we get to the previous session.
     [[ "$line" =~ "$START_MARKER" || "$line" =~ "$STOP_MARKER" ]] && break
   done)
-  echo $rules > $RULES_FILE
+  echo $rules
 }
 
 check_startup()
@@ -205,7 +205,7 @@ do_start()
         check_startup
         started_ok=$?
         if [[ $started_ok ]]; then
-          get_rules
+          get_rules > $RULES_FILE
           return 0
         fi
       fi
@@ -294,8 +294,7 @@ case "$1" in
       2) log_daemon_msg "$NAME is stopped, but left a stale lock at $PIDFILE" ;;
     esac
     ;;
-  info)
-    check_startup
+  get_rules)
     get_rules
     ;;
   *)

@@ -32,7 +32,7 @@ set CLASSPATH=%CLASSPATH%;%WOODSTOCK_HOME%\build\prod\classes\
 set JVM_ARGS=-Djava.net.preferIPv4Stack=true
 
 set SDC_OPTION=-configFile %WOODSTOCK_HOME%\rules.properties 
-set SDC_OPTION=%SDC_OPTION% -secureLinkServerHost enterprise-apps-tls.sandbox.google.com
+set SDC_OPTION=%SDC_OPTION% -secureLinkServerHost apps-secure-data-connector.google.com
 set SDC_OPTION=%SDC_OPTION% -secureLinkServerPort 443
 set SDC_OPTION=%SDC_OPTION% -logPropertiesFile %WOODSTOCK_HOME%\logging.properties
 set SDC_OPTION=%SDC_OPTION% -useSsl 

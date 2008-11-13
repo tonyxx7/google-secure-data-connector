@@ -67,6 +67,8 @@ Build File for tunnel-server client and reference server.
     <delete dir="${build}" />
     <delete dir="${bin}" />
     <delete file="${deb}" />
+    <delete dir="third-party/openssh/${bin}" />
+    <delete file="third-party/openssh/etc/sshd_config"/>
     <ant
         antfile="build.xml"
         dir="third-party/openssh"
@@ -228,18 +230,16 @@ Build File for tunnel-server client and reference server.
         <include name="third-party/cglib/**"/>
         <include name="third-party/easymock/**"/>
         <include name="third-party/apache-log4j/**"/>
-	<include name="third-party/java-service-wrapper/**"/>
+        <include name="third-party/java-service-wrapper/**"/>
      </tarfileset>
       <tarfileset dir="." mode="600">
         <include name="third-party/openssh/etc/*"/>
         <include name="third-party/openssh/home/woodstock/.ssh/*"/>
       </tarfileset>
       <tarfileset dir="." mode="755">
-	<include name="third-party/openssh/sbin/*"/>
-	<include name="third-party/java-service-wrapper/windows/*.bat"/>
-	<include name="third-party/java-service-wrapper/windows/bin/*.exe"/>
-	<include name="third-party/java-service-wrapper/linux/googlesdc.sh"/>
-	<include name="third-party/java-service-wrapper/linux/bin/*"/>
+        <include name="third-party/openssh/sbin/*"/>
+		<include name="third-party/openssh/sbin/*"/>
+		<include name="third-party/java-service-wrapper/windows/*"/>
         <include name="runclient.sh"/>
 	<include name="runclient.bat"/>
         <include name="setup.sh"/>
@@ -287,8 +287,7 @@ Build File for tunnel-server client and reference server.
           third-party/cglib/**,
           third-party/easymock/**,
           third-party/apache-log4j/**,
-	  third-party/java-service-wrapper/*,
-	  third-party/java-service-wrapper/linux/**"
+	      third-party/java-service-wrapper/**"
         compression="gzip">
       <tarfileset dir="." mode="600">
         <include name="third-party/openssh/etc/*"/>
@@ -296,8 +295,6 @@ Build File for tunnel-server client and reference server.
       </tarfileset>
       <tarfileset dir="." mode="755">
         <include name="third-party/openssh/sbin/*"/>
-        <include name="third-party/java-service-wrapper/linux/googlesdc.sh"/>
-        <include name="third-party/java-service-wrapper/linux/bin/*"/>
         <include name="runclient.sh"/>
         <include name="setup.sh"/>
         <include name="start.sh"/>
@@ -344,9 +341,13 @@ Build File for tunnel-server client and reference server.
           third-party/junit/**,
           third-party/cglib/**,
           third-party/easymock/**,
-          third-party/apache-log4j/**,
-	      third-party/java-service-wrapper/*,
-	      third-party/java-service-wrapper/windows/**"
+          third-party/apache-log4j/**
+	      third-party/java-service-wrapper/**
+	      third-party/java-service-wrapper/dist/**
+	      third-party/java-service-wrapper/windows/**
+	      third-party/java-service-wrapper/windows/lib/**
+	      third-party/java-service-wrapper/windows/logs/**
+	      third-party/java-service-wrapper/windows/conf/**"
         compression="gzip">
       <tarfileset dir="." mode="600">
         <include name="third-party/openssh/etc/*"/>
@@ -354,10 +355,12 @@ Build File for tunnel-server client and reference server.
       </tarfileset>
       <tarfileset dir="." mode="755">
         <include name="third-party/openssh/sbin/*"/>
-	<include name="third-party/java-service-wrapper/windows/*.bat"/>
-	<include name="third-party/java-service-wrapper/windows/bin/*.exe"/>
-	<include name="runclient.bat"/>
+	    <include name="third-party/java-service-wrapper/windows/*"/>
+        <include name="runclient.sh"/>
+	    <include name="runclient.bat"/>
         <include name="setup.sh"/>
+        <include name="start.sh"/>
+        <include name="stop.sh"/>
       </tarfileset>
     </tar>
   </target>

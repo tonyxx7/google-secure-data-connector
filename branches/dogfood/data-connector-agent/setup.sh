@@ -143,6 +143,8 @@ sed -e "s:_WSCLIENT_HOME_:$PWD:g" $OPENSSH_HOME/dist/start_sshd.sh.tmpl > $OPENS
 chmod 755 $OPENSSH_HOME/bin/start_sshd.sh
 chmod 600 $OPENSSH_HOME/etc/ssh_host_dsa_key
 chmod 600 $OPENSSH_HOME/etc/ssh_host_rsa_key
+chmod 644 $OPENSSH_HOME/home/woodstock/.ssh/authorized_keys
+chmod 755 `pwd`/third-party/java-service-wrapper/linux/bin/*
 chmod 755 `pwd`/third-party/java-service-wrapper/linux/googlesdc.sh
 chmod 755 start.sh
 chmod 755 stop.sh

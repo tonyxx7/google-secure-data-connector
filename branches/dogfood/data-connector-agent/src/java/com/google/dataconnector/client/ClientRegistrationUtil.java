@@ -70,9 +70,9 @@ public class ClientRegistrationUtil {
 
     try {
       // send a message to initiate handshake with tunnelserver
-      // SW log.info("Sending initial handshake msg");
-      // SW pw.println(INITIAL_HANDSHAKE_MSG);
-      // SW pw.flush();
+      log.info("Sending initial handshake msg");
+      pw.println(INITIAL_HANDSHAKE_MSG);
+      pw.flush();
       
       // create auth request packet
       AuthRequest authRequest = new AuthRequest();

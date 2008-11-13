@@ -40,8 +40,8 @@ if [ "$1" = "configure" ]; then
   chown root:root $RULES_DIR/rules
 
   chmod 750 /etc/opt/dataconnector
+  chown -R root:dataconnector /etc/opt/dataconnector
   chown -R root:dataconnector /opt/dataconnector
-  chown -R root:dataconnector /etc//opt/dataconnector
 fi
 
 installinit_error() {

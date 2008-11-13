@@ -55,6 +55,9 @@ public class ClientRegistrationUtilTest extends TestCase {
 
     fakeClientConfig = new FakeClientConfiguration();
     authRequest = new AuthRequest();
+    authRequest.setDomain(fakeClientConfig.getFakeClientConf().getDomain());
+    authRequest.setUser(fakeClientConfig.getFakeClientConf().getUser());
+    authRequest.setPassword(fakeClientConfig.getFakeClientConf().getPassword());
   }
 
   /**
@@ -81,11 +84,12 @@ public class ClientRegistrationUtilTest extends TestCase {
     InputStream is = new ByteArrayInputStream(
         (authResponse.toJson().toString() + "\n").getBytes());
     OutputStream os = new ByteArrayOutputStream();
-    try {
-      ClientRegistrationUtil.authorize(getFakeSocket(is, os), fakeClientConfig.getFakeClientConf());
-    } catch (AuthenticationException e) {
-      fail("not supposed to receive exception");
-    }
+    AuthRequest returnedAuthRequest = ClientRegistrationUtil.authorize(getFakeSocket(is, os),
+        fakeClientConfig.getFakeClientConf());
+    assertEquals(returnedAuthRequest.getPassword(), 
+        fakeClientConfig.getFakeClientConf().getPassword());
+    assertEquals(returnedAuthRequest.getDomain(), fakeClientConfig.getFakeClientConf().getDomain());
+    assertEquals(returnedAuthRequest.getUser(), fakeClientConfig.getFakeClientConf().getUser());
     
     // Access Denied Case
     authResponse = new AuthResponse();
@@ -94,7 +98,8 @@ public class ClientRegistrationUtilTest extends TestCase {
     os = new ByteArrayOutputStream();
     boolean threwException = false;
     try {
-      ClientRegistrationUtil.authorize(getFakeSocket(is, os), fakeClientConfig.getFakeClientConf());
+      returnedAuthRequest = ClientRegistrationUtil.authorize(getFakeSocket(is, os),
+          fakeClientConfig.getFakeClientConf());
     } catch (AuthenticationException e) {
       threwException = true;
     } catch (MangledResponseException e) {
@@ -107,7 +112,8 @@ public class ClientRegistrationUtilTest extends TestCase {
     os = new ByteArrayOutputStream();
     threwException = false;
     try {
-      ClientRegistrationUtil.authorize(getFakeSocket(is, os), fakeClientConfig.getFakeClientConf());
+      returnedAuthRequest = ClientRegistrationUtil.authorize(getFakeSocket(is, os),
+          fakeClientConfig.getFakeClientConf());
     } catch (MangledResponseException e) {
       threwException = true;
     } catch (AuthenticationException e) {

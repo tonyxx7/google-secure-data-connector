@@ -19,4 +19,4 @@
 
 OPENSSH_HOME=/opt/dataconnector/third-party/openssh
 
-$OPENSSH_HOME/sbin/sshd -i -f $OPENSSH_HOME/etc/sshd_config
+$OPENSSH_HOME/sbin/sshd -i -e -f $OPENSSH_HOME/etc/sshd_config

@@ -23,7 +23,7 @@ NAME="dataconnector"
 
 JVM_ARGS="-Djava.net.preferIPv4Stack=true"
 CLIENT="com.google.dataconnector.client.Client"
-SECURELINK_HOME="/opt/dataconnector/"
+SECURELINK_HOME="/opt/dataconnector"
 CLASSPATH=\
 $SECURELINK_HOME/third-party/jsocks/jsocks-server.jar:\
 $SECURELINK_HOME/third-party/wpg-proxy/wpgproxy.jar:\
@@ -287,18 +287,20 @@ case "$1" in
     esac
     ;;
   status)
+    log_daemon_msg "Checking $DESC" "$NAME"
     is_running
     case "$?" in
-      0) log_daemon_msg "$NAME is running" ;;
-      1) log_daemon_msg "$NAME is stopped" ;;
-      2) log_daemon_msg "$NAME is stopped, but left a stale lock at $PIDFILE" ;;
+      0) log_end_msg 0 ;;
+      1) log_end_msg 1
+         exit 1
+         ;;
     esac
     ;;
   get_rules)
     get_rules
     ;;
   *)
-    echo "Usage: $SCRIPTNAME {start|stop|status|restart|force-reload}" >&2
+    echo "Usage: $SCRIPTNAME {start|stop|status|restart|force-reload|get_rules}" >&2
     exit 3
     ;;
 esac

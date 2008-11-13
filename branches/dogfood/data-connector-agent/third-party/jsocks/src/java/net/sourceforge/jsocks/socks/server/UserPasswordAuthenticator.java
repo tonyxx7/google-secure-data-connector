@@ -116,7 +116,7 @@ public class UserPasswordAuthenticator extends  ServerAuthenticatorNone{
     if (ipPortPairList == null) {
       return false;
     }
-    
+
     for (IpPortPair ipPortPair: ipPortPairList) {
       if ((msg.host.equals(ipPortPair.getIp()) && 
           (msg.port == ipPortPair.getPort()))) {

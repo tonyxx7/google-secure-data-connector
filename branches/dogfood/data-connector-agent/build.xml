@@ -434,13 +434,13 @@ http://code.google.com/
       </tarfileset>
       <tarfileset dir="build/prod/" prefix="opt/dataconnector" filemode="640">
       </tarfileset>
-      <tarfileset dir="." prefix="opt/dataconnector" filemode="640">
-        <include name="third-party/openssh/etc/*.pub"/>
-        <include name="third-party/openssh/etc/sshd_config.debian"/>
-        <include name="third-party/openssh/home/woodstock/.ssh/*"/>
+      <tarfileset dir="third-party/openssh/etc"
+                  prefix="opt/dataconnector/third-party/openssh/etc"
+                  filemode="640">
       </tarfileset>
-      <tarfileset dir="." prefix="opt/dataconnector" filemode="600">
-        <include name="third-party/openssh/etc/*_key"/>
+      <tarfileset dir="." prefix="opt/dataconnector" filemode="444">
+        <!-- Set perm 440 as needs to be readable by dataconnector and
+             woodstock users -->
         <include name="third-party/openssh/home/woodstock/.ssh/*"/>
       </tarfileset>
       <tarfileset dir="." prefix="opt/dataconnector" filemode="750">

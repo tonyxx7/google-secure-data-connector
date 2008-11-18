@@ -1,0 +1,24 @@
+<entity>
+  <sdcServerHost>127.0.0.1</sdcServerHost>
+  <sdcServerPort>4444</sdcServerPort>
+  <domain>test.joonix.net</domain>
+  <user>rcolline</user>
+  <oauthKey>kuuz2rpWyEkQ1I3wHRxlqOnY</oauthKey>
+  <useSsl>true</useSsl>
+  <sslKeyStoreFile>/usr/local/exporthda3/svn/google-secure-data-connector/data-connector-agent//config/secureLinkClientTrustStore</sslKeyStoreFile>
+  <clientId>test_joonix.net1</clientId>
+  <sshd>/usr/local/exporthda3/svn/google-secure-data-connector/data-connector-agent/third-party/openssh/bin/start_sshd.sh
+  </sshd>
+  <startingHttpProxyPort>18000</startingHttpProxyPort>
+  <socksServerPort>1080</socksServerPort>
+  <logProperties>
+    # ***** Set root logger level to DEBUG and its only appender to A.
+    log4j.rootLogger=debug, A
+
+    # ***** A is set to be a ConsoleAppender.
+    log4j.appender.A=org.apache.log4j.ConsoleAppender
+    # ***** A uses PatternLayout.
+    log4j.appender.A.layout=org.apache.log4j.PatternLayout
+    log4j.appender.A.layout.ConversionPattern=%-4r [%t] %-5p %c %x - %m%n
+  </logProperties>
+</entity>

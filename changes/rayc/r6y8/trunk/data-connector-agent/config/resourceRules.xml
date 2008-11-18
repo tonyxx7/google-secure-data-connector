@@ -1,0 +1,23 @@
+<feed>
+  <entity repeatable="true">
+    <name>1</name>
+    <clientId>all</clientId>
+    <allowedEntities repeatable="true">rcolline@test.joonix.net</allowedEntities>
+    <allowedEntities>admin@test.joonix.net</allowedEntities>
+    <pattern>http://.*.corp.google.com</pattern>
+  </entity>
+  <entity>
+    <name>2</name>
+    <clientId>all</clientId>
+    <allowedEntities repeatable="true">rcolline@test.joonix.net</allowedEntities>
+    <allowedEntities>admin@test.joonix.net</allowedEntities>
+    <pattern>http://.*.google.com/.*</pattern>
+  </entity>
+  <entity>
+    <name>3</name>
+    <clientId>all</clientId>
+    <allowedEntities repeatable="true">rcolline@test.joonix.net</allowedEntities>
+    <allowedEntities>admin@test.joonix.net</allowedEntities>
+    <pattern>socket://128.195.131.4:22</pattern>
+  </entity>
+</feed>

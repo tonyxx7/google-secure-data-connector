@@ -39,7 +39,7 @@ public class FakeLocalConfGenerator {
   /** The fake properties file we generate the config from */
   private LocalConf fakeLocalConf;
   
-  /** conf values */
+  /* conf values */
   public static final String NAME = "localConf";
   public static final String SDC_SERVER_HOST = "test.apps-secure-data-connector.google.com";
   public static final Integer SDC_SERVER_PORT = 443;
@@ -56,7 +56,6 @@ public class FakeLocalConfGenerator {
   public static final Integer SOCKS_SERVER_PORT = 1080;
   public static final String SOCKSD_BIND_HOST = "127.0.0.1";
   public static final String RULES_FILE = "/tmp/rulesConf.xml";
-  
   
   /**
    * Creates a configuration beans from the fake hardcoded XML files.  
@@ -109,6 +108,7 @@ public class FakeLocalConfGenerator {
     "<httpProxyBindHost>" + HTTP_PROXY_BIND_HOST + "</httpProxyBindHost>\n" +
     "<socksServerPort>" + SOCKS_SERVER_PORT + "</socksServerPort>\n" +
     "<socksdBindHost>" + SOCKSD_BIND_HOST + "</socksdBindHost>\n" +
+    // We hard code socks properties and log properties because they are not used in our tests.
     "<socksProperties>\n" +
     "iddleTimeout    = 600000   # 10 minutes\n" +
     "acceptTimeout   = 60000    # 1 minute\n" +

@@ -26,7 +26,6 @@ import java.io.File;
 public class LocalConfValidator {
   
   private FileFactory fileFactory;
-
   
   /**
    * Builds a validator with pre-configured dependencies.

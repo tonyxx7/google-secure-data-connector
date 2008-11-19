@@ -17,7 +17,7 @@
 package com.google.dataconnector.util;
 
 /**
- * Exception for all connection related exceptions.
+ * Exception for all connection related errors.
  * 
  * @author rayc@google.com (Ray Colline)
  */

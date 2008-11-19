@@ -84,7 +84,8 @@ public class ClientRegistrationUtilTest extends TestCase {
         (authResponse.toJson().toString() + "\n").getBytes());
     OutputStream os = new ByteArrayOutputStream();
     try {
-      ClientRegistrationUtil.authorize(getFakeSocket(is, os), fakeLocalConfGenerator.getFakeLocalConf());
+      ClientRegistrationUtil.authorize(getFakeSocket(is, os),
+          fakeLocalConfGenerator.getFakeLocalConf());
     } catch (AuthenticationException e) {
       fail("not supposed to receive exception");
     }
@@ -96,7 +97,8 @@ public class ClientRegistrationUtilTest extends TestCase {
     os = new ByteArrayOutputStream();
     boolean threwException = false;
     try {
-      ClientRegistrationUtil.authorize(getFakeSocket(is, os), fakeLocalConfGenerator.getFakeLocalConf());
+      ClientRegistrationUtil.authorize(getFakeSocket(is, os),
+          fakeLocalConfGenerator.getFakeLocalConf());
     } catch (AuthenticationException e) {
       threwException = true;
     } 
@@ -107,7 +109,8 @@ public class ClientRegistrationUtilTest extends TestCase {
     os = new ByteArrayOutputStream();
     threwException = false;
     try {
-      ClientRegistrationUtil.authorize(getFakeSocket(is, os), fakeLocalConfGenerator.getFakeLocalConf());
+      ClientRegistrationUtil.authorize(getFakeSocket(is, os),
+          fakeLocalConfGenerator.getFakeLocalConf());
     } catch (AuthenticationException e) {
       threwException = true;
       assertTrue(e.getMessage().startsWith("Mangled"));
@@ -152,6 +155,5 @@ public class ClientRegistrationUtilTest extends TestCase {
       assertTrue(e.getMessage().startsWith("Mangled"));
     } 
     assertTrue(threwException);
-
   }
 }

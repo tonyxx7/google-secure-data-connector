@@ -47,14 +47,17 @@ public class LocalConfValidatorTest extends TestCase {
     mockFileFactory = EasyMock.createMock(LocalConfValidator.FileFactory.class);
     localConfValidator = new LocalConfValidator(mockFileFactory);
     
+    // Good file.
     mockGoodFile = EasyMock.createMock(File.class);
     EasyMock.expect(mockGoodFile.canRead()).andReturn(true).anyTimes();
     EasyMock.replay(mockGoodFile);
     
+    // Bad file should only occur once
     mockBadFile = EasyMock.createMock(File.class);
     EasyMock.expect(mockBadFile.canRead()).andReturn(false);
     EasyMock.replay(mockBadFile);
     
+    // Successful filefactory
     EasyMock.expect(mockFileFactory.getFile(FakeLocalConfGenerator.RULES_FILE)).andReturn(
         mockGoodFile);
     EasyMock.expect(mockFileFactory.getFile(FakeLocalConfGenerator.SSL_KEY_STORE_FILE)).andReturn(
@@ -74,6 +77,7 @@ public class LocalConfValidatorTest extends TestCase {
   }
   
   public void testProperConfigResourceRules() throws LocalConfException {
+    // Test successful base case.
     localConfValidator.validate(localConf);
     EasyMock.verify(mockGoodFile);
     EasyMock.verify(mockFileFactory);
@@ -81,10 +85,11 @@ public class LocalConfValidatorTest extends TestCase {
   
   // RulesFile
   public void testBadRulesFile() {
+    // Setup bad data
     String badFile = "/bad/file";
     localConf.setRulesFile(badFile);
     
-    // Overwrite success case
+    // Create filefactory to give the right bad files.
     mockFileFactory = EasyMock.createMock(LocalConfValidator.FileFactory.class);
     EasyMock.expect(mockFileFactory.getFile(badFile)).andReturn(mockBadFile);
     EasyMock.expect(mockFileFactory.getFile(FakeLocalConfGenerator.SSL_KEY_STORE_FILE)).andReturn(
@@ -95,6 +100,7 @@ public class LocalConfValidatorTest extends TestCase {
     // Create new validator with our updated factory.
     localConfValidator = new LocalConfValidator(mockFileFactory);
     
+    // Test and verify
     try {
       localConfValidator.validate(localConf);
     } catch (LocalConfException e) {
@@ -109,8 +115,10 @@ public class LocalConfValidatorTest extends TestCase {
   
   // Socks Server Port
   public void testBadSdcServerPort() {
+    // Setup bad data
     localConf.setSdcServerPort(3242343);
     
+    // Test and verify
     try {
       localConfValidator.validate(localConf);
     } catch (LocalConfException e) {
@@ -122,8 +130,10 @@ public class LocalConfValidatorTest extends TestCase {
   
   // Domain
   public void testBadDomain() {
+    // Setup bad data
     localConf.setDomain("asdfasdf");
     
+    // Test and verify
     try {
       localConfValidator.validate(localConf);
     } catch (LocalConfException e) {
@@ -134,8 +144,10 @@ public class LocalConfValidatorTest extends TestCase {
   }
   
   public void testBadDomainInvalidTld() {
+    // Setup bad data
     localConf.setDomain("asdfasdf.asdfasfdafdsfadsf");
     
+    // Test and verify
     try {
       localConfValidator.validate(localConf);
     } catch (LocalConfException e) {
@@ -145,13 +157,13 @@ public class LocalConfValidatorTest extends TestCase {
     fail("did not get LocalConf");
   }
   
-  
   // SslKeyStoreFile
   public void testBadSslKeystoreFile() {
+    // Setup bad data
     String badFile = "/bad/file";
     localConf.setSslKeyStoreFile(badFile);
     
-    // Overwrite success case
+    // Create filefactory to give the right bad files.
     mockFileFactory = EasyMock.createMock(LocalConfValidator.FileFactory.class);
     EasyMock.expect(mockFileFactory.getFile(FakeLocalConfGenerator.RULES_FILE)).andReturn(
         mockGoodFile);
@@ -162,6 +174,7 @@ public class LocalConfValidatorTest extends TestCase {
     // Create new validator with our updated factory.
     localConfValidator = new LocalConfValidator(mockFileFactory);
     
+    // Test and verify
     try {
       localConfValidator.validate(localConf);
     } catch (LocalConfException e) {
@@ -176,8 +189,10 @@ public class LocalConfValidatorTest extends TestCase {
   
   // Socks Server Port
   public void testBadStartingHttpProxyPort() {
+    // Setup bad data
     localConf.setStartingHttpProxyPort(3242343);
     
+    // Test and verify
     try {
       localConfValidator.validate(localConf);
     } catch (LocalConfException e) {
@@ -189,8 +204,10 @@ public class LocalConfValidatorTest extends TestCase {
   
   // Socks Server Port
   public void testBadSocksServerPort() {
+    // Setup bad data
     localConf.setSocksServerPort(3242343);
     
+    // Test and verify
     try {
       localConfValidator.validate(localConf);
     } catch (LocalConfException e) {
@@ -202,10 +219,11 @@ public class LocalConfValidatorTest extends TestCase {
   
   // Sshd
   public void testBadSshd() {
+    // Setup bad data
     String badFile = "/bad/file";
     localConf.setSshd(badFile);
     
-    // Overwrite success case
+    // Create filefactory to give the right bad files.
     mockFileFactory = EasyMock.createMock(LocalConfValidator.FileFactory.class);
     EasyMock.expect(mockFileFactory.getFile(FakeLocalConfGenerator.RULES_FILE)).andReturn(
         mockGoodFile);
@@ -217,6 +235,7 @@ public class LocalConfValidatorTest extends TestCase {
     // Create new validator with our updated factory.
     localConfValidator = new LocalConfValidator(mockFileFactory);
     
+    // Test and verify
     try {
       localConfValidator.validate(localConf);
     } catch (LocalConfException e) {

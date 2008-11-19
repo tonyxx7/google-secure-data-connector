@@ -181,22 +181,7 @@ public class Client {
     props.setProperty("log4j.appender.A.layout.ConversionPattern", "%-4r [%t] %-5p %c %x - %m%n");
     return props;
   }
-  
-  /**
-   * Helper that loads a file into a new string.
-   * 
-   * @param fileName properties file with rules configuration.
-   * @returns a String representing the file contents.
-   * @throws IOException if any errors are encountered reading the file
-   */
-  public static String loadFileIntoString(final String fileName) throws IOException {
-    File file = new File(fileName);
-    byte[] buffer = new byte[(int) file.length()];
-    InputStream fin = new FileInputStream(fileName);
-    fin.read(buffer);
-    return new String(buffer);
-  }
-  
+
   /**
    * Sets up our own local SSL context and returns a SSLSocketFactory with keystore and password
    * set by our flags.
@@ -232,4 +217,18 @@ public class Client {
     }
   }
   
+  /**
+   * Helper that loads a file into a new string.
+   * 
+   * @param fileName properties file with rules configuration.
+   * @returns a String representing the file contents.
+   * @throws IOException if any errors are encountered reading the file
+   */
+  public static String loadFileIntoString(final String fileName) throws IOException {
+    File file = new File(fileName);
+    byte[] buffer = new byte[(int) file.length()];
+    InputStream fin = new FileInputStream(fileName);
+    fin.read(buffer);
+    return new String(buffer);
+  }
 }

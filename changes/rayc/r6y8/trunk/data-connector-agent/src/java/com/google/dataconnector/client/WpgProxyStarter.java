@@ -57,7 +57,7 @@ public final class WpgProxyStarter {
     for (ResourceRule resourceRule : resourceRules) {
       
       // Skip all non http rule entries these will be handled elsewhere.
-      if (!resourceRule.getPattern().startsWith("http")) {
+      if (!resourceRule.getPattern().startsWith(ResourceRule.HTTPID)) {
         continue;
       }
       /* Each proxy instance can filter multiple URL patterns, but in our current setup we

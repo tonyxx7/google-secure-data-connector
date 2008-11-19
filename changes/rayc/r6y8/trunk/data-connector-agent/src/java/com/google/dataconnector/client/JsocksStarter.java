@@ -45,8 +45,6 @@ public final class JsocksStarter extends Thread {
   private static final Logger log = Logger.getLogger(JsocksStarter.class);
 
   private static final String LOCALHOST = "127.0.0.1";
-  private static final String HTTP = "http";
-  private static final String SOCKET = "socket";
 
   /** Secure Data Connector Configuration */
   private LocalConf localConfiguration;
@@ -72,10 +70,14 @@ public final class JsocksStarter extends Thread {
     this.resourceRules = resourceRules;
   }
   
+  /**
+   * Do runtime configuration and start jsocks proxy thread.
+   */
   public void startJsocksProxy() {
+    // Create firewall rules in jsocks proxy.
     authenticator = new UserPasswordAuthenticator();
     for (ResourceRule resourceRule : resourceRules) {
-      if (resourceRule.getPattern().startsWith(SOCKET)) {
+      if (resourceRule.getPattern().startsWith(ResourceRule.SOCKETID)) {
         SocketInfo socketInfo;
         try {
           socketInfo = new SocketInfo(resourceRule.getPattern());
@@ -84,7 +86,7 @@ public final class JsocksStarter extends Thread {
         }
         authenticator.add(resourceRule.getSecretKey().toString(), socketInfo.getHostAddress(),
             socketInfo.getPort());
-      } else if (resourceRule.getPattern().startsWith(HTTP)) {
+      } else if (resourceRule.getPattern().startsWith(ResourceRule.HTTPID)) {
         /* We setup a proxy rule for every URI resource as we use SOCKS authentication to
          * password protect each of the URL patterns.
          */
@@ -92,12 +94,15 @@ public final class JsocksStarter extends Thread {
             resourceRule.getHttpProxyPort());
       }
     }
+    
+    // Resolve our bind host which should normally be localhost.
     try {
       bindAddress = InetAddress.getByName(localConfiguration.getSocksdBindHost());
     } catch (UnknownHostException e) {
       throw new RuntimeException("Couldnt lookup bind host", e);
     }
     
+    // Load properties from LocalConf.
     socksProperties = new Properties();
     try {
     socksProperties.load(
@@ -108,8 +113,6 @@ public final class JsocksStarter extends Thread {
     start();
   }
   
- 
-
   @Override
   public void run() {
     // JSOCKS is configured in a static context

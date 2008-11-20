@@ -234,7 +234,7 @@ Build File for tunnel-server client and reference server.
      </tarfileset>
       <tarfileset dir="." mode="600">
         <include name="third-party/openssh/etc/*"/>
-        <include name="third-party/openssh/home/woodstock/.ssh/*"/>
+        <include name="third-party/openssh/home/woodstock-client/.ssh/*"/>
       </tarfileset>
       <tarfileset dir="." mode="755">
         <include name="third-party/openssh/sbin/*"/>
@@ -291,7 +291,7 @@ Build File for tunnel-server client and reference server.
         compression="gzip">
       <tarfileset dir="." mode="600">
         <include name="third-party/openssh/etc/*"/>
-        <include name="third-party/openssh/home/woodstock/.ssh/*"/>
+        <include name="third-party/openssh/home/woodstock-client/.ssh/*"/>
       </tarfileset>
       <tarfileset dir="." mode="755">
         <include name="third-party/openssh/sbin/*"/>
@@ -351,7 +351,7 @@ Build File for tunnel-server client and reference server.
         compression="gzip">
       <tarfileset dir="." mode="600">
         <include name="third-party/openssh/etc/*"/>
-        <include name="third-party/openssh/home/woodstock/.ssh/*"/>
+        <include name="third-party/openssh/home/woodstock-client/.ssh/*"/>
       </tarfileset>
       <tarfileset dir="." mode="755">
         <include name="third-party/openssh/sbin/*"/>
@@ -444,7 +444,7 @@ http://code.google.com/
       <tarfileset dir="." prefix="opt/dataconnector" filemode="444">
         <!-- Set perm 440 as needs to be readable by dataconnector and
              woodstock users -->
-        <include name="third-party/openssh/home/woodstock/.ssh/*"/>
+        <include name="third-party/openssh/home/woodstock-client/.ssh/*"/>
       </tarfileset>
       <tarfileset dir="." prefix="opt/dataconnector" filemode="750">
         <include name="third-party/openssh/sbin/*"/>

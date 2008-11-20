@@ -12,7 +12,7 @@ if [ "$1" = "configure" ]; then
   adduser --system --quiet --group --no-create-home dataconnector || :
   # Set up the user to access the client
   adduser --system --quiet --group --home $WOODSTOCK_HOME --no-create-home \
-    woodstock || :
+    woodstock-client || :
     if [ -e ${OPENSSH_ROOT}etc/sshd_config.debian ]; then
       cp ${OPENSSH_ROOT}etc/sshd_config.debian ${OPENSSH_ROOT}etc/sshd_config
     fi

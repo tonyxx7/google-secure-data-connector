@@ -16,29 +16,17 @@
  */
 package com.google.dataconnector.client;
 
-import com.google.dataconnector.registration.v2.ResourceException;
 import com.google.dataconnector.registration.v2.ResourceRule;
-import com.google.dataconnector.registration.v2.ResourceRuleUtil;
-import com.google.dataconnector.registration.v2.ResourceRuleValidator;
 import com.google.dataconnector.util.ConnectionException;
 import com.google.dataconnector.util.LocalConf;
-import com.google.dataconnector.util.LocalConfException;
-import com.google.dataconnector.util.LocalConfValidator;
-import com.google.feedserver.util.BeanCliHelper;
-import com.google.feedserver.util.ConfigurationBeanException;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.util.List;
-import java.util.Properties;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
@@ -94,6 +82,7 @@ public class Client {
     // Check SSL flag and leave sslSocketFactory set to null if SSL is disabled.
     SSLSocketFactory sslSocketFactory = null;
     if (localConfiguration.getUseSsl()) {
+      log.info("Using SSL for client connections.");
       sslSocketFactory = getSslSocketFactory(localConfiguration);
     }
       
@@ -104,82 +93,6 @@ public class Client {
     SecureDataConnection secureDataConnection = new SecureDataConnection(localConfiguration, 
         resourceRules, sslSocketFactory);
     secureDataConnection.connect();
-  }
-  
-  /**
-   * Entry point for the Secure Data Connector binary.  Sets up logging, parses flags and
-   * creates ClientConf.
-   * 
-   * @param args
-   */
-  public static void main(String[] args) {
-    // Bootstrap logging system
-    PropertyConfigurator.configure(getBootstrapLoggingProperties());
-    
-    // Create configuration beans
-    LocalConf localConfiguration = new LocalConf();
-    
-    try {
-      // Load configuration file and command line flags into beans
-      BeanCliHelper beanCliHelper = new BeanCliHelper();
-      beanCliHelper.register(localConfiguration);
-      beanCliHelper.parse(args);
-    
-      // validate localconf
-      LocalConfValidator localConfValidator = new LocalConfValidator();
-      localConfValidator.validate(localConfiguration);
-      
-      // Create resource rules based on rules config
-      ResourceRuleUtil resourceRuleUtil = new ResourceRuleUtil();
-      List<ResourceRule> resourceRules = resourceRuleUtil.getResourceRules(
-          loadFileIntoString(localConfiguration.getRulesFile()));
-      
-      // Validate Resource Rules
-      ResourceRuleValidator resourceRuleValidator = new ResourceRuleValidator();
-      resourceRuleValidator.validate(resourceRules);
-      
-      // Set runtime configuration.
-      resourceRuleUtil.setSocksServerPort(resourceRules,
-          localConfiguration.getSocksServerPort());
-      resourceRuleUtil.setHttpProxyPorts(resourceRules, 
-          localConfiguration.getStartingHttpProxyPort());
-      resourceRuleUtil.setSecretKeys(resourceRules);
-      
-      // Load logging properties file.
-      Properties properties = new Properties();
-      properties.load(new ByteArrayInputStream(
-          localConfiguration.getLogProperties().trim().getBytes()));
-      PropertyConfigurator.configure(properties);
-
-      // Create the client instance and start services
-      Client client = new Client(localConfiguration, resourceRules);
-      client.startUp();
-    } catch (ConnectionException e) {
-      log.fatal("Connection error.", e);
-    } catch (IOException e) {
-      log.fatal("Client connection failure.", e);
-    } catch (LocalConfException e) {
-      log.fatal("Local configuration error.", e);
-    } catch (ConfigurationBeanException e) {
-      log.fatal("Local configuration error.", e);
-    } catch (ResourceException e) {
-      log.fatal("Resource rules error.", e);
-    }
-  }
-  
-  /**
-   * Returns a base set of logging properties so we can log fatal errors before config parsing is 
-   * done.
-   * 
-   * @return Properties a basic console logging setup.
-   */
-  public static Properties getBootstrapLoggingProperties() {
-    Properties props = new Properties();
-    props.setProperty("log4j.rootLogger","debug, A");
-    props.setProperty("log4j.appender.A", "org.apache.log4j.ConsoleAppender");
-    props.setProperty("log4j.appender.A.layout", "org.apache.log4j.PatternLayout");
-    props.setProperty("log4j.appender.A.layout.ConversionPattern", "%-4r [%t] %-5p %c %x - %m%n");
-    return props;
   }
 
   /**
@@ -215,20 +128,5 @@ public class Client {
     } catch (IOException e) {
       throw new RuntimeException("Could read Keystore file: " + e);
     }
-  }
-  
-  /**
-   * Helper that loads a file into a new string.
-   * 
-   * @param fileName properties file with rules configuration.
-   * @returns a String representing the file contents.
-   * @throws IOException if any errors are encountered reading the file
-   */
-  public static String loadFileIntoString(final String fileName) throws IOException {
-    File file = new File(fileName);
-    byte[] buffer = new byte[(int) file.length()];
-    InputStream fin = new FileInputStream(fileName);
-    fin.read(buffer);
-    return new String(buffer);
   }
 }

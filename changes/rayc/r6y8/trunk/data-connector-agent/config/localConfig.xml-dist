@@ -1,11 +1,11 @@
 <entity>
-  <sdcServerHost>127.0.0.1</sdcServerHost>
-  <sdcServerPort>4444</sdcServerPort>
-  <domain>test.joonix.net</domain>
-  <user>rcolline</user>
-  <oauthKey>kuuz2rpWyEkQ1I3wHRxlqOnY</oauthKey>
+  <sdcServerHost>apps-secure-data-connector.google.com</sdcServerHost>
+  <sdcServerPort>443</sdcServerPort>
+  <domain>example.com</domain>
+  <user>AnyValidDomainUsername</user>
+  <oauthKey>fillMeInFromAdminPanelManageOauth</oauthKey>
   <useSsl>true</useSsl>
-  <clientId>test_joonix.net1</clientId>
+  <clientId>test_example.com</clientId>
   <sshd>_SSHD_</sshd>
   <startingHttpProxyPort>18000</startingHttpProxyPort>
   <socksServerPort>1080</socksServerPort>

@@ -31,7 +31,6 @@ public class LocalConf {
   private static final String DEFAULT_GOOGLE_SDC_HOST = "apps-secure-data-connector.google.com";
   private static final int DEFAULT_GOOGLE_SDC_PORT = 443;
   private static final String DEFAULT_SSL_KEYSTORE_PASSWORD = "woodstock";
-  private static final String DEFAULT_SSL_KEYSTORE_FILE = "./secureLinkClientTrustStore";
   
   private String name;
 
@@ -57,7 +56,7 @@ public class LocalConf {
   private String sslKeyStorePassword = DEFAULT_SSL_KEYSTORE_PASSWORD;
   @Flag(help = "External keystore to use.  Default only allows verified certs per java default " +
       "trust store.")
-  private String sslKeyStoreFile = DEFAULT_SSL_KEYSTORE_FILE;
+  private String sslKeyStoreFile;
   @Flag(help = "Client identifier for this agent.  These must be unique for all agents in this " +
       "domain.")
   private String clientId;

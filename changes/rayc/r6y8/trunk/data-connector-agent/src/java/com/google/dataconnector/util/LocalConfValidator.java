@@ -137,16 +137,14 @@ public class LocalConfValidator {
       errors.append("'useSsl' required\n");
     }
     
-    // sslKeyStorePassword 
-    if (localConf.getSslKeyStorePassword() == null) {
-      errors.append("'useSsl' required\n");
-    }
-    
     // sslKeyStoreFile
     if (localConf.getSslKeyStoreFile() != null) {
       errors.append(canReadFile("sslKeyStoreFile", localConf.getSslKeyStoreFile()));
-    } else {
-      errors.append("can't read 'sslKeyStoreFile'\n");
+    } 
+    
+    // sslKeyStorePassword 
+    if (localConf.getSslKeyStoreFile() != null && localConf.getSslKeyStorePassword() == null) {
+        errors.append("'sslKeyStorePassword' required\n");
     }
     
     // clientId

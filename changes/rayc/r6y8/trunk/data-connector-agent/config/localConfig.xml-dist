@@ -5,10 +5,8 @@
   <user>rcolline</user>
   <oauthKey>kuuz2rpWyEkQ1I3wHRxlqOnY</oauthKey>
   <useSsl>true</useSsl>
-  <sslKeyStoreFile>/usr/local/exporthda3/svn/google-secure-data-connector/data-connector-agent//config/secureLinkClientTrustStore</sslKeyStoreFile>
   <clientId>test_joonix.net1</clientId>
-  <sshd>/usr/local/exporthda3/svn/google-secure-data-connector/data-connector-agent/third-party/openssh/bin/start_sshd.sh
-  </sshd>
+  <sshd>_SSHD_</sshd>
   <startingHttpProxyPort>18000</startingHttpProxyPort>
   <socksServerPort>1080</socksServerPort>
   <logProperties>

@@ -108,7 +108,7 @@ public class Client {
       String keystorePath = localConfiguration.getSslKeyStoreFile();
       
       SSLContext context = SSLContext.getInstance("TLSv1");
-      if (!"".equals(keystorePath)) {
+      if (keystorePath != null) { // The customer specified their own keystore.
         // Get a new "Java Key Store"
         KeyStore keyStore = KeyStore.getInstance("JKS");
         // Load with our trusted certs and setup the trust manager.

@@ -115,7 +115,7 @@ Build File for tunnel-server client and reference server.
     <exec executable="${basedir}/setup.sh"/>
   </target>
 
-  <target name="compile" depends="init">
+  <target name="compile" depends="init,jsocks,wpg-proxy">
     <javac 
         srcdir="${src}" 
         destdir="${classes}"
@@ -146,7 +146,9 @@ Build File for tunnel-server client and reference server.
     </javac>
   </target>
 
-  <target name="jar" depends="client_src_jar,client_jar,protocol_src_jar,protocol_jar"/>
+  <target 
+      name="jar" 
+      depends="client_src_jar,client_jar,protocol_src_jar,protocol_jar,openssh"/>
 
   <target name="client_src_jar" depends="init">
     <tstamp/>

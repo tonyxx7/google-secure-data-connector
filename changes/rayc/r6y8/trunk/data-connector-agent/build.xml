@@ -214,8 +214,6 @@ Build File for tunnel-server client and reference server.
         <include name="CHANGE_LOG"/>
         <include name="COPYING"/>
         <include name="config/*"/>
-        <include name="logging.properties"/>
-        <include name="rules.properties"/>
         <include name="third-party/commons-*/**"/>
         <include name="third-party/jline/**"/>
         <include name="third-party/jsch/**"/>
@@ -275,8 +273,6 @@ Build File for tunnel-server client and reference server.
         includes="config/*,
           COPYING,
           CHANGE_LOG,
-          rules.properties,
-          logging.properties,
           bin/**,
           build/**,
           third-party/wpg-proxy/bin/*.jar,
@@ -333,8 +329,6 @@ Build File for tunnel-server client and reference server.
         includes="config/*,
           COPYING,
           CHANGE_LOG,
-          rules.properties,
-          logging.properties,
           bin/**,
           build/**,
           third-party/wpg-proxy/bin/*.jar,

@@ -178,7 +178,7 @@ public class SecureDataConnection {
                 break;
               }
               out.write(buffer, 0, bytesRead);
-              log.debug(getName() + ":Wrote " + bytesRead + " bytes: ");
+              log.debug(getName() + ":Wrote " + bytesRead + " bytes");
               out.flush();
             }
           }

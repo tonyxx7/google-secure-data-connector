@@ -91,22 +91,12 @@ Build File for tunnel-server client and reference server.
         antfile="build.xml"
         dir="third-party/jsocks"
         target="clean"/>
-    <ant
-        antfile="build.xml"
-        dir="third-party/wpg-proxy"
-        target="clean"/>
-     </target>
+  </target>
 
   <target name="jsocks" depends="init">
     <ant 
         antfile="build.xml"
         dir="third-party/jsocks"/>
-  </target>
-
-  <target name="wpg-proxy" depends="init">
-    <ant 
-        antfile="build.xml"
-        dir="third-party/wpg-proxy"/>
   </target>
 
   <target name="openssh" depends="init">
@@ -134,7 +124,7 @@ Build File for tunnel-server client and reference server.
     <exec executable="${basedir}/setup.sh"/>
   </target>
 
-  <target name="compile" depends="init,jsocks,wpg-proxy">
+  <target name="compile" depends="init,jsocks">
     <javac 
         srcdir="${src}" 
         destdir="${classes}"
@@ -143,7 +133,6 @@ Build File for tunnel-server client and reference server.
         includes="**"
         >
       <classpath>
-        <pathelement path="third-party/wpg-proxy/bin/wpgproxy.jar"/>
         <pathelement path="third-party/jsocks/bin/jsocks-server.jar"/>
         <pathelement path="third-party/commons-cli/commons-cli-1.1.jar"/>
         <pathelement path="third-party/commons-logging/commons-logging-1.1.jar"/>
@@ -245,16 +234,6 @@ Build File for tunnel-server client and reference server.
         <include name="third-party/jsocks/runsocks.sh"/>
         <include name="third-party/jsocks/src/**"/>
         <include name="third-party/jsocks/third-party/**"/>
-        <include name="third-party/wpg-proxy/src/**"/>
-        <include name="third-party/wpg-proxy/uml/**"/>
-        <include name="third-party/wpg-proxy/third-party/**"/>
-        <include name="third-party/wpg-proxy/resources/**"/>
-        <include name="third-party/wpg-proxy/lib/**"/>
-        <include name="third-party/wpg-proxy/*.html"/>
-        <include name="third-party/wpg-proxy/README"/>
-        <include name="third-party/wpg-proxy/*.xml"/>
-        <include name="third-party/wpg-proxy/build.properties"/>
-        <include name="third-party/wpg-proxy/license.txt"/>
         <include name="third-party/openssh/CREDITS"/>
         <include name="third-party/openssh/build.xml"/>
         <include name="third-party/openssh/CREDITS"/>
@@ -289,7 +268,7 @@ Build File for tunnel-server client and reference server.
     </tar>
   </target>
     
-  <target name="binary-distro" depends="jsocks,wpg-proxy,jar,openssh">
+  <target name="binary-distro" depends="jsocks,jar,openssh">
     <tar 
         destfile="${dist}/tunnel-server-${version}-${timestamp}-bin.tar.gz"
         longfile="gnu"
@@ -299,14 +278,6 @@ Build File for tunnel-server client and reference server.
           CHANGE_LOG,
           bin/**,
           build/**,
-          third-party/wpg-proxy/bin/*.jar,
-          third-party/wpg-proxy/uml/**,
-          third-party/wpg-proxy/third-party/**,
-          third-party/wpg-proxy/resources/**,
-          third-party/wpg-proxy/lib/**,
-          third-party/wpg-proxy/*.html,
-          third-party/wpg-proxy/README,
-          third-party/wpg-proxy/license.txt,
           third-party/jsocks/bin/*.jar,
           third-party/jsocks/third-party/**,
           third-party/jsocks/docs/*,
@@ -347,7 +318,7 @@ Build File for tunnel-server client and reference server.
   </target>
 
   
-  <target name="binary-distro-win" depends="jsocks,wpg-proxy,jar,opensshwin">
+  <target name="binary-distro-win" depends="jsocks,jar,opensshwin">
     <tar 
         destfile="${dist}/tunnel-server-${version}-${timestamp}-bin-win.tar.gz"
         longfile="gnu"
@@ -357,14 +328,6 @@ Build File for tunnel-server client and reference server.
           CHANGE_LOG,
           bin/**,
           build/**,
-          third-party/wpg-proxy/bin/*.jar,
-          third-party/wpg-proxy/uml/**,
-          third-party/wpg-proxy/third-party/**,
-          third-party/wpg-proxy/resources/**,
-          third-party/wpg-proxy/lib/**,
-          third-party/wpg-proxy/*.html,
-          third-party/wpg-proxy/README,
-          third-party/wpg-proxy/license.txt,
           third-party/jsocks/bin/*.jar,
           third-party/jsocks/third-party/**,
           third-party/jsocks/docs/*,
@@ -422,7 +385,7 @@ Build File for tunnel-server client and reference server.
 
   <taskdef resource="ant_deb_task.properties" classpathref="deb-classpath"/> -->
 
-  <target name="deb" depends="jsocks,wpg-proxy,jar,openssh,apache-httpd">
+  <target name="deb" depends="jsocks,jar,openssh,apache-httpd">
     <mkdir dir="${deb}"/>
     <deb todir="${deb}"
          package="securedataconnector"
@@ -454,17 +417,11 @@ http://code.google.com/
          <include name="third-party/json/**"/>
          <include name="third-party/junit/**"/>
          <include name="third-party/cglib/**"/>
-         <include name="third-party/wpg-proxy/README"/>
-         <include name="third-party/wpg-proxy/license.txt"/>
          <include name="third-party/jsocks/docs/*"/>
          <include name="third-party/jsocks/COPYING"/>
          <include name="third-party/easymock/**"/>
          <include name="third-party/apache-log4j/**"/>
          <include name="third-party/apache-httpd/**"/>
-      </tarfileset>
-      <tarfileset dir="third-party/wpg-proxy/bin/" filemode="640"
-                  prefix="opt/securedataconnector/third-party/wpg-proxy">
-         <include name="*.jar"/>
       </tarfileset>
       <tarfileset dir="third-party/jsocks/bin/" filemode="640"
                   prefix="opt/securedataconnector/third-party/jsocks">

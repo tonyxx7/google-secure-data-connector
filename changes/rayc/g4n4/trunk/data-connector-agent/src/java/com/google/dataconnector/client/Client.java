@@ -121,10 +121,13 @@ public class Client {
       client.startUp();
     } catch (IOException e) {
       log.fatal("Connection error.", e);
+      System.exit(-1);
     } catch (ConnectionException e) {
       log.fatal("Client connection failure.", e);
+      System.exit(-1);
     } catch (AgentConfigurationException e) {
       log.fatal("Client configuration error.", e);
+      System.exit(-1);
     }
   }
   

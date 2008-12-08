@@ -33,10 +33,11 @@
   </target>
 
   <target name="untar" depends="init">
-    <untar 
-        src="${targz}" 
-        dest="${srcdir}/"
-        compression="gzip"/>
+    <exec 
+        dir="${srcdir}"
+        executable="tar">
+      <arg line="xvzf ../${targz}"/>
+    </exec>
   </target>
 
   <target name="configure" depends="untar">
@@ -61,17 +62,7 @@
     </exec>
   </target>
 
-  <target name="fix-build-chmod" depends="make">
-    <exec
-        dir="${src}/build"
-        executable="chmod">
-      <arg value="-R"/>
-      <arg value="755"/>
-      <arg value="."/>
-    </exec>
-  </target>
-
-  <target name="install" depends="fix-build-chmod"> 
+  <target name="install" depends="configure"> 
     <exec
         dir="${src}"
         executable="make">

@@ -92,9 +92,15 @@ public class ClientGuiceModule extends AbstractModule {
       LocalConfValidator localConfValidator = new LocalConfValidator();
       localConfValidator.validate(localConf);
     } catch (ConfigurationBeanException e) {
-      throw new RuntimeException(e);
+      LOG.fatal("Configuration Error.", e);
+      System.exit(-1);
+      // Guice produces SUPER VERBOSE errors that make system admins cry.  we
+      // instead exit early so the message is clear.  I hate this.
     } catch (LocalConfException e) {
-      throw new RuntimeException(e);
+      LOG.fatal("Configuration Error.", e);
+      // Guice produces SUPER VERBOSE errors that make system admins cry.  we
+      // instead exit early so the message is clear.  I hate this.
+      System.exit(-1);
     }
     return localConf;
   }
@@ -130,10 +136,17 @@ public class ClientGuiceModule extends AbstractModule {
       resourceRuleUtil.setSecretKeys(resourceRules);
       return resourceRules;
     } catch (ResourceException e) {
-      throw new RuntimeException(e);
+      LOG.fatal("Configuration Error.", e);
+      // Guice produces SUPER VERBOSE errors that make system admins cry.  we
+      // instead exit early so the message is clear.  I hate this.
+      System.exit(-1); 
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      LOG.fatal("Configuration File Error.", e);
+      // Guice produces SUPER VERBOSE errors that make system admins cry.  we
+      // instead exit early so the message is clear.  I hate this.
+      System.exit(-1); 
     }
+    return null; // HACK - VM doesnt know that System.exit() will never return.
   }
   
   /**
@@ -173,9 +186,16 @@ public class ClientGuiceModule extends AbstractModule {
       }
       return context.getSocketFactory();
     } catch (GeneralSecurityException e) {
-      throw new RuntimeException("SSL setup error: " + e);
+      LOG.fatal("SSL setup error.", e);
+      // Guice produces SUPER VERBOSE errors that make system admins cry.  we
+      // instead exit early so the message is clear.  I hate this.
+      System.exit(-1);
     } catch (IOException e) {
-      throw new RuntimeException("Could read Keystore file: " + e);
+      LOG.fatal("Keystore file error.", e);
+      // Guice produces SUPER VERBOSE errors that make system admins cry.  we
+      // instead exit early so the message is clear.  I hate this.
+      System.exit(-1);
     }
+    return null;
   }
 }

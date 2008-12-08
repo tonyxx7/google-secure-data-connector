@@ -18,6 +18,8 @@ package com.google.dataconnector.client.testing;
 
 import org.easymock.IArgumentMatcher;
 
+import java.util.Arrays;
+
 /**
  * EasyMock matcher that compares two String arrays.
  * 
@@ -49,18 +51,6 @@ public class StringArrayMatcher implements IArgumentMatcher {
     if (!(actual instanceof String[])) {
       return false; 
     }
-    String[] actualStringArray = (String[]) actual;
-
-    // They must be the same size
-    if (expected.length != actualStringArray.length) {
-      return false;
-    }
-
-    for (int index=0; index < expected.length; index++) {
-      if (!expected[index].equals(actualStringArray[index])) {
-        return false;
-      }
-    }
-    return true;
+    return Arrays.equals(expected, (String[]) actual); 
   }
 }

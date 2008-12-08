@@ -41,24 +41,24 @@ import javax.xml.parsers.ParserConfigurationException;
  * @author rayc@google.com (Ray Colline)
  */
 public class ResourceRuleUtil {
-  
+
   private static final String TOP_LEVEL_ELEMENT = "feed";
   private static final String ENTITY = "entity";
   private static final String HTTP = "http";
   private static final String ALL = "all";
-  
+
   // Dependencies
   private XmlUtil xmlUtil;
   private BeanUtil beanUtil;
-  
+
   /**
    * Creates a new resource util and its dependencies
    */
   public ResourceRuleUtil() {
     this(new XmlUtil(), new BeanUtil());
-    
+
   }
-  
+
   /**
    * Creates a new resource util with provided dependcies
    * 
@@ -69,7 +69,7 @@ public class ResourceRuleUtil {
     this.xmlUtil = xmlUtil;
     this.beanUtil = beanUtil;
   }
-  
+
   /**
    * Creates secret keys for each of the resources.
    * 
@@ -80,10 +80,12 @@ public class ResourceRuleUtil {
       resourceRule.setSecretKey(new Random().nextLong());
     }
   }
-  
+
   /**
    * Finds all rules that either match our client ID specified or match "all". We remove any rules
-   * that are not for "us". This method modifies the list in-place.
+   * that are not for "us". This method modifies the list in-place.  The idea here is that 
+   * ResourceRules config files could be the same for all clients.  When we move to config in the
+   * cloud, there will only be one feed of resource rules.
    * 
    * @param resourceRules that correctly matches our client.
    */
@@ -98,10 +100,10 @@ public class ResourceRuleUtil {
         resourceRule.setClientId(myClientId);
       }
     }
-    // Delete out the entries we dont need.
+    // Delete out the entries not for this client.
     resourceRules.removeAll(removalList);
   }
-  
+
   /**
    * Sets the httpProxyPort to the apache httpd server for each rule.
    * 
@@ -111,11 +113,11 @@ public class ResourceRuleUtil {
   public void setHttpProxyPorts(List<ResourceRule> resourceRules, int httpProxyPort) {
     for (ResourceRule resourceRule : resourceRules) {
       if (resourceRule.getPattern().startsWith(HTTP)) {
-	    resourceRule.setHttpProxyPort(httpProxyPort);
+        resourceRule.setHttpProxyPort(httpProxyPort);
       }
     }
   }
-  
+
   /**
    * Sets the socks server listen port for these resource rules
    * 
@@ -127,7 +129,7 @@ public class ResourceRuleUtil {
       resourceRule.setSocksServerPort(socksServerPort);
     }
   }
-  
+
   /**
    * Return a populated {@link ResourceRule} bean from the given payload-in-content entity XML.
    * 
@@ -156,7 +158,7 @@ public class ResourceRuleUtil {
       throw new ResourceException(e);
     }
   }
-  
+
   /**
    * Returns XML generated from {@link ResourceRule} bean.
    * 
@@ -177,7 +179,7 @@ public class ResourceRuleUtil {
       throw new ResourceException(e);
     }
   }
-  
+
   /**
    * Returns a list of {@link ResourceRule} from a feed encompassing one or more payload-in-content
    * entity XML representing a property configured Resource Rule.
@@ -219,7 +221,13 @@ public class ResourceRuleUtil {
     }
   }
 
-  public String getIpFromRule(ResourceRule resourceRule) {
+  /**
+   * For HTTPS rules use the URL util to extract the host from the URL pattern.
+   * 
+   * @param resourceRule the resource rule to exact host from.
+   * @return a hostname.
+   */
+  public String getHostnameFromRule(ResourceRule resourceRule) {
     if (!resourceRule.getPattern().startsWith(ResourceRule.HTTPSID)) {
       throw new RuntimeException("Can only invoke on HTTPS rules");
     }
@@ -231,6 +239,12 @@ public class ResourceRuleUtil {
     }
   }
 
+  /**
+   * For HTTPS rules use the URL util to extract the port from the URL pattern.
+   * 
+   * @param resourceRule the resource rule to exact host from.
+   * @return a port.
+   */
   public Integer getPortFromRule(ResourceRule resourceRule) {
     if (!resourceRule.getPattern().startsWith(ResourceRule.HTTPSID)) {
       throw new RuntimeException("Can only invoke on HTTPS rules");
@@ -243,4 +257,3 @@ public class ResourceRuleUtil {
     }
   }
 }
-  

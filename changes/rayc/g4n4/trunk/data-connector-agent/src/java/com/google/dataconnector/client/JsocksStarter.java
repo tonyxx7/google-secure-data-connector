@@ -101,10 +101,10 @@ public final class JsocksStarter extends Thread {
             resourceRule.getHttpProxyPort());
       } else if (resourceRule.getPattern().startsWith(ResourceRule.HTTPSID)) {
         authenticator.add(resourceRule.getSecretKey().toString(), 
-            resourceRuleUtil.getIpFromRule(resourceRule), 
+            resourceRuleUtil.getHostnameFromRule(resourceRule), 
             resourceRuleUtil.getPortFromRule(resourceRule));
         LOG.info("Added https rule " + resourceRule.getPattern() + " host: " + 
-            resourceRuleUtil.getIpFromRule(resourceRule) + " port: " + 
+            resourceRuleUtil.getHostnameFromRule(resourceRule) + " port: " + 
             resourceRuleUtil.getPortFromRule(resourceRule));
       }
       LOG.info("Adding rule: " + resourceRule.getPattern());

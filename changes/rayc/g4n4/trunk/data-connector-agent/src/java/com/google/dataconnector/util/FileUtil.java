@@ -22,10 +22,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 /**
- * Contains static convenience functions that allow for file manipulation.
+ * Contains mockable convenience methods used for file manipulation.
  * 
  * @author rayc@google.com (Ray Colline)
- *
  */
 public class FileUtil {
   

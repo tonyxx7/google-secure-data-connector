@@ -17,7 +17,7 @@
 package com.google.dataconnector.util;
 
 /**
- * Super class for  configuration exceptions.
+ * Super class for configuration exceptions.
  * 
  * @author rayc@google.com (Ray Colline)
  */

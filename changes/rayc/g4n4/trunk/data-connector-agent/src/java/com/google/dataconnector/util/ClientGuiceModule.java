@@ -28,13 +28,8 @@ import com.google.inject.Singleton;
 
 import org.apache.log4j.Logger;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.util.List;
@@ -50,22 +45,39 @@ import javax.net.ssl.TrustManagerFactory;
  */
 public class ClientGuiceModule extends AbstractModule {
   
-  private static final Logger log = Logger.getLogger(ClientGuiceModule.class);
+  private static final Logger LOG = Logger.getLogger(ClientGuiceModule.class);
 
   private String[] args; // command line args
   
+  /**
+   * Creates the guice module using the VMs command line arguments.
+   * 
+   * @param args command line.
+   */
   public ClientGuiceModule(String[] args) {
     this.args = args;
   }
 
+  /** Use default binding */
   @Override
   protected void configure() {}
   
+  /** 
+   * Provides the runtime for methods needing to make processes.
+   * 
+   * @return the VM's runtime.
+   */
   @Provides
   public Runtime getRuntime() {
     return Runtime.getRuntime();
   }
   
+  /**
+   * Provider method that builds the {@link LocalConf} bean from the commandline arguments and 
+   * configuration file.  
+   * 
+   * @return a populated local configuration bean.
+   */
   @Provides @Singleton
   public LocalConf getLocalConf() {
     LocalConf localConf = new LocalConf();
@@ -87,22 +99,33 @@ public class ClientGuiceModule extends AbstractModule {
     return localConf;
   }
   
+  /**
+   * Provider method that returns a list of {@link ResourceRule} that is read from the file 
+   * system location pointed to by the {@link LocalConf} bean.  It also prepares the resource
+   * rules for runtime.
+   * 
+   * @param localConf the local configuration.
+   * @param resourceRuleUtil the resource rule util used for validation and setup of resource rules.
+   * @return the created List of resources.
+   */
   @Provides @Singleton
   public List<ResourceRule> getResourceRules(LocalConf localConf,
       ResourceRuleUtil resourceRuleUtil) {
     
     try {
       List<ResourceRule> resourceRules = resourceRuleUtil.getResourceRules(
-          loadFileIntoString(localConf.getRulesFile()));
+          new FileUtil().readFile(localConf.getRulesFile()));
       // Validate Resource Rules
       ResourceRuleValidator resourceRuleValidator = new ResourceRuleValidator();
       resourceRuleValidator.validate(resourceRules);
       
-      // Set runtime configuration.
+      // Remove all the rules in the config that arent for this client.
       resourceRuleUtil.getThisClientRulesAndSetId(resourceRules, localConf.getClientId());
+      
+      // Set the socks server port for the rules based on the local configuration.
       resourceRuleUtil.setSocksServerPort(resourceRules,
           localConf.getSocksServerPort());
-      // REMOVE THE NEXT LINE DONT LET ME CHECK THIS IN IF YOU SEE THIS COMMENT HERE!
+      // We set all the rules to the same proxy port now that we use apache.
       resourceRuleUtil.setHttpProxyPorts(resourceRules, localConf.getHttpProxyPort());
       resourceRuleUtil.setSecretKeys(resourceRules);
       return resourceRules;
@@ -114,8 +137,8 @@ public class ClientGuiceModule extends AbstractModule {
   }
   
   /**
-   * Sets up our own local SSL context and returns a SSLSocketFactory with keystore and password
-   * set by our flags.
+   * Provider method that sets up our own local SSL context and returns a SSLSocketFactory 
+   * with keystore and password set by our flags.
    * 
    * @param localConfiguration the configuration object for the client.
    * @return SSLSocketFactory configured for use.
@@ -127,7 +150,7 @@ public class ClientGuiceModule extends AbstractModule {
       return null;
     }
     
-    log.info("Using SSL for client connections.");
+    LOG.info("Using SSL for client connections.");
     
     char[] password = localConfiguration.getSslKeyStorePassword().toCharArray();
     try {
@@ -155,24 +178,4 @@ public class ClientGuiceModule extends AbstractModule {
       throw new RuntimeException("Could read Keystore file: " + e);
     }
   }
-  
-  /**
-   * Gets the properly configured {@link LocalConf}
-   */
-  
-  /**
-   * Helper that loads a file into a new string.
-   * 
-   * @param fileName properties file with rules configuration.
-   * @returns a String representing the file contents.
-   * @throws IOException if any errors are encountered reading the file
-   */
-  public static String loadFileIntoString(final String fileName) throws IOException {
-    File file = new File(fileName);
-    byte[] buffer = new byte[(int) file.length()];
-    InputStream fin = new FileInputStream(fileName);
-    fin.read(buffer);
-    return new String(buffer);
-  }
-
 }

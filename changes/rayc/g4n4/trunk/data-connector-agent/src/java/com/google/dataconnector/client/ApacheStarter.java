@@ -43,6 +43,13 @@ public class ApacheStarter extends Thread {
   private ApacheHelper apacheHelper;
   private Runtime runtime;
 
+  /**
+   * Creates the ApacheStarter with injected dependencies.
+   * 
+   * @param localConf local agent configuration.
+   * @param apacheHelper apache helper object.
+   * @param runtime system runtime.
+   */
   @Inject 
   public ApacheStarter(LocalConf localConf, ApacheHelper apacheHelper, Runtime runtime) {
     this.localConf = localConf;
@@ -61,6 +68,10 @@ public class ApacheStarter extends Thread {
     start();
   }
   
+  /**
+   * Starts Apache's HTTPD in a new thread and waits for it to exit.  All startup errots are 
+   * logged.
+   */
   @Override
   public void run() {
     LOG.info("Starting httpd");
@@ -73,6 +84,7 @@ public class ApacheStarter extends Thread {
       Process p = runtime.exec(commandLine);
       BufferedReader br = new BufferedReader(new InputStreamReader(p.getErrorStream()));
       String errorLine;
+      
       // Catch any startup errors
       while ((errorLine = br.readLine()) != null) {
         LOG.info("httpd output: " + errorLine);

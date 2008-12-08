@@ -23,15 +23,14 @@ import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.List;
 
 /**
- * Generates Apache Configuration and htpassword files from Secure Data Client configuration.
+ * Helper methods that generate Apache Configuration and make htpassword files from  Secure Data 
+ * Client configuration.
  * 
  * @author rayc@google.com (Ray Colline)
  */
@@ -40,7 +39,11 @@ public class ApacheHelper {
   // Logging instance
   private static final Logger LOG = Logger.getLogger(ApacheHelper.class);
   
-  // Constants
+  // Constants 
+  /** 
+   * This is the username we expect the server side to authenticate as.  Currently this is hard
+   * coded as "foo" as its not used inside of apache.  Changing this requires a serverside change!
+   */
   static final String DEFAULT_PROXY_AUTH_USER = "foo";
   static final String HTPASSWD_BINARY = "bin" + File.separator + "htpasswd";
   static final String HTPASSWD_FILE_PREFIX = "htpasswd.resource.";
@@ -82,9 +85,9 @@ public class ApacheHelper {
   
   /**
    * Uses httpd.conf template and substitutes in ProxyMatch and htpassword paths.  It also
-   * writes out the file to the filesystem for Apache Httpd to read.
+   * writes out the final httpd.conf to the file to the filesystem for Apache Httpd to read.
    * 
-   * @throws ApacheSetupException if any file IO errors occur.
+   * @throws ApacheSetupException if any file IO errors occur when writing the httpd conf.
    */
   public void generateHttpdConf() throws ApacheSetupException {
     
@@ -110,7 +113,8 @@ public class ApacheHelper {
   
   /**
    * For each http resource rule, we take the template {@link #PROXY_MATCH_RULE_TEMPLATE} and 
-   * substitutes the correct value based on the resource configuration.
+   * substitute the correct value based on the resource configuration.  We build up the entire
+   * &lt;ProxyMatch&gt; section and return it.
    * 
    * @return a string representing all the "&lt;ProxyMatch&gt;" rules.
    */
@@ -121,11 +125,12 @@ public class ApacheHelper {
     // sort the resource rules by sequence number
     Collections.sort(resourceRules);
     // reverse the rules as Apache HTTP processes ProxyMatch rules in a reverse order.
+    // see http://httpd.apache.org/docs/2.0/sections.html for how precedence in Apache works.
     Collections.reverse(resourceRules);
     
     // Create ProxyMatch entries for each rule.
     for (ResourceRule resourceRule : resourceRules) {
-      LOG.info("resource " + resourceRule.getName());
+      LOG.info("Creating <ProxyMatch> section for resource " + resourceRule.getName());
       // Skip non http rules
       if (!resourceRule.getPattern().startsWith(ResourceRule.HTTPID)) { 
         continue;
@@ -157,6 +162,7 @@ public class ApacheHelper {
           continue;
         }
         
+        // Get path and remove any existing files.
         String htpasswdFile = makeHtpasswdPath(localConf, resourceRule.getName());
         fileUtil.deleteFile(htpasswdFile);
         
@@ -175,11 +181,12 @@ public class ApacheHelper {
         BufferedReader br = new BufferedReader(new InputStreamReader(p.getErrorStream()));
         String errorLine;
         while ((errorLine = br.readLine()) != null) {
-          LOG.error("htpasswd output: " + errorLine);
+          LOG.error("htpasswd error: " + errorLine);
         }
         
         // Wait until htpassword finishes
         p.waitFor(); 
+        // Schedule this temporary file for deletion on vm exit.
         fileUtil.deleteFileOnExit(htpasswdFile);
       }
     } catch (IOException e) {
@@ -187,17 +194,6 @@ public class ApacheHelper {
     } catch (InterruptedException e) {
       throw new ApacheSetupException(e);
     }
-  }
-
-  
-  /**
-   * Creates the htpasswd file location from the given resource rule.
-   * 
-   * @param name the unique identifier for this htpasswd file.
-   * @return a constructed path name.
-   */
-  static String makeHtpasswdPath(LocalConf localConf, String name) {
-    return localConf.getApacheConfDir() + File.separator + HTPASSWD_FILE_PREFIX + name;
   }
   
   /**
@@ -214,7 +210,17 @@ public class ApacheHelper {
    * 
    * @return path used for apache configuration file.
    */
-  public static String getHttpdConfTemplateFileName(LocalConf localConf) {
+  static String getHttpdConfTemplateFileName(LocalConf localConf) {
       return localConf.getApacheConfDir() + File.separator + LocalConf.HTTPD_CONF_TEMPLATE_FILE;
+  }
+  
+  /**
+   * Creates the htpasswd file location from the given resource rule.
+   * 
+   * @param name the unique identifier for this htpasswd file.
+   * @return a constructed path name.
+   */
+  static String makeHtpasswdPath(LocalConf localConf, String name) {
+    return localConf.getApacheConfDir() + File.separator + HTPASSWD_FILE_PREFIX + name;
   }
 }

@@ -85,7 +85,7 @@ public class SecureDataConnection {
     log.info("Connecting to server");
 
     Socket clientSocket;
-    if (sslSocketFactory != null) { // We have an SSL socket factory, use it.
+    if (localConf.getUseSsl()) { // We have an SSL socket factory, use it.
       clientSocket = sslSocketFactory.createSocket();
       // Enable all support cipher suites.
       SSLSocket sslClientSocketRef = (SSLSocket) clientSocket;

@@ -54,10 +54,9 @@ CMD="java com.google.dataconnector.testserver.TestServerFailures \
  -testServerListenPort 9009"
 
 # uncomment this line to get more debugging output
-CMD="${CMD} -verbose"
+#CMD="${CMD} -verbose"
 
 ${CMD} -exitpoint AFTER_CLIENT_CONNECTS 
-exit
 ${CMD} -exitpoint AFTER_AUTHZ_REQ_RECVD
 ${CMD} -exitpoint AFTER_AUTHZ_RESPONSE_SENT
 ${CMD} -exitpoint AFTER_REG_REQ_RECVD

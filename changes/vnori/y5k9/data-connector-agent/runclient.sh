@@ -45,6 +45,10 @@ $WOODSTOCK_HOME/third-party/google-feedserver/commons-lang-2.4.jar:\
 $WOODSTOCK_HOME/build/prod/classes/
 JVM_ARGS="-Djava.net.preferIPv4Stack=true"   
 
+while /bin/true; do
   java com.google.dataconnector.client.Client \
   -localConfigFile ./config/localConfig.xml \
   -rulesFile ./config/resourceRules.xml
+  sleep 5
+  echo "RECONNECTING..."
+done

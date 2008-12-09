@@ -32,6 +32,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import javax.net.ssl.SSLContext;
@@ -158,11 +159,6 @@ public class ClientGuiceModule extends AbstractModule {
    */
   @Provides @Singleton
   public SSLSocketFactory getSslSocketFactory(LocalConf localConfiguration) {
-    // Only if we have useSsl set.
-    if (!localConfiguration.getUseSsl()) {
-      return null;
-    }
-    
     LOG.info("Using SSL for client connections.");
     
     char[] password = localConfiguration.getSslKeyStorePassword().toCharArray();

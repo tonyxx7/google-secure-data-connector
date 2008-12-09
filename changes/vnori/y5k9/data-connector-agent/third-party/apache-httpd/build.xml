@@ -2,7 +2,7 @@
 
 <project 
     name="apache-httpd" 
-    default="install_httpd"
+    default="build-httpd"
     basedir=".">
 
   <property name="version" value="1.0"/>
@@ -27,9 +27,16 @@
     <mkdir dir="${src}"/>
   </target>
 
+  <target name="clean" description="Deletes all build files.">
+    <delete dir="${srcdir}" />
+    <delete dir="${root}" />
+  </target>
+
   <target name="untar" depends="init">
-    <exec dir="${srcdir}" executable="tar" >
-      <arg line="-zxf ../${targz}" />
+    <exec 
+        dir="${srcdir}"
+        executable="tar">
+      <arg line="-xvzf ../${targz}"/>
     </exec>
   </target>
 
@@ -55,9 +62,7 @@
     </exec>
   </target>
 
-  <target name="buildhttpd" depends="check" unless="present">
-    <echo message="httpd file doesn'exist..building it" />
-    <ant dir="." target="make" />
+  <target name="install" depends="configure"> 
     <exec
         dir="${src}"
         executable="make">
@@ -65,22 +70,17 @@
     </exec>
   </target>
 
-  <target name="check">
-    <available property="present" file="${src}/httpd" />
+  <!-- Build detection targets.  We dont want to rebuild unless we have to. -->
+  <target name="build-httpd" depends="already-built-msg" unless="httpd-present">
+    <ant dir="." target="install"/>
   </target>
 
-  <target name="FileExists" depends="check" if="present">
-    <echo message="httpd file exists. Not rebuilding it.." />
+  <target name="already-built">
+    <available property="httpd-present" file="root/bin/httpd"/>
   </target>
-
-  <target name="decision" depends="FileExists,buildhttpd" />
-
-  <target name="install_httpd" depends="decision">
-  </target>
-
-  <target name="clean" description="Deletes all build files.">
-    <delete dir="${srcdir}" />
-    <delete dir="${root}" />
+  
+  <target name="already-built-msg" depends="already-built" if="httpd-present">
+    <echo message="httpd already built"/>
   </target>
 
 </project>

@@ -1,0 +1,110 @@
+#!/bin/sh
+
+set -e
+
+OPENSSH_ROOT="/opt/dataconnector/third-party/openssh/"
+APACHE_ROOT="/opt/dataconnector/third-party/apache-httpd/"
+SSHD_WRAPPER=${OPENSSH_ROOT}"bin/start_sshd.sh"
+WOODSTOCK_HOME=${OPENSSH_ROOT}"home/woodstock"
+CONF_DIR="/etc/opt/dataconnector"
+APACHE_CONF_DIR=${CONF_DIR}"/apache"
+APACHE_TEMPLATE=${APACHE_CONF_DIR}"/httpd.conf-template"
+APACHE_DIST=${CONF_DIR}"/httpd.conf-dist"
+SSHD_CONF=${CONF_DIR}"/sshd_config"
+LOCAL_CONF_FILE=${CONF_DIR}"/localConfig.xml"
+LOG_DIR="/var/log/dataconnector"
+RULES_DIR="/var/opt/dataconnector"
+
+if [ "$1" = "configure" ]; then
+  # Setup the user to run the client
+  adduser --system --quiet --group --no-create-home dataconnector || :
+  # Set up the user to access the client
+  adduser --system --quiet --group --home $WOODSTOCK_HOME --no-create-home \
+    woodstock || :
+    if [ -e ${OPENSSH_ROOT}etc/sshd_config.debian ]; then
+      cp ${OPENSSH_ROOT}etc/sshd_config.debian ${OPENSSH_ROOT}etc/sshd_config
+    fi
+    if [ -e ${SSHD_WRAPPER}.debian ]; then
+      cp ${SSHD_WRAPPER}.debian ${SSHD_WRAPPER}
+    fi
+
+  # Set up the logfile for dataconnector
+  if [ ! -d $LOG_DIR ]; then
+    mkdir $LOG_DIR
+  fi
+  chown root:dataconnector $LOG_DIR
+  chmod 770 $LOG_DIR
+  for filename in "client" "access_log" "error_log"; do
+    logfile="$LOG_DIR/$filename"
+    if [ ! -f $logfile ]; then
+      touch $logfile
+    fi
+    chown root:dataconnector $logfile
+    chmod 660 $logfile
+  done
+
+  # Set up a temporary store for the rules state.
+  if [ ! -d $RULES_DIR ]; then
+    mkdir -p $RULES_DIR
+    chmod 700 $RULES_DIR
+  fi
+
+  if [ ! -f $RULES_DIR/rules ]; then
+    touch $RULES_DIR/rules
+  fi
+  chmod 0600 $RULES_DIR/rules
+  chown root:root $RULES_DIR/rules
+
+  # set up a localConfig.xml file from the template.
+  if [ ! -e $LOCAL_CONF_FILE ]; then
+    /bin/cp $LOCAL_CONF_FILE-dist $LOCAL_CONF_FILE
+    sed -i $LOCAL_CONF_FILE -e 's^_SSHD_^'$SSHD_WRAPPER'^'
+    sed -i $LOCAL_CONF_FILE -e 's^_APACHE_ROOT_^'$APACHE_ROOT'^'
+    sed -i $LOCAL_CONF_FILE -e 's^_APACHE_CONF_DIR^'$APACHE_CONF_DIR'^'
+    rm $LOCAL_CONF_FILE-dist
+  fi
+
+  # set up the apache config and environment
+  if [ ! -d $APACHE_CONF_DIR ]; then
+    mkdir -p $APACHE_CONF_DIR/htdocs
+  fi
+  # Always overwrite the template
+  if [ -e $APACHE_DIST ]; then
+    /bin/cp $APACHE_DIST $APACHE_TEMPLATE
+    sed -i $APACHE_TEMPLATE -e 's^_APACHE_ROOT_^'$APACHE_ROOT'^'
+    sed -i $APACHE_TEMPLATE -e 's^_APACHE_CONF_^'$APACHE_CONF_DIR'^'
+    sed -i $APACHE_TEMPLATE -e 's^_APACHE_LOG_DIR_^'$LOG_DIR'^'
+    # And change ownership to dataconnector.....
+    # FIXME(sebastian.welsh): This is ugly. FixFixFix.
+    sed -i $APACHE_TEMPLATE -e 's^User daemon^User dataconnector^'
+    sed -i $APACHE_TEMPLATE -e 's^Group daemon^Group dataconnector^'
+  fi
+
+  # set up the sshd config
+  if [ ! -f $SSHD_CONF ]; then
+    sed -e "s:_WSCLIENT_HOME_:/opt/dataconnector:g" $SSHD_CONF-dist > $SSHD_CONF
+    rm $SSHD_CONF-dist
+  fi
+
+  chmod 750 /etc/opt/dataconnector
+  chown -R root:dataconnector /etc/opt/dataconnector
+  chown -R root:dataconnector /opt/dataconnector
+  # FIXME(sebastianw): chase this up with rayc
+  chmod g+w /etc/opt/dataconnector/apache
+
+  chmod g+w /opt/dataconnector/third-party/apache-httpd/root/logs
+
+fi
+
+installinit_error() {
+  exit $?
+}
+
+if [ -x "/etc/init.d/dataconnector" ]; then
+  update-rc.d dataconnector defaults 50 15 >/dev/null
+  if [ -x "`which invoke-rc.d 2>/dev/null`" ]; then
+    invoke-rc.d dataconnector start || installinit_error
+  else
+    /etc/init.d/dataconnector start || installinit_error
+  fi
+fi

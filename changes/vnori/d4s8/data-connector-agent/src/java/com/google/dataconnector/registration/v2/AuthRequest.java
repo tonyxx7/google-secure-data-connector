@@ -51,7 +51,7 @@ public class AuthRequest {
     NONE
   }
   
-  private AuthType authTpe; // filled in when JsonString is parsed.
+  private AuthType authType; // filled in when JsonString is parsed.
 
   /**
    * Returns JSON object representing data.
@@ -79,15 +79,15 @@ public class AuthRequest {
    */
   public AuthRequest(final JSONObject json) throws JSONException {
     // look for oauth keys
-    try {
+    if (json.has(OAUTH_KEY)) {
       setOauthString(json.getString(OAUTH_KEY));
-      setAuthTpe(AuthType.OAUTH);
-    } catch (JSONException e) {
+      setAuthType(AuthType.OAUTH);
+    } else {
       // look for password key. if not found, then let the exception be thrown
       setUser(json.getString(USER_KEY));
       setDomain(json.getString(DOMAIN_KEY));
       setPassword(json.getString(PASSWORD_KEY));
-      setAuthTpe(AuthType.PASSWORD);
+      setAuthType(AuthType.PASSWORD);
     }
   }
   
@@ -158,11 +158,11 @@ public class AuthRequest {
     this.password = password;
   }
   
-  public AuthType getAuthTpe() {
-    return authTpe;
+  public AuthType getAuthType() {
+    return authType;
   }
 
-  public void setAuthTpe(AuthType authTpe) {
-    this.authTpe = authTpe;
+  public void setAuthType(AuthType authType) {
+    this.authType = authType;
   }
 }

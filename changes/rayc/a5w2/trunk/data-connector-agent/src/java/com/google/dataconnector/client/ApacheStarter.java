@@ -65,22 +65,27 @@ public class ApacheStarter extends Thread {
     LOG.info("Configuring httpd");
     apacheHelper.generateHtpasswdFiles();
     apacheHelper.generateHttpdConf();
-    setName("apache-starter-thread");
-    start();
+    // We cleanup existing httpds if they are still running.
+    LOG.info("Shutting down any existing httpd processes");
+    runApacheCtl(ApacheCommand.STOP);
+    LOG.info("Starting httpd process");
+    runApacheCtl(ApacheCommand.START);
+    // Set apache to stop on shutdown.
+    runtime.addShutdownHook(new Thread() {
+      @Override
+      public void run() {
+        runApacheCtl(ApacheCommand.STOP);
+      }
+    });
   }
   
-  /**
-   * Starts Apache's HTTPD in a new thread and waits for it to exit.  All startup errots are 
-   * logged.
-   */
-  @Override
-  public void run() {
-    LOG.info("Starting httpd");
+  public void runApacheCtl(ApacheCommand command) {
+    LOG.info("apachectl " + command + " issued.");
     try {
       String[] commandLine = new String[] {
-          localConf.getApacheRoot() + File.separator + "bin" + File.separator + "httpd",
-          "-D", "FOREGROUND",
-          "-f", ApacheHelper.getHttpdConfFileName(localConf)
+          localConf.getApacheRoot() + File.separator + "bin" + File.separator + "apachectl",
+          "-f", ApacheHelper.getHttpdConfFileName(localConf),
+          "-k", command.toString()
       };
       Process p = runtime.exec(commandLine);
       BufferedReader br = new BufferedReader(new InputStreamReader(p.getErrorStream()));
@@ -88,15 +93,35 @@ public class ApacheStarter extends Thread {
       
       // Catch any startup errors
       while ((errorLine = br.readLine()) != null) {
-        LOG.info("httpd output: " + errorLine);
+        LOG.info("apachectl: " + errorLine);
       }
       p.waitFor();
-      LOG.info("Httpd shutting down.");
     } catch (IOException e) {
       LOG.log(Level.ERROR, "Apache did not start correctly.", e);
       throw new RuntimeException(e);
     } catch (InterruptedException e) {
       LOG.log(Level.ERROR, "Apache interrupted.", e);
+    }
+  }
+  
+  /**
+   * Enum to represent different apachectl directives.
+   * 
+   * @author rayc@google.com (Ray Colline)
+   */
+  private enum ApacheCommand {
+    STOP("stop"),
+    START("start");
+    
+    private String command;
+    
+    private ApacheCommand(String command) {
+      this.command = command;
+    }
+    
+    @Override
+    public String toString() {
+      return command; 
     }
   }
 }

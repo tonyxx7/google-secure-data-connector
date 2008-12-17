@@ -79,6 +79,11 @@ public class ApacheStarter extends Thread {
     });
   }
   
+  /**
+   * Runs apachectl with specified command with configured apache configuration file.
+   * 
+   * @param command the apache command to run.
+   */
   public void runApacheCtl(ApacheCommand command) {
     LOG.info("apachectl " + command + " issued.");
     try {

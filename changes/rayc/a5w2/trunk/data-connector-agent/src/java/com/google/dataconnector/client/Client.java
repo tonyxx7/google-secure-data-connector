@@ -133,7 +133,7 @@ public class Client {
     props.setProperty("log4j.rootLogger","info, A");
     props.setProperty("log4j.appender.A", "org.apache.log4j.ConsoleAppender");
     props.setProperty("log4j.appender.A.layout", "org.apache.log4j.PatternLayout");
-    props.setProperty("log4j.appender.A.layout.ConversionPattern", "%-4r [%t] %-5p %c %x - %m%n");
+    props.setProperty("log4j.appender.A.layout.ConversionPattern", "%d [%t] %-5p %c %x - %m%n");
     return props;
   }
 }

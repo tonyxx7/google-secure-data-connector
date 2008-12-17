@@ -34,7 +34,7 @@ import java.io.InputStreamReader;
  * 
  * @author rayc@google.com (Ray Colline)
  */
-public class ApacheStarter extends Thread {
+public class ApacheStarter {
 
   // Logging instance
   private static final Logger LOG = Logger.getLogger(ApacheStarter.class);
@@ -93,6 +93,7 @@ public class ApacheStarter extends Thread {
           "-k", command.toString()
       };
       Process p = runtime.exec(commandLine);
+      
       BufferedReader br = new BufferedReader(new InputStreamReader(p.getErrorStream()));
       String errorLine;
       
@@ -100,12 +101,9 @@ public class ApacheStarter extends Thread {
       while ((errorLine = br.readLine()) != null) {
         LOG.info("apachectl: " + errorLine);
       }
-      p.waitFor();
     } catch (IOException e) {
       LOG.log(Level.ERROR, "Apache did not start correctly.", e);
       throw new RuntimeException(e);
-    } catch (InterruptedException e) {
-      LOG.log(Level.ERROR, "Apache interrupted.", e);
     }
   }
   
@@ -114,7 +112,7 @@ public class ApacheStarter extends Thread {
    * 
    * @author rayc@google.com (Ray Colline)
    */
-  private enum ApacheCommand {
+  enum ApacheCommand {
     STOP("stop"),
     START("start");
     

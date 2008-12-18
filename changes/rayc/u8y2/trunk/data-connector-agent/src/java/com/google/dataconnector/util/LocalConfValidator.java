@@ -16,6 +16,8 @@
  */
 package com.google.dataconnector.util;
 
+import com.google.dataconnector.registration.v2.AuthRequest;
+
 import java.io.File;
 
 /**
@@ -127,9 +129,13 @@ public class LocalConfValidator {
       errors.append("'user' required\n");
     }
     
-    // oauthKey
-    if (localConf.getOauthKey() == null) {
-      errors.append("'oauthKey' required\n");
+    // oauthKey or password required
+    if (localConf.getOauthKey() != null) {
+      localConf.setAuthType(AuthRequest.AuthType.OAUTH);
+    } else if (localConf.getPassword() != null) {
+      localConf.setAuthType(AuthRequest.AuthType.PASSWORD);
+    } else {
+      errors.append("'oauthKey' or 'password' required\n");
     }
     
     // useSsl
@@ -164,13 +170,13 @@ public class LocalConfValidator {
     }
     
     // startingHttpProxyPort 
-    Integer startingHttpProxyPort = localConf.getStartingHttpProxyPort();
-    if (startingHttpProxyPort != null) {
-      if (startingHttpProxyPort > MAX_PORT || startingHttpProxyPort < 0) {
-        errors.append("invalid 'startingHttpProxyPort': " +  startingHttpProxyPort);
+    Integer httpProxyPort = localConf.getHttpProxyPort();
+    if (httpProxyPort != null) {
+      if (httpProxyPort > MAX_PORT || httpProxyPort < 0) {
+        errors.append("invalid 'startingHttpProxyPort': " +  httpProxyPort);
       }
     } else {
-      errors.append("'startingHttpProxyPort' required\n");
+      errors.append("'httpProxyPort' required\n");
     }
     
     // httpProxyBindHost
@@ -209,6 +215,21 @@ public class LocalConfValidator {
     // socksProperties 
     if (localConf.getSocksProperties() == null) {
       errors.append("'socksProperties' required\n");
+    }
+    
+    // apache root
+    if (localConf.getApacheRoot() != null) {
+      errors.append(canReadFile("apacheRoot", localConf.getApacheRoot()));
+    } else {
+      errors.append("'apacheRoot' required.");
+    }
+    
+    // apache conf dir
+    if (localConf.getApacheConfDir() != null) {
+      errors.append(canReadFile("apacheConfDir", localConf.getApacheConfDir() + File.separator +
+          LocalConf.HTTPD_CONF_TEMPLATE_FILE));
+    } else {
+      errors.append("'apacheConfDir' required.");
     }
     
     // Check for errors and throw

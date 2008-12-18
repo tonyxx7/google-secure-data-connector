@@ -24,7 +24,7 @@ Build File for tunnel-server client and reference server.
 
   <!-- PROPERTIES -->
   <property name="version" value="1.0"/>
-  <property name="version.debian" value="3"/>
+  <property name="version.debian" value="4"/>
 
   <property name="projects.dir" value=".." />
   <property name="COMPILE_DEBUG_FLAG" value="true" />
@@ -383,6 +383,11 @@ Build File for tunnel-server client and reference server.
       tofile="config/sshd_config-dist"/>
     <copy file="third-party/openssh/dist/start_sshd.sh.debian"
       todir="third-party/openssh/bin"/>
+    <echo message="Switching apache build dir ${basedir} to debian default"/>
+    <replace
+      dir="third-party/apache-httpd/root/"
+      token="${basedir}"
+      value="/opt/dataconnector"/>
     <deb todir="deb"
          package="dataconnector"
          section="net"
@@ -452,6 +457,11 @@ http://code.google.com/
         <include name="dataconnector"/>
       </tarfileset>
     </deb>
+    <echo message="Switching debianised apache back to dir ${basedir}"/>
+    <replace
+      dir="third-party/apache-httpd/root/"
+      token="/opt/dataconnector"
+      value="${basedir}"/>
   </target>
 
   <target name="all" depends="test,source-distro,binary-distro,deb,install"/>

@@ -3,7 +3,7 @@
 set -e
 
 OPENSSH_ROOT="/opt/dataconnector/third-party/openssh/"
-APACHE_ROOT="/opt/dataconnector/third-party/apache-httpd/"
+APACHE_ROOT="/opt/dataconnector/third-party/apache-httpd/root/"
 SSHD_WRAPPER=${OPENSSH_ROOT}"bin/start_sshd.sh"
 WOODSTOCK_HOME=${OPENSSH_ROOT}"home/woodstock"
 CONF_DIR="/etc/opt/dataconnector"

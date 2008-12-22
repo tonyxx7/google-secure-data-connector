@@ -107,7 +107,7 @@ public class ResourceRuleValidator {
    */
   public void validate(ResourceRule resourceRule) throws ResourceException {
     
-    // Name - should be number and should be unique
+    // Name 
     if (resourceRule.getName() != null) {
       try {
         Integer.valueOf(resourceRule.getName().trim());
@@ -166,8 +166,7 @@ public class ResourceRuleValidator {
       }
       if (!pattern.startsWith(ResourceRule.HTTPID) && 
           !pattern.startsWith(ResourceRule.HTTPSID) && 
-          !pattern.startsWith(ResourceRule.SOCKETID) &&
-          !pattern.startsWith(ResourceRule.GOOGAPPSID)) {
+          !pattern.startsWith(ResourceRule.SOCKETID)) {
         throw new ResourceException("Invalid pattern, missing identifier: " + pattern);
       }
     } else {

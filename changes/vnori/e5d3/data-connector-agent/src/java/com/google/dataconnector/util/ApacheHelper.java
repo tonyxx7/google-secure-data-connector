@@ -131,9 +131,8 @@ public class ApacheHelper {
     // Create ProxyMatch entries for each rule.
     for (ResourceRule resourceRule : resourceRules) {
       LOG.info("Creating <ProxyMatch> section for resource " + resourceRule.getName());
-      // only process http and "goog apps" rules
-      if (!resourceRule.getPattern().startsWith(ResourceRule.HTTPID) &&
-          !resourceRule.getPattern().startsWith(ResourceRule.GOOGAPPSID)) { 
+      // Skip non http rules
+      if (!resourceRule.getPattern().startsWith(ResourceRule.HTTPID)) { 
         continue;
       }
 
@@ -159,8 +158,7 @@ public class ApacheHelper {
     try {
       for (ResourceRule resourceRule : resourceRules) {
         // Skip non http rules
-        if (!resourceRule.getPattern().startsWith(ResourceRule.HTTPID) &&
-            !resourceRule.getPattern().startsWith(ResourceRule.GOOGAPPSID)) { 
+        if (!resourceRule.getPattern().startsWith(ResourceRule.HTTPID)) { 
           continue;
         }
         

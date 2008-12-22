@@ -26,7 +26,6 @@ import com.google.dataconnector.registration.v2.ResourceRule;
 import com.google.dataconnector.util.LocalConf;
 import com.google.dataconnector.util.AuthenticationException;
 import com.google.dataconnector.util.RegistrationException;
-import com.google.inject.internal.collect.Lists;
 
 import net.oauth.OAuth;
 import net.oauth.OAuthAccessor;
@@ -165,8 +164,7 @@ public class ClientRegistrationUtil {
    * 
    * @param socket the connected socket.
    * @param authRequest the auth request for this connection.
-   * @param resourceRules the rule set defined by the user
-   * @param systemResourceRules the rule set created automatically for system use.
+   * @param resourceRules the rule set.
    * @throws RegistrationException if the registration fails.  This can happen if the server has 
    *             backend issues.
    * @throws IOException if any socket communication issues occur.
@@ -206,23 +204,5 @@ public class ClientRegistrationUtil {
     } catch (ResourceException e) {
       throw new RegistrationException("Invalid Resources ", e);
     }
-  }
-
-  /**
-   * Creates all system resources to be automatically registered.
-   * 
-   * @return List of System ResourceRules
-   */
-  private static List<ResourceRule> createSystemRules(LocalConf localConf, int port) {
-    List<ResourceRule> systemResources = Lists.newArrayList();
-    
-    // create healthz rule
-    ResourceRule resourceRule = new ResourceRule();
-    resourceRule.setAllowedEntities(new String[] {});
-    resourceRule.setClientId(localConf.getClientId());
-    resourceRule.setName(localConf.getUser() + "@" + localConf.getDomain());
-    resourceRule.setPattern(ResourceRule.GOOGAPPSID + "localhost:" + port + "/healthz");
-    systemResources.add(resourceRule);
-    return systemResources;
   }
 }

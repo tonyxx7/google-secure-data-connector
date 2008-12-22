@@ -455,7 +455,7 @@ http://code.google.com/
     </deb>
   </target>
 
-  <target name="all" depends="test,install"/>
+  <target name="all" depends="test,source-distro,binary-distro,deb,install"/>
   <target name="cygwin" depends="test,source-distro,binary-distro-win,install"/>
 
   <!-- Start of Testing-related stuff -->

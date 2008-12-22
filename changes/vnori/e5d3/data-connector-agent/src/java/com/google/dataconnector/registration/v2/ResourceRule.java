@@ -28,7 +28,6 @@ public class ResourceRule implements Comparable<ResourceRule> {
   public static final String HTTPID = "http://";
   public static final String HTTPSID = "https://";
   public static final String SOCKETID = "socket://";
-  public static final String GOOGAPPSID = "googapps://";
   
   private String name;
   

@@ -114,19 +114,17 @@ public class Rfc1929SdcAuthenticator extends ServerAuthenticatorNone {
       String resource = serverMetadataJson.getString("resource");
       String user = serverMetadataJson.getString("user");
       String appId = serverMetadataJson.getString("appId");
-      LOG.info(msg.getConnectionId() + " Incoming connection for rule id:" + 
-          name + " for resource:" + resource +  " cloud-user:" + user + 
-          " reported-appId:" + appId);
+      LOG.info(msg.getConnectionId() + " Incoming connection for rule id:" +  name + 
+          " for resource:" + resource +  " cloud-user:" + user + " reported-appId:" + appId);
     } catch (JSONException e) {
-      LOG.info(msg.getConnectionId() + " Cloud did not report metadata (old" +
-          " cloud clients?)", e);
+      LOG.info(msg.getConnectionId() + " Cloud did not report metadata (old cloud clients?)", e);
     }
 
     // Is this a valid "secret key"
     List<IpPortPair> ipPortPairList = rulesMap.get(passKey);
     if (ipPortPairList == null) {
-      LOG.warn(msg.getConnectionId() + " Auth failed to " + msg.host + ":" + 
-          msg.port + " for rule ");
+      LOG.warn(msg.getConnectionId() + " Auth failed to " + msg.host + ":" + msg.port + 
+          " for rule ");
       return false;
     }
 

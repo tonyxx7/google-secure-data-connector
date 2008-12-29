@@ -59,7 +59,6 @@ public class Client {
   private JsocksStarter jsocksStarter;
   private ApacheStarter apacheStarter;
   private SecureDataConnection secureDataConnection;
-  private HealthzRequestHandler healthzRequestHandler;
   
   /**
    * Creates a new client from the populated client configuration object.
@@ -70,18 +69,15 @@ public class Client {
    * @param apacheStarter 
    * @param jsocksStarter 
    * @param secureDataConnection
-   * @param healthzRequestHandler
    */
   @Inject
   public Client(LocalConf localConfiguration, List<ResourceRule> resourceRules, 
       SSLSocketFactory sslSocketFactory, ApacheStarter apacheStarter, 
-      JsocksStarter jsocksStarter, SecureDataConnection secureDataConnection,
-      HealthzRequestHandler healthzRequestHandler) {
+      JsocksStarter jsocksStarter, SecureDataConnection secureDataConnection) {
     this.localConfiguration = localConfiguration;
     this.apacheStarter = apacheStarter;
     this.jsocksStarter = jsocksStarter;
     this.secureDataConnection = secureDataConnection;
-    this.healthzRequestHandler = healthzRequestHandler;
   }
   
   /**
@@ -99,11 +95,6 @@ public class Client {
         localConfiguration.getLogProperties().trim().getBytes()));
     PropertyConfigurator.configure(properties);
     
-    // make sure the healthz service is up before we do anything else.
-    if (!healthzRequestHandler.isStarted()) {
-      return;
-    }
-    
     apacheStarter.startApacheHttpd();
     jsocksStarter.startJsocksProxy();
     secureDataConnection.connect();
@@ -119,10 +110,12 @@ public class Client {
     // Bootstrap logging system
     PropertyConfigurator.configure(getBootstrapLoggingProperties());
     final Injector injector = Guice.createInjector(new ClientGuiceModule(args));
-    // Create the client instance and start services
-    Client client = injector.getInstance(Client.class);
+    
     try {
-      client.startUp();
+      // start the healthz service before we do anything else.
+      injector.getInstance(HealthzRequestHandler.class).init();
+      // Create the client instance and start services
+      injector.getInstance(Client.class).startUp();
     } catch (IOException e) {
       log.fatal("Connection error.", e);
     } catch (ConnectionException e) {

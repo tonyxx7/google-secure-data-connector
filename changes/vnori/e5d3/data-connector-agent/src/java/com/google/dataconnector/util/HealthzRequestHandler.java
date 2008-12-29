@@ -17,6 +17,8 @@
 
 package com.google.dataconnector.util;
 
+import com.google.inject.Singleton;
+
 import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
@@ -26,11 +28,12 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+@Singleton
 public class HealthzRequestHandler extends Thread {
   public static Logger LOG = Logger.getLogger(HealthzRequestHandler.class.getName());
 
   // MAX amount of time to wait before giving up on the service starting up
-  public static final int MAX_WAIT_TIME_FOR_SERVICE_TO_STATUP = 1; // in sec
+  public static final int MAX_WAIT_TIME_FOR_SERVICE_TO_STATUP = 10; // in sec
   
   private ServerSocket serverSocket;
 
@@ -48,38 +51,33 @@ public class HealthzRequestHandler extends Thread {
   }
   
   /**
-   * Returns true if the healthz service is successfully started up. false otherwise.
-   * Waits on the serverSocket port to become -1. 
+   * Initializes the HealthzRequestHandler in a separate thread and waits for it to startup.
+   * If it doesn't startup within some predefined amount of time, throws an exception.
    * 
-   * @return true if the healthz service started up. false otherwise.
+   * @throws ConnectionException is the service doens't initialize within a predefined amount of 
+   * time
    */
-  public boolean isStarted() {
+  public void init() throws ConnectionException {
+    // start the service in a separate thread
+    start();
     
+    // wait for the service to startup
     int port;
-    // sleep for 100 ms between each check
-    int numSleepCycles = MAX_WAIT_TIME_FOR_SERVICE_TO_STATUP * 10;
+    // sleep for 200 ms between each check
+    int numSleepCycles = MAX_WAIT_TIME_FOR_SERVICE_TO_STATUP * 5;
     for (int k = 0; ((port = getPort()) == -1) && k < numSleepCycles; k++) { 
       LOG.info("healthz service NOT ready yet. sleep for 100ms and check again. attempt #" + k);
       try {
         Thread.sleep(100);
       } catch (InterruptedException e) {
-        LOG.fatal("sleep interrupted");
-        return false;
+        throw new ConnectionException("interrupted while waiting for healthz service to init");
       }
     }
     if (port == -1) {
       // this should be a rarity
-      LOG.warn("healthz service couldn't be started");
-      return false;
+      throw new ConnectionException("healthz service couldn't be started");
     }
     LOG.info("healthz service started on port " + port);
-    return true;
-  }
-
-  public HealthzRequestHandler() {
-    this.start();
-    // wait for the service to startup
-    isStarted();
   }
   
   @Override

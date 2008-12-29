@@ -61,14 +61,6 @@ public class ClientGuiceModule extends AbstractModule {
   /** Use default binding */
   @Override
   protected void configure() {
-    /*
-     * the following is EagerSingleton (i.e., singleton is created at VM startup time by Guice)
-     * because it starts a service listening on a socket - and that port number  the socket is 
-     * listening on is needed by {@link getResourceRules()}.
-     * This singleton needs to be created before Client is instantiated by Guice in main method of
-     * {@link Client}.
-     */
-    bind(HealthzRequestHandler.class).asEagerSingleton();
   }
   
   /** 
@@ -133,18 +125,8 @@ public class ClientGuiceModule extends AbstractModule {
           new FileUtil().readFile(localConf.getRulesFile()));
       
       // Add System resource rules to the list
-      // create healthz rule
       LOG.info("Adding healthz service rule");
-      ResourceRule healthzRule = new ResourceRule();
-      healthzRule.setAllowedEntities(new String[] {
-          localConf.getUser() + "@" + localConf.getDomain()
-          });
-      healthzRule.setClientId(localConf.getClientId());
-      // assign name of ZERO. should really be name of the last resource in the sorted list + 1
-      healthzRule.setName("0");
-      healthzRule.setPattern(ResourceRule.HTTPID + "localhost:" + 
-          healthzRequestHandler.getPort() + "/healthz");
-      resourceRules.add(healthzRule);
+      resourceRules.add(resourceRuleUtil.getHealthzRule(localConf, healthzRequestHandler));
       
       // Validate Resource Rules
       ResourceRuleValidator resourceRuleValidator = new ResourceRuleValidator();

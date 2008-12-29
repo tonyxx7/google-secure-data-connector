@@ -17,6 +17,8 @@
 
 package com.google.dataconnector.registration.v2;
 
+import com.google.dataconnector.util.HealthzRequestHandler;
+import com.google.dataconnector.util.LocalConf;
 import com.google.feedserver.util.BeanUtil;
 import com.google.feedserver.util.XmlUtil;
 
@@ -255,5 +257,19 @@ public class ResourceRuleUtil {
     } catch (MalformedURLException e) {
       throw new RuntimeException(e);
     }
+  }
+  
+  public ResourceRule getHealthzRule(LocalConf localConf, 
+      HealthzRequestHandler healthzRequestHandler) {
+    ResourceRule healthzRule = new ResourceRule();
+    healthzRule.setAllowedEntities(new String[] {
+        localConf.getUser() + "@" + localConf.getDomain()
+        });
+    healthzRule.setClientId(localConf.getClientId());
+    // assign name of ZERO. should really be name of the last resource in the sorted list + 1
+    healthzRule.setName("0");
+    healthzRule.setPattern(ResourceRule.HTTPID + "localhost:" + 
+        healthzRequestHandler.getPort() + "/healthz");
+    return healthzRule;
   }
 }

@@ -1,6 +1,5 @@
 package net.sourceforge.jsocks;
 
-
 import java.util.*;
 import java.io.*;
 import java.net.*;

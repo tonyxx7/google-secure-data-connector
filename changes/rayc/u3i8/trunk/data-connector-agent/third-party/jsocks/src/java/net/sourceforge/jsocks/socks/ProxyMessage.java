@@ -93,6 +93,14 @@ public abstract class ProxyMessage{
       "Port:   "+ port+"\n"+
       "User:   "+ user+"\n" ;
    }
+   
+   public String getConnectionId() {
+     return connectionId;
+   }
+
+   public void setConnectionId(String connectionId) {
+     this.connectionId = connectionId;
+   }
 
 //Package methods
 //////////////////
@@ -108,13 +116,4 @@ public abstract class ProxyMessage{
      //Have no idea how they look like!
      return null;
    }
-
-  public String getConnectionId() {
-    return connectionId;
-  }
-
-  public void setConnectionId(String connectionId) {
-    this.connectionId = connectionId;
-  }
-
 }

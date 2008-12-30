@@ -117,7 +117,7 @@ public class Rfc1929SdcAuthenticator extends ServerAuthenticatorNone {
       LOG.info(msg.getConnectionId() + " Incoming connection for rule id:" +  name + 
           " for resource:" + resource +  " cloud-user:" + user + " reported-appId:" + appId);
     } catch (JSONException e) {
-      LOG.info(msg.getConnectionId() + " Cloud did not report metadata (old cloud clients?)", e);
+      LOG.info(msg.getConnectionId() + " Cloud did not report metadata (old cloud clients?)");
     }
 
     // Is this a valid "secret key"

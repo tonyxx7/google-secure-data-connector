@@ -60,8 +60,7 @@ public class ClientGuiceModule extends AbstractModule {
 
   /** Use default binding */
   @Override
-  protected void configure() {
-  }
+  protected void configure() {}
   
   /** 
    * Provides the runtime for methods needing to make processes.
@@ -126,7 +125,7 @@ public class ClientGuiceModule extends AbstractModule {
       
       // Add System resource rules to the list
       LOG.info("Adding healthz service rule");
-      resourceRules.add(resourceRuleUtil.getHealthzRule(localConf, healthzRequestHandler));
+      resourceRules.add(resourceRuleUtil.createHealthzRule(localConf, healthzRequestHandler));
       
       // Validate Resource Rules
       ResourceRuleValidator resourceRuleValidator = new ResourceRuleValidator();

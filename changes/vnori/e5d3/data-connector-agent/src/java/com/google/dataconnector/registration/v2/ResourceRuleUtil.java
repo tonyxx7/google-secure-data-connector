@@ -259,12 +259,11 @@ public class ResourceRuleUtil {
     }
   }
   
-  public ResourceRule getHealthzRule(LocalConf localConf, 
+  public ResourceRule createHealthzRule(LocalConf localConf, 
       HealthzRequestHandler healthzRequestHandler) {
     ResourceRule healthzRule = new ResourceRule();
-    healthzRule.setAllowedEntities(new String[] {
-        localConf.getUser() + "@" + localConf.getDomain()
-        });
+    healthzRule.setAllowedEntities(
+        new String[] {localConf.getUser() + "@" + localConf.getDomain()});
     healthzRule.setClientId(localConf.getClientId());
     // assign name of ZERO. should really be name of the last resource in the sorted list + 1
     healthzRule.setName("0");

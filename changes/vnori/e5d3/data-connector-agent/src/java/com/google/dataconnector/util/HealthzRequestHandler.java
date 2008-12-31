@@ -30,12 +30,11 @@ import java.net.Socket;
 
 @Singleton
 public class HealthzRequestHandler extends Thread {
+  
   public static Logger LOG = Logger.getLogger(HealthzRequestHandler.class.getName());
-
-  // MAX amount of time to wait before giving up on the service starting up
-  public static final int MAX_WAIT_TIME_FOR_SERVICE_TO_STATUP = 10; // in sec
   
   private ServerSocket serverSocket;
+  private boolean quit = false;
 
   /**
    * Returns the port this service is listening on. This is used when system rules such as
@@ -51,41 +50,34 @@ public class HealthzRequestHandler extends Thread {
   }
   
   /**
-   * Initializes the HealthzRequestHandler in a separate thread and waits for it to startup.
-   * If it doesn't startup within some predefined amount of time, throws an exception.
+   * Initializes the HealthzRequestHandler in a separate thread after opneing a ServerSocket
    * 
-   * @throws ConnectionException is the service doens't initialize within a predefined amount of 
-   * time
+   * @throws IOException propagated from ServerSocket creation, if any exception
    */
-  public void init() throws ConnectionException {
+  public void init() throws IOException {
+    
+    // start a serverSocket to have the HelathZRequestHandler listen on
+    serverSocket = new ServerSocket(0);
+    
     // start the service in a separate thread
     start();
-    
-    // wait for the service to startup
-    int port;
-    // sleep for 200 ms between each check
-    int numSleepCycles = MAX_WAIT_TIME_FOR_SERVICE_TO_STATUP * 5;
-    for (int k = 0; ((port = getPort()) == -1) && k < numSleepCycles; k++) { 
-      LOG.info("healthz service NOT ready yet. sleep for 100ms and check again. attempt #" + k);
-      try {
-        Thread.sleep(100);
-      } catch (InterruptedException e) {
-        throw new ConnectionException("interrupted while waiting for healthz service to init");
-      }
-    }
-    if (port == -1) {
-      // this should be a rarity
-      throw new ConnectionException("healthz service couldn't be started");
-    }
-    LOG.info("healthz service started on port " + port);
+    LOG.info("healthz service started on port " + getPort());
   }
   
+  /**
+   * the run method of the HealthzRequestHandler thread. It waits to receive a socket connect 
+   * request from the callers wishing to send "GET /healthz" http request. 
+   * upon receiving the /healthz request, it responds with a simple "ok" response.
+   */
   @Override
   public void run() {
     setName("HealthzRequestHandler");
+    // make this a daemon thread, so it quits when non-daemon threads exit.
+    // TODO: make all daemon threads non-daemons and make them quit when they are told to,
+    // for example by calling setQuitFlag() in this class to make this thread exit.
+    setDaemon(true);
     try {
-      serverSocket = new ServerSocket(0);
-      while (true) {
+      while (!quit) {
         Socket incomingSocket = serverSocket.accept();
 
         // read incoming request
@@ -95,16 +87,32 @@ public class HealthzRequestHandler extends Thread {
         String inputStr;
         while ((inputStr = in.readLine()) != null) {
           if (inputStr.contains("/healthz")) {
-            LOG.info("healthz req found");
+            LOG.debug("healthz req found");
             break;
           }
         }
         out.println("ok");
         out.close();
-        LOG.info("processed healthz request");
+        LOG.debug("processed healthz request");
       }
     } catch (IOException e) {
       LOG.warn("Healthz service IOException", e);
     }
+  }
+
+  /**
+   * this method is called to let the thread know that it should quit.
+   */
+  public void setQuitFlag() {
+    this.quit = true;
+  }
+  
+  /**
+   * this is ONLY for unittesting purposes. 
+   * 
+   * @param mockSocket set serverSocket to this mockSocket passed in.
+   */
+  public void setServerSocket(ServerSocket mockSocket) {
+    serverSocket = mockSocket;
   }
 }

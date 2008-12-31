@@ -1,0 +1,101 @@
+
+
+%preun
+
+%pre 
+
+%prep 
+#%setup -c -n %{name}-%{version} 
+
+%build
+#ant binary-distro 
+
+%install
+rm -rf $RPM_BUILD_ROOT
+mkdir -p $RPM_BUILD_ROOT
+mkdir -p $RPM_BUILD_ROOT/opt/%{name}
+mkdir -p $RPM_BUILD_ROOT/opt/%{name}/third-party/openssh/bin
+mkdir -p $RPM_BUILD_ROOT/etc/opt/%{name}
+mkdir -p $RPM_BUILD_ROOT/etc/opt/%{name}/openssh
+mkdir -p $RPM_BUILD_ROOT/etc/opt/%{name}/apache
+tar -xzf $RPM_SOURCE_DIR/%{name}-%{version}-%{release}-bin.tar.gz -C $RPM_BUILD_ROOT/opt/%{name}
+
+# Moving config files for ssh
+mv $RPM_BUILD_ROOT/opt/%{name}/third-party/openssh/dist/sshd_config.redhat $RPM_BUILD_ROOT/etc/opt/%{name}/openssh/sshd_config
+mv $RPM_BUILD_ROOT/opt/%{name}/third-party/openssh/dist/start_sshd.sh.redhat $RPM_BUILD_ROOT/etc/opt/%{name}/openssh/start_sshd.sh
+mv $RPM_BUILD_ROOT/opt/%{name}/third-party/openssh/etc/* $RPM_BUILD_ROOT/etc/opt/%{name}/openssh
+
+# Moving config files for /etc/opt/${name}
+mv $RPM_BUILD_ROOT/opt/%{name}/config/localConfig.xml.redhat $RPM_BUILD_ROOT/etc/opt/%{name}/localConfig.xml
+mv $RPM_BUILD_ROOT/opt/%{name}/config/resourceRules.xml-dist $RPM_BUILD_ROOT/etc/opt/%{name}/resourceRules.xml
+mv $RPM_BUILD_ROOT/opt/%{name}/config/httpd.conf-template.redhat $RPM_BUILD_ROOT/etc/opt/%{name}/apache/httpd.conf-template
+mv $RPM_BUILD_ROOT/opt/%{name}/config/id_rsa_no_password $RPM_BUILD_ROOT/etc/opt/%{name}
+mv $RPM_BUILD_ROOT/opt/%{name}/config/secureLinkClientTrustStore $RPM_BUILD_ROOT/etc/opt/%{name}
+mv $RPM_BUILD_ROOT/opt/%{name}/config/trustedCA.keystore $RPM_BUILD_ROOT/etc/opt/%{name}
+
+# Removing source config directory
+rm -rf $RPM_BUILD_ROOT/opt/%{name}/config
+# Remove Apache due to rpm package dependencies
+rm -rf $RPM_BUILD_ROOT/opt/%{name}/third-party/apache-httpd
+# Remove sshd binary and source due to rpm package dependencies
+# Keeping bin for sshd launch script
+rm -rf $RPM_BUILD_ROOT/opt/%{name}/third-party/openssh/sbin
+rm -rf $RPM_BUILD_ROOT/opt/%{name}/third-party/openssh/dist
+rm -rf $RPM_BUILD_ROOT/opt/%{name}/third-party/openssh/bin
+
+
+%post 
+set -e
+CONF_DIR="/etc/opt/dataconnector"
+CLIENT_HOME="/opt/dataconnector"
+WOODSTOCK_HOME=${CLIENT_HOME}"/third-party/openssh/home/woodstock"
+
+# Create default apache log and htdocs directories
+mkdir -p $CONF_DIR/apache/htdocs
+mkdir -p $CLIENT_HOME/logs
+
+# Setup the user to run apache and client
+adduser -s /bin/false -U -M dataconnector 
+
+# Set up the user to access the client
+adduser -s /bin/false -U -d $WOODSTOCK_HOME -M \
+woodstock
+
+dd if=/dev/urandom bs=1024 count=1 |passwd --stdin woodstock
+
+# Set permissions on installation for user accounts
+chown -R root:dataconnector /etc/opt/dataconnector
+chown -R root:dataconnector /opt/dataconnector
+chmod 755 /etc/opt/dataconnector
+
+# Set permission on ssh keys and scripts
+chmod 644 $WOODSTOCK_HOME/.ssh/authorized_keys
+chmod 750 $CONF_DIR/openssh/start_sshd.sh
+
+ 
+%postun
+echo "Removing User Accounts.."
+
+userdel -r woodstock || true
+userdel -r dataconnector || true
+
+if [ -e /opt/dataconnector ] ; then
+ rm -rf /opt/dataconnector
+fi
+
+if [ -e /etc/init.d/dataconnector ] ; then
+ rm -f /etc/init.d/dataconnector
+fi
+
+%clean                               
+rm -rf $RPM_BUILD_ROOT
+
+%files
+%defattr(-,root,root) 
+%config /etc/opt/%{name}/apache/httpd.conf-template
+%config /etc/opt/%{name}/resourceRules.xml
+%config /etc/opt/%{name}/localConfig.xml
+/etc/opt/%{name}/*
+/opt/%{name}/*  
+
+

@@ -59,6 +59,11 @@ public class HealthzRequestHandler extends Thread {
     // start a serverSocket to have the HelathZRequestHandler listen on
     serverSocket = new ServerSocket(0);
     
+    // make this a daemon thread, so it quits when non-daemon threads exit.
+    // TODO: make all daemon threads non-daemons and make them quit when they are told to,
+    // for example by calling setQuitFlag() in this class to make this thread exit.
+    setDaemon(true);
+    
     // start the service in a separate thread
     start();
     LOG.info("healthz service started on port " + getPort());
@@ -72,10 +77,6 @@ public class HealthzRequestHandler extends Thread {
   @Override
   public void run() {
     setName("HealthzRequestHandler");
-    // make this a daemon thread, so it quits when non-daemon threads exit.
-    // TODO: make all daemon threads non-daemons and make them quit when they are told to,
-    // for example by calling setQuitFlag() in this class to make this thread exit.
-    setDaemon(true);
     try {
       while (!quit) {
         Socket incomingSocket = serverSocket.accept();

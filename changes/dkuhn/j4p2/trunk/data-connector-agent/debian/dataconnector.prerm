@@ -1,0 +1,16 @@
+#!/bin/sh
+
+set -e
+
+installinit_error() {
+  status=$?
+  exit $status
+}
+
+if [ -x "/etc/init.d/dataconnector" ]; then
+  if [ -x "`which invoke-rc.d 2>/dev/null`" ]; then
+    invoke-rc.d dataconnector stop || installinit_error
+  else
+    /etc/init.d/dataconnector stop || installinit_error
+  fi
+fi

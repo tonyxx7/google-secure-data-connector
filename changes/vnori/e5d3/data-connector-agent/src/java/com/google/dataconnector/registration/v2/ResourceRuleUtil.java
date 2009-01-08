@@ -17,7 +17,6 @@
 
 package com.google.dataconnector.registration.v2;
 
-import com.google.dataconnector.util.HealthzRequestHandler;
 import com.google.feedserver.util.BeanUtil;
 import com.google.feedserver.util.XmlUtil;
 

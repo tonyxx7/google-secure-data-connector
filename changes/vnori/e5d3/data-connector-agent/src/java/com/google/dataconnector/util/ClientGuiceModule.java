@@ -30,6 +30,7 @@ import org.apache.log4j.Logger;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.util.List;
@@ -125,7 +126,8 @@ public class ClientGuiceModule extends AbstractModule {
       
       // Add System resource rules to the list
       LOG.info("Adding healthz service rule");
-      resourceRules.add(resourceRuleUtil.createHealthzRule(localConf, healthzRequestHandler));
+      resourceRules.add(resourceRuleUtil.createHealthzRule(localConf.getUser(),
+          localConf.getDomain(), localConf.getClientId(), healthzRequestHandler.getPort()));
       
       // Validate Resource Rules
       ResourceRuleValidator resourceRuleValidator = new ResourceRuleValidator();
@@ -201,5 +203,17 @@ public class ClientGuiceModule extends AbstractModule {
       System.exit(-1);
     }
     return null;
+  }
+  
+  /**
+   * creates a singleton instance of {@link HealthzRequestHandler} with a 
+   * ServerSocket listening on an ephemeral port.
+   * 
+   * @return created singleton instance of HealthzRequestHandler
+   * @throws IOException thrown if ServerSocket couldn't be created
+   */
+  @Provides @Singleton
+  public HealthzRequestHandler getHealthzRequestHandler() throws IOException {
+    return new HealthzRequestHandler(new ServerSocket(0));
   }
 }

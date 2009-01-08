@@ -52,7 +52,7 @@ public class HealthzRequestHandlerTest extends TestCase {
     return fakeSocket;
   }
   
-  public void testAuthorize() throws IOException {
+  public void testHealthzRequestHandlerProcessingRequest() throws IOException {
     
     // Successful case.
     InputStream is = new ByteArrayInputStream(("GET /healthz\n").getBytes());
@@ -61,8 +61,7 @@ public class HealthzRequestHandlerTest extends TestCase {
     EasyMock.expect(mockServerSocket.accept()).andReturn(getFakeSocket(is, os));
     EasyMock.expect(mockServerSocket.accept()).andThrow(new IOException("test done"));
     EasyMock.replay(mockServerSocket);
-    HealthzRequestHandler testHealthzRequestHandler = new HealthzRequestHandler();
-    testHealthzRequestHandler.setServerSocket(mockServerSocket);
+    HealthzRequestHandler testHealthzRequestHandler = new HealthzRequestHandler(mockServerSocket);
     try {
       testHealthzRequestHandler.run();
       String strOut = ((ByteArrayOutputStream) os).toString("utf8");

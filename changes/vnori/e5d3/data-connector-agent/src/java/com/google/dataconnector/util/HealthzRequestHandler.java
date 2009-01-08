@@ -17,7 +17,7 @@
 
 package com.google.dataconnector.util;
 
-import com.google.inject.Singleton;
+import com.google.inject.Inject;
 
 import org.apache.log4j.Logger;
 
@@ -28,7 +28,6 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-@Singleton
 public class HealthzRequestHandler extends Thread {
   
   public static Logger LOG = Logger.getLogger(HealthzRequestHandler.class.getName());
@@ -36,6 +35,11 @@ public class HealthzRequestHandler extends Thread {
   private ServerSocket serverSocket;
   private boolean quit = false;
 
+  @Inject
+  public HealthzRequestHandler(ServerSocket serverSocket) {
+    this.serverSocket = serverSocket;
+  }
+  
   /**
    * Returns the port this service is listening on. This is used when system rules such as
    * healthz service rule are added to the user-defined list of resource rules.
@@ -55,9 +59,6 @@ public class HealthzRequestHandler extends Thread {
    * @throws IOException propagated from ServerSocket creation, if any exception
    */
   public void init() throws IOException {
-    
-    // start a serverSocket to have the HelathZRequestHandler listen on
-    serverSocket = new ServerSocket(0);
     
     // make this a daemon thread, so it quits when non-daemon threads exit.
     // TODO: make all daemon threads non-daemons and make them quit when they are told to,
@@ -106,14 +107,5 @@ public class HealthzRequestHandler extends Thread {
    */
   public void setQuitFlag() {
     this.quit = true;
-  }
-  
-  /**
-   * this is ONLY for unittesting purposes. 
-   * 
-   * @param mockSocket set serverSocket to this mockSocket passed in.
-   */
-  public void setServerSocket(ServerSocket mockSocket) {
-    serverSocket = mockSocket;
   }
 }

@@ -266,7 +266,7 @@ public class ResourceRuleUtil {
    *       clientId helps make url unique if two clients in the same domain 
    *       start the HealthzRequest service on the same (ephemeral) portnum.
    *       
-   *       having domain name in the url helps make it unique across all domains.
+   *       having domain name in the url helps make it unique across all domains. 
    * 
    * @param user the userid who should be allowed to access this resource
    * @param domain the domain the above user belongs to

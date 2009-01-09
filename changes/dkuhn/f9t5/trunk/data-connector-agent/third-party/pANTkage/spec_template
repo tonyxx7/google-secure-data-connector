@@ -1,0 +1,144 @@
+
+
+%pre 
+if [ -e /etc/init.d/dataconnector ] ; then 
+  /etc/init.d/dataconnector stop
+fi
+
+%prep 
+
+%build
+#ant binary-distro 
+
+%install
+rm -rf $RPM_BUILD_ROOT
+mkdir -p $RPM_BUILD_ROOT
+mkdir -p $RPM_BUILD_ROOT/opt/%{name}
+mkdir -p $RPM_BUILD_ROOT/opt/%{name}/third-party/openssh/bin
+mkdir -p $RPM_BUILD_ROOT/etc/opt/%{name}
+mkdir -p $RPM_BUILD_ROOT/etc/opt/%{name}/jsw
+mkdir -p $RPM_BUILD_ROOT/etc/opt/%{name}/openssh
+mkdir -p $RPM_BUILD_ROOT/etc/opt/%{name}/apache
+tar -xzf $RPM_SOURCE_DIR/dataconnector-%{version}-%{release}-bin.tar.gz -C $RPM_BUILD_ROOT/opt/%{name}
+
+# Moving config files for ssh
+mv $RPM_BUILD_ROOT/opt/%{name}/third-party/openssh/dist/sshd_config.redhat $RPM_BUILD_ROOT/etc/opt/%{name}/openssh/sshd_config
+mv $RPM_BUILD_ROOT/opt/%{name}/third-party/openssh/dist/start_sshd.sh.redhat $RPM_BUILD_ROOT/opt/%{name}/third-party/openssh/bin/start_sshd.sh
+mv $RPM_BUILD_ROOT/opt/%{name}/third-party/openssh/etc/* $RPM_BUILD_ROOT/etc/opt/%{name}/openssh
+rm -rf $RPM_BUILD_ROOT/opt/%{name}/third-party/openssh/etc
+
+# Moving config files for /etc/opt/${name}
+mv $RPM_BUILD_ROOT/opt/%{name}/config/redhat/localConfig.xml $RPM_BUILD_ROOT/etc/opt/%{name}/localConfig.xml
+mv $RPM_BUILD_ROOT/opt/%{name}/config/resourceRules.xml-dist $RPM_BUILD_ROOT/etc/opt/%{name}/resourceRules.xml
+mv $RPM_BUILD_ROOT/opt/%{name}/config/redhat/apache/httpd.conf-template $RPM_BUILD_ROOT/etc/opt/%{name}/apache/httpd.conf-template
+mv $RPM_BUILD_ROOT/opt/%{name}/config/id_rsa_no_password $RPM_BUILD_ROOT/etc/opt/%{name}
+mv $RPM_BUILD_ROOT/opt/%{name}/config/secureLinkClientTrustStore $RPM_BUILD_ROOT/etc/opt/%{name}
+mv $RPM_BUILD_ROOT/opt/%{name}/config/trustedCA.keystore $RPM_BUILD_ROOT/etc/opt/%{name}
+mv $RPM_BUILD_ROOT/opt/%{name}/third-party/java-service-wrapper/linux/conf/wrapper.conf $RPM_BUILD_ROOT/etc/opt/%{name}/jsw
+
+# Removing source config directory
+rm -rf $RPM_BUILD_ROOT/opt/%{name}/config
+# Remove Apache due to rpm package dependencies
+rm -rf $RPM_BUILD_ROOT/opt/%{name}/third-party/apache-httpd
+# Remove sshd binary and source due to rpm package dependencies
+# Keeping bin for sshd launch script
+rm -rf $RPM_BUILD_ROOT/opt/%{name}/third-party/openssh/sbin
+rm -rf $RPM_BUILD_ROOT/opt/%{name}/third-party/openssh/dist
+
+
+%post 
+set -e
+CLIENT_HOME="/opt/dataconnector"
+CONF_DIR="/etc/opt/dataconnector"
+OPENSSH_ROOT="/opt/dataconnector/third-party/openssh"
+WOODSTOCK_HOME=${OPENSSH_ROOT}"/home/woodstock"
+LOGDIR="/var/log/dataconnector"
+
+# Setup the user to run the client
+adduser -s /bin/false -U -M dataconnector 
+# Set up the user to access the client
+adduser -s /bin/false -U -d $WOODSTOCK_HOME -M \
+woodstock
+
+dd if=/dev/urandom bs=1024 count=1 |passwd --stdin woodstock
+
+  # Set up the logfile for dataconnector
+  if [ ! -e $LOGDIR ]; then
+    mkdir -p $LOGDIR
+    chown root:dataconnector $LOGDIR
+    touch $LOGDIR/dataconnector
+    touch $LOGDIR/apache_access_log
+    touch $LOGDIR/apache_error_log
+    chmod 660 $LOGDIR/*
+  fi
+
+  for filename in "dataconnector" "apache_access_log" "apache_error_log"; do
+    logfile="$LOGDIR/$filename"
+    if [ ! -f $logfile ]; then
+      touch $logfile
+    fi
+    chown root:dataconnector $logfile
+    chmod 660 $logfile
+  done
+
+
+# Set proper permissions for user dataconnector
+chmod 750 /etc/opt/dataconnector
+chown -R root:dataconnector /etc/opt/dataconnector
+chown -R root:dataconnector /opt/dataconnector
+
+# Create default apache htdocs directories
+mkdir -p $CONF_DIR/apache/htdocs
+
+# Set proper permission on ssh keys and scripts
+chown -R woodstock:root $WOODSTOCK_HOME
+chmod 640 $WOODSTOCK_HOME/.ssh/authorized_keys
+chmod 750 $OPENSSH_ROOT/bin/start_sshd.sh
+
+# Set permissions on java-service-wrapper
+chmod 750 $CLIENT_HOME/third-party/java-service-wrapper/linux/dataconnector.sh
+chmod 750 $CLIENT_HOME/third-party/java-service-wrapper/linux/bin/*
+chmod 750 $CLIENT_HOME/third-party/java-service-wrapper/linux/lib/*.so
+chmod 750 $CLIENT_HOME/third-party/java-service-wrapper/linux/lib/*.jnilib
+
+# Create symlink to java daemon wrapper
+ln -sf /opt/dataconnector/third-party/java-service-wrapper/linux/dataconnector.sh /etc/init.d/dataconnector
+
+if [ -x "/etc/init.d/dataconnector" ]; then
+   echo Adding dataconnector to system startup.
+   chkconfig dataconnector --add
+fi
+
+%preun
+if [ -e /etc/init.d/dataconnector ] ; then 
+  /etc/init.d/dataconnector stop
+fi
+echo Removing dataconnector from startup.
+chkconfig dataconnector --del
+
+if [ -e /etc/init.d/dataconnector ] ; then
+ rm -f /etc/init.d/dataconnector
+fi
+
+%postun
+echo "Removing User Accounts.."
+
+userdel -r woodstock || true
+userdel -r dataconnector || true
+
+if [ -e /opt/dataconnector ] ; then
+ rm -rf /opt/dataconnector
+fi
+
+%clean                               
+rm -rf $RPM_BUILD_ROOT
+
+%files
+%defattr(-,root,root) 
+%config /etc/opt/%{name}/jsw/wrapper.conf
+%config /etc/opt/%{name}/apache/httpd.conf-template
+%config /etc/opt/%{name}/resourceRules.xml
+%config /etc/opt/%{name}/localConfig.xml
+/etc/opt/%{name}/* 
+/opt/%{name}/*  
+

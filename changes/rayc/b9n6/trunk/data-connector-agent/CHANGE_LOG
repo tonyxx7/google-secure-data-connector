@@ -4,3 +4,8 @@
            * SSHD automatically compiles and gets configured
            * Early convenience scripts for setting up the service, starting 
            * Source and binary distribution targets.
+
+1-13-07:  * New packaging, setup and install.  More of a "gnu autoconf" style experience.
+          * Jsocks is now an external third-party dependency.
+          * Openssh is no longer bundled.
+          * Improved JSOCKS logging.

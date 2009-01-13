@@ -29,6 +29,8 @@ LOG_DIR=`pwd`/logs  # Absolute path required
 
 LOCAL_CONF_FILE=$CONF_DIR/localConfig.xml
 APACHE_ROOT=`pwd`/third-party/apache-httpd/root #  Absolute path required
+APACHE_HTPASSWD=`pwd`/third-party/apache-httpd/root/bin/htpasswd #  Absolute path required
+APACHE_CTL=`pwd`/third-party/apache-httpd/root/bin/apachectl #  Absolute path required
 APACHE_CONF_DIST_FILE=$CONF_DIR/httpd.conf-dist
 APACHE_CONF_DIR=$CONF_DIR/apache # Absolute path required
 APACHE_CONF_GEN_FILENAME=$APACHE_CONF_DIR/httpd.conf-template
@@ -99,8 +101,6 @@ if [ $? == 0 ]; then
 fi
 
 if [ $installmode = "linux" ] ; then
-  # Create links for service daemon
-  ln -fs `pwd`/third-party/java-service-wrapper/linux/googlesdc.sh /etc/init.d/googlesdc
 
   # GET LINUX PW LINE FOR WOODSTOCK USER
   return_highest_id "/etc/passwd"
@@ -130,7 +130,8 @@ if [ $installmode = "linux" ] ; then
   else 
     /bin/cp $LOCAL_CONF_FILE-dist $LOCAL_CONF_FILE
     sed -i $LOCAL_CONF_FILE -e  's^_SSHD_^'$OPENSSH_HOME'/bin/start_sshd.sh^'	
-    sed -i $LOCAL_CONF_FILE -e  's^_APACHE_ROOT_^'$APACHE_ROOT'^'	
+    sed -i $LOCAL_CONF_FILE -e  's^_APACHE_HTPASSWD_^'$APACHE_HTPASSWD'^'	
+    sed -i $LOCAL_CONF_FILE -e  's^_APACHE_CTL_^'$APACHE_CTL'^'	
     sed -i $LOCAL_CONF_FILE -e  's^_APACHE_CONF_DIR^'$APACHE_CONF_DIR'^'	
   fi
 
@@ -189,6 +190,11 @@ if [ $installmode = "cygwin" ] ; then
   fi
 fi
 
+
+# Create folders for apache
+mkdir -p $CONF_DIR/apache/htdocs
+mkdir logs
+
 #SETUP SSHD RUNTIME
 mkdir $OPENSSH_HOME/bin
 sed -e "s:_WSCLIENT_HOME_:$PWD:g" $OPENSSH_HOME/dist/sshd_config.tmpl > $OPENSSH_HOME/etc/sshd_config
@@ -196,7 +202,7 @@ sed -e "s:_WSCLIENT_HOME_:$PWD:g" $OPENSSH_HOME/dist/start_sshd.sh.tmpl > $OPENS
 chmod 755 $OPENSSH_HOME/bin/start_sshd.sh
 chmod 600 $OPENSSH_HOME/etc/ssh_host_dsa_key
 chmod 600 $OPENSSH_HOME/etc/ssh_host_rsa_key
-chmod 755 `pwd`/third-party/java-service-wrapper/linux/googlesdc.sh
+chmod 644 $OPENSSH_HOME/home/woodstock/.ssh/authorized_keys
 chmod 755 start.sh
 chmod 755 stop.sh
 chmod 755 runclient.sh

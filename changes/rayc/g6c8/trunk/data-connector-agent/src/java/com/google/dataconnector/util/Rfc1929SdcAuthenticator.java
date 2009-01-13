@@ -14,9 +14,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
 
-package net.sourceforge.jsocks.socks.server;
+package com.google.dataconnector.util;
 
 import net.sourceforge.jsocks.socks.ProxyMessage;
+import net.sourceforge.jsocks.socks.server.ServerAuthenticator;
+import net.sourceforge.jsocks.socks.server.ServerAuthenticatorNone;
+
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,62 +33,55 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * This class implements SOCKS5 User/Password authentication scheme as
- * defined in rfc1929,the server side of it.
+ * This class implements both authentication and Layer 4 IP rule enforcement for incoming SOCKS5 
+ * connections.  It uses the RFC1929 specification however the user name is a JSON packet used a 
+ * log vehicle, while the password is used a key that only allows access to the specified rule 
+ * sets in the configuration.
+ * 
+ * @author rayc@google.com (Ray Colline)
  */
-public class UserPasswordAuthenticator extends  ServerAuthenticatorNone{
+public class Rfc1929SdcAuthenticator extends ServerAuthenticatorNone {
 
+   private static final Logger LOG = Logger.getLogger(Rfc1929SdcAuthenticator.class);
+   
+   // RFC1929 Method ID
    static final int METHOD_ID = 2;
 
-   // HashMap that stores all the rules for this SOCKS fire-wall.
+   // HashMap that stores all the layer 4 rules associated with their unique key.
    private HashMap<String,List<IpPortPair>> rulesMap;
    
-   private String passKey;
+   private String passKey; // RFC1929 password used to lookup rule set in the map.
+   private String serverMetaData; // Raw JSON string from server
 
    /**
-    * Used to create instances returned from startSession.
+    * Used to create instances returned from startSession in JSOCKS server..
     * 
-    * @param in Input stream.
-    * @param out OutputStream.
+    * @param in InputStream of socks connection.
+    * @param out OutputStream of socks connection.
     * @param passKey the password provided by the client for this connection
     * @param rulesMap the list of rules that are allowed for this server config.
     */
-   UserPasswordAuthenticator(InputStream in,OutputStream out, String passKey,
-       HashMap<String,List<IpPortPair>> rulesMap) {
+   Rfc1929SdcAuthenticator(InputStream in,OutputStream out, String passKey, 
+       HashMap<String,List<IpPortPair>> rulesMap, String userLogLine) {
      super(in,out);
      this.passKey = passKey;
      this.rulesMap = rulesMap;   
+     this.serverMetaData = userLogLine;
    }
    
    /**
-    * Construct a new UserPasswordAuthentication object relying on
-    * the passwordPerIp scheme.
+    * Initialize passkey map.
     */
-   public UserPasswordAuthenticator(){
+   public Rfc1929SdcAuthenticator(){
       rulesMap = new HashMap<String,List<IpPortPair>>();
    }
    
-   /**
-    * Construct a new UserPasswordAuthentication object, with given
-    * UserValidation scheme.  This is deprecated and one must run
-    * {@link #add(String key, String ip, Integer port)} to add firewall rules.
-    * 
-    * @param validator to use. This validator is ignored and Password Per IP
-    *            is used instead.
-    */
-  @Deprecated
-  public UserPasswordAuthenticator(UserValidation validator){
-    rulesMap = new HashMap<String,List<IpPortPair>>();
-  }
-   
   /**
-   * Adds a rule to the authenticator associating a password with an IP port
-   * pair
+   * Adds a rule to the authenticator associating a password with an IP port pair.
    * 
    * @param key the key/password to associate with this rule
    * @param ip a dotted-quad IP address.
    * @param port an integer representing the allowed port.
-   * 
    */
   public synchronized void add(String key, String ip, Integer port) {
       IpPortPair ipPortPair = new IpPortPair(ip, port);
@@ -96,11 +95,11 @@ public class UserPasswordAuthenticator extends  ServerAuthenticatorNone{
   }
   
   /**
-   * Checks the destination IP and port specified in the {@link ProxyMessage}
-   * against the allowed IP:Port pair for this connection.  If its valid allow
-   * the connection to continue.  Reject all non SOCKS 5 requests.
+   * Checks the destination IP and port specified in the {@link ProxyMessage} against the allowed 
+   * IP:Port pair for this connection.  If its valid allow the connection to continue.  Reject all
+   * non SOCKS 5 requests.  We also log  any cloud provided data if we have any.
    * 
-   * @param msg
+   * @param msg the JSOCKS msg object representing the SOCKS connection parameters.
    * @returns true if request is allowed or false if its prevented by ruleset.
    */
   @Override
@@ -111,15 +110,30 @@ public class UserPasswordAuthenticator extends  ServerAuthenticatorNone{
       return false;
     }
 
-    List<IpPortPair> ipPortPairList = rulesMap.get(passKey);
+    try {
+      JSONObject serverMetadataJson = new JSONObject(serverMetaData);
+      String name = serverMetadataJson.getString("name");
+      String resource = serverMetadataJson.getString("resource");
+      String user = serverMetadataJson.getString("user");
+      String appId = serverMetadataJson.getString("appId");
+      LOG.info(msg.getConnectionId() + " Incoming connection for rule id:" +  name + 
+          " for resource:" + resource +  " cloud-user:" + user + " reported-appId:" + appId);
+    } catch (JSONException e) {
+      LOG.info(msg.getConnectionId() + " Cloud did not report metadata (old cloud clients?)");
+    }
 
+    // Is this a valid "secret key"
+    List<IpPortPair> ipPortPairList = rulesMap.get(passKey);
     if (ipPortPairList == null) {
+      LOG.warn(msg.getConnectionId() + " Auth failed to " + msg.host + ":" + msg.port + 
+          " for rule ");
       return false;
     }
-    
+
+    // Check to see if the connection is allowed via IP rule set for this "secret key".
     for (IpPortPair ipPortPair: ipPortPairList) {
-      if ((msg.host.equals(ipPortPair.getIp()) && 
-          (msg.port == ipPortPair.getPort()))) {
+      if ((msg.host.equals(ipPortPair.getIp()) && (msg.port == ipPortPair.getPort()))) {
+        LOG.info(msg.getConnectionId() + " Authentication successful");
         return true;
       } 
     }
@@ -144,12 +158,11 @@ public class UserPasswordAuthenticator extends  ServerAuthenticatorNone{
     if(!doUserPasswordAuthentication(s,in,out))
       return null;
 
-    return new UserPasswordAuthenticator(in, out, passKey, rulesMap);
+    return new Rfc1929SdcAuthenticator(in, out, passKey, rulesMap, serverMetaData);
   }
   
   /** 
-   * Get String representation of the PerPasswordIpAuthenticator including
-   * current key and rulesMap.
+   * Get String representation of the PerPasswordIpAuthenticator including current key and rulesMap.
    */
   @Override
   public String toString() {
@@ -157,8 +170,7 @@ public class UserPasswordAuthenticator extends  ServerAuthenticatorNone{
      
      for (String key : rulesMap.keySet()) {
        for (IpPortPair ipPortPair : rulesMap.get(key)) {
-         s += "Key: " + key + " Dest: " + ipPortPair.getIp() + ":" +
-             ipPortPair.getPort() + "\n";
+         s += "Key: " + key + " Dest: " + ipPortPair.getIp() + ":" + ipPortPair.getPort() + "\n";
        }
      }
      return s;
@@ -179,34 +191,37 @@ public class UserPasswordAuthenticator extends  ServerAuthenticatorNone{
                                                throws IOException {
     int version = in.read();
     if(version != 1) return false;
+    // This byte tells us how many bytes the username will be.  Max is 255.
     int ulen = in.read();
     if(ulen < 0) return false;
     byte[] user = new byte[ulen];
     in.read(user);
+    // This byte tells us how many bytes the password will be.  Max is 255.
     int plen = in.read();
     if(plen < 0) return false;
     byte[] password = new byte[plen];
     in.read(password);
 
+    // We use the RFC1929 Username to pass metadata to the client about this connection.
+    serverMetaData = new String(user);
     passKey = new String(password);
-    // Verify passKey
+    
+    // Verify passKey exists.
     if (rulesMap.containsKey(passKey)) {
-      // we have a password that matches, we will check the dest later
+      // we have a passkey that matches, we will check the dest later
       out.write(new byte[]{1,0});
     } else {
       // failed auth, we have no passwords that match
       out.write(new byte[]{1,1});
       return false;
     }
-
     return true;
   }
 
   /**
-   * Inner class to represent a the ip port pair.
+   * Class to represent a the ip port pair.
    * 
    * @author rayc@google.com (Ray Colline)
-   *
    */
   public class IpPortPair {
     // IP address in dot form most likely

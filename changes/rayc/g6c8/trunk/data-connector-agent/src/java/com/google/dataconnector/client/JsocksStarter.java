@@ -21,11 +21,12 @@ import com.google.dataconnector.registration.v2.ResourceRule;
 import com.google.dataconnector.registration.v2.ResourceRuleUtil;
 import com.google.dataconnector.registration.v2.SocketInfo;
 import com.google.dataconnector.util.LocalConf;
+import com.google.dataconnector.util.Rfc1929SdcAuthenticator;
 import com.google.inject.Inject;
 
 import net.sourceforge.jsocks.SOCKS;
 import net.sourceforge.jsocks.socks.ProxyServer;
-import net.sourceforge.jsocks.socks.server.UserPasswordAuthenticator;
+
 import org.apache.log4j.Logger;
 
 import java.io.ByteArrayInputStream;
@@ -54,7 +55,7 @@ public final class JsocksStarter extends Thread {
   private ResourceRuleUtil resourceRuleUtil;
 
   // Socks V5 User/Password authenticator object.
-  private UserPasswordAuthenticator authenticator;
+  private Rfc1929SdcAuthenticator authenticator;
 
   // Bind address
   private InetAddress bindAddress;
@@ -82,7 +83,7 @@ public final class JsocksStarter extends Thread {
    */
   public void startJsocksProxy() {
     // Create firewall rules in jsocks proxy.
-    authenticator = new UserPasswordAuthenticator();
+    authenticator = new Rfc1929SdcAuthenticator();
     for (ResourceRule resourceRule : resourceRules) {
       if (resourceRule.getPattern().startsWith(ResourceRule.SOCKETID)) {
         SocketInfo socketInfo;
@@ -125,6 +126,8 @@ public final class JsocksStarter extends Thread {
     } catch (IOException e) {
       throw new RuntimeException("Invalid socks properties", e);
     }
+    setName("jsocks-starter-thread");
+    setDaemon(true);
     start();
   }
   

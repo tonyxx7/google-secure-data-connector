@@ -21,6 +21,7 @@ import com.google.dataconnector.util.ApacheSetupException;
 import com.google.dataconnector.util.ClientGuiceModule;
 import com.google.dataconnector.util.AgentConfigurationException;
 import com.google.dataconnector.util.ConnectionException;
+import com.google.dataconnector.util.HealthzRequestHandler;
 import com.google.dataconnector.util.LocalConf;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
@@ -30,16 +31,11 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.security.KeyStore;
 import java.util.List;
 import java.util.Properties;
 
-import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManagerFactory;
 
 /**
  * Entry point class for starting the Secure Data Connector.  There are three components to the
@@ -50,7 +46,6 @@ import javax.net.ssl.TrustManagerFactory;
  * 2) The Socks 5 proxy which provides the network firewall to incoming network connections through
  * the secure data transport. see {@link JsocksStarter}
  * 3) The HTTP(S) proxy which provides the http firewall filtering for incoming http requests.
- * see {@link WpgProxyStarter}
  * 
  * @author rayc@google.com (Ray Colline)
  */
@@ -73,7 +68,7 @@ public class Client {
    * @param sslSocketFactory 
    * @param apacheStarter 
    * @param jsocksStarter 
-   * @param secureDataConnection 
+   * @param secureDataConnection
    */
   @Inject
   public Client(LocalConf localConfiguration, List<ResourceRule> resourceRules, 
@@ -115,19 +110,18 @@ public class Client {
     // Bootstrap logging system
     PropertyConfigurator.configure(getBootstrapLoggingProperties());
     final Injector injector = Guice.createInjector(new ClientGuiceModule(args));
-    // Create the client instance and start services
-    Client client = injector.getInstance(Client.class);
+    
     try {
-      client.startUp();
+      // start the healthz service before we do anything else.
+      injector.getInstance(HealthzRequestHandler.class).init();
+      // Create the client instance and start services
+      injector.getInstance(Client.class).startUp();
     } catch (IOException e) {
       log.fatal("Connection error.", e);
-      System.exit(-1);
     } catch (ConnectionException e) {
       log.fatal("Client connection failure.", e);
-      System.exit(-1);
     } catch (AgentConfigurationException e) {
       log.fatal("Client configuration error.", e);
-      System.exit(-1);
     }
   }
   
@@ -142,7 +136,7 @@ public class Client {
     props.setProperty("log4j.rootLogger","info, A");
     props.setProperty("log4j.appender.A", "org.apache.log4j.ConsoleAppender");
     props.setProperty("log4j.appender.A.layout", "org.apache.log4j.PatternLayout");
-    props.setProperty("log4j.appender.A.layout.ConversionPattern", "%-4r [%t] %-5p %c %x - %m%n");
+    props.setProperty("log4j.appender.A.layout.ConversionPattern", "%d [%t] %-5p %c %x - %m%n");
     return props;
   }
 }

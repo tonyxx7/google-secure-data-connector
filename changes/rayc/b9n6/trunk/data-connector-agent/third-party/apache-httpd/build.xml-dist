@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project 
+    name="apache-httpd" 
+    default="buildhttpd"
+    basedir=".">
+
+  <property name="version" value="1.0"/>
+
+  <!-- Define Directories. -->
+
+  <property name="binname" value="httpd-2.2.9" />
+  <property name="targz" value="dist/${binname}.tar.gz" />
+  <property name="root" value="_APACHE_ROOT_" />
+  <property name="httpd" value="${root}/bin/httpd" />
+  <property name="apachectl" value="${root}/bin/apachectl" />
+  <property name="srcdir" value="${basedir}/src" />
+  <property name="src" value="${srcdir}/${binname}" />
+
+  <!-- common targets -->
+  <target name="init">    
+    <!-- setup environment -->
+    <tstamp>
+      <format property="timestamp" pattern="MMddyyyyhhmm"/>
+    </tstamp>
+    <mkdir dir="${root}"/>
+    <mkdir dir="${src}"/>
+  </target>
+
+  <target name="untar" depends="init">
+    <exec dir="${srcdir}" executable="tar" >
+      <arg line="-zxf ../${targz}" />
+    </exec>
+  </target>
+
+  <target name="configure" depends="untar">
+    <exec 
+        dir="${src}"
+        executable="sh">
+      <arg value="configure"/>
+      <arg value="--enable-ssl"/>
+      <arg value="--enable-proxy-connect"/>
+      <arg value="--enable-proxy"/>
+      <arg value="--enable-proxy-http"/>
+      <arg value="--enable-static-htpasswd"/>
+      <arg value="--enable-rewrite"/>
+      <arg value="--prefix=${root}"/>
+    </exec>
+  </target>
+
+  <target name="make" depends="clean,configure">
+    <exec
+        dir="${src}"
+        executable="make">
+    </exec>
+  </target>
+
+  <target name="buildhttpd" depends="check" unless="present">
+    <echo message="httpd file doesn'exist..building it" />
+    <ant dir="." target="make" />
+    <exec
+        dir="${src}"
+        executable="make"/>
+  </target>
+
+  <target name="check">
+    <available property="present" file="${src}/httpd" />
+  </target>
+
+  <target name="install_httpd" depends="buildhttpd">
+    <exec
+        dir="${src}"
+        executable="make">
+      <arg value="install"/>
+    </exec>
+  </target>
+
+  <target name="clean" description="Deletes all build files.">
+    <delete dir="${srcdir}" />
+  </target>
+
+</project>
+

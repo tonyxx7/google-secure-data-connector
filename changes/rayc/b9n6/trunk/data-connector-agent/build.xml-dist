@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Copyright 2007 Google Inc. All rights reserved. 
+
+NOTE: configure.sh edits the outputted build.xml make changes to build.xml-dist.
+  
+Build File for Secure Data Connector client and reference server.
+
+  Interesting targets:
+   -all: builds distros
+   -compile: creates all the jars.
+   -install: builds jars and runs setup.sh
+   -apache_httpd: builds the bundled copy of apache.
+   -src_jars: creates the source only jars.
+-->
+
+<project 
+    name="secure-data-connector" 
+    default="compile"
+    basedir=".">
+
+  <!-- PROPERTIES -->
+  <property name="version" value="1.0"/>
+  <property name="version.debian" value="3"/>
+  <property name="projects.dir" value=".." />
+
+  <!-- compile properties -->
+  <property name="COMPILE_DEBUG_FLAG" value="true" />
+  <property name="COMPILE_DEBUG_LEVEL" value="source,lines,vars" />
+  <property name="build" value="build" />
+  <property name="bin" value="bin" />
+  <property name="deb" value="deb" />
+  <property name="src" value="src/java" />
+  <property name="classes" value="${build}/classes" />
+
+  <!-- install properties -->
+  <property name="install.prefix" value="__PREFIX__" />
+  <property name="install.etc.prefix" value="__ETCPREFIX__" />
+  <property name="install.var.prefix" value="__VARPREFIX__" />
+  <property name="install.apache.conf" value="${install.etc.prefix}/apache"/> 
+  <property name="install.lib.prefix" value="${install.prefix}/lib" />
+  <property name="install.bin.prefix" value="${install.prefix}/bin" />
+  <property name="install.ssh.conf.dir" value="${install.etc.prefix}/openssh" />
+  <property name="install.ssh.user.dir" value="${install.etc.prefix}/woodstock-user/.ssh" />
+
+  <property 
+      name="agent.jarfile" 
+      value="${build}/agent.jar" />
+
+  <property 
+      name="agent-src.jarfile" 
+      value="${build}/agent-src.jar" />
+
+  <property 
+      name="protocol.jarfile" 
+      value="${build}/protocol.jar" />
+
+  <property 
+      name="protocol-src.jarfile" 
+      value="${build}/protocol-src.jar" />
+
+  <!-- TARGETS -->
+
+  <target name="timestamp">
+    <tstamp>
+      <format property="timestamp" pattern="MMddyyyyhhmm"/>
+    </tstamp>
+  </target>
+
+  <target name="init" depends="timestamp">    
+    <mkdir dir="${build}" />
+    <mkdir dir="${classes}" />
+  </target>
+
+  <target name="clean" description="Deletes all build files.">
+    <delete dir="${build}" />
+    <delete dir="${bin}" />
+    <delete file="${deb}" />
+    <ant
+        antfile="build.xml"
+        dir="third-party/apache-httpd"
+        inheritAll="false"
+        target="clean"/>
+  </target>
+
+  <target 
+      name="dist-clean" 
+      depends="clean"
+      description="Deletes all files to pre configured state.">
+    <delete file="build.xml"/>
+    <delete file="runclient.sh"/>
+    <delete file="config/localConfig.xml"/>
+    <delete file="config/openssh/start_sshd.sh"/>
+    <delete file="config/openssh/sshd_config"/>
+    <delete file="config/apache/httpd.conf-template"/>
+    <delete file="third-party/apache-httpd/build.xml"/>
+  </target>
+
+  <target name="apache-httpd" depends="init">
+    <ant 
+        antfile="build.xml"
+        dir="third-party/apache-httpd"
+        inheritAll="false"/>
+  </target>
+
+  <target name="compile" depends="init__BUILDHTTPD__">
+
+    <javac 
+        srcdir="${src}" 
+        destdir="${classes}"
+        debug="${COMPILE_DEBUG_FLAG}"
+        debuglevel="${COMPILE_DEBUG_LEVEL}"
+        includes="**"
+        >
+      <classpath>
+        <pathelement path="third-party/jsocks/jsocks.jar"/>
+        <pathelement path="third-party/commons-cli/commons-cli-1.1.jar"/>
+        <pathelement path="third-party/commons-logging/commons-logging-1.1.jar"/>
+        <pathelement path="third-party/apache-log4j/log4j-1.2.15.jar"/>
+        <pathelement path="third-party/easymock/easymock.jar"/>
+        <pathelement path="third-party/easymock/easymockclassextension.jar"/>
+        <pathelement path="third-party/guice-snapshot20081016/guice-assistedinject-snapshot20081016.jar"/>
+        <pathelement path="third-party/guice-snapshot20081016/guice-snapshot20081016.jar"/>
+        <pathelement path="third-party/google-feedserver/commons-beanutils-1.8.0.jar"/>
+        <pathelement path="third-party/google-feedserver/commons-beanutils-core-1.8.0.jar"/>
+        <pathelement path="third-party/google-feedserver/gdata-client-1.0.jar"/>
+        <pathelement path="third-party/google-feedserver/gdata-core-1.0.jar"/>
+        <pathelement path="third-party/google-feedserver/google-feedserver-java-client-1.0.jar"/>
+        <pathelement path="third-party/jsch/jsch-20071024.jar"/>
+        <pathelement path="third-party/jline/jline-0.9.91.jar"/>
+        <pathelement path="third-party/json/json.jar"/>
+        <pathelement path="third-party/junit/junit-4.4.jar"/>
+        <pathelement path="third-party/oauth/core.jar"/>
+        <pathelement path="third-party/oauth/commons-codec-1.3.jar"/>
+      </classpath>
+    </javac>
+
+    <!-- create agent jar -->
+    <tstamp/>
+    <jar jarfile="${agent.jarfile}">
+      <fileset dir="${classes}" includes="**"/>
+      <manifest>
+        <attribute name="Implementation-Title" value="Secure Data Connector"/>
+        <attribute name="Implementation-Version" value="${version} ${TODAY}"/>
+        <attribute name="Implementation-Vendor" value="Google"/>
+        <attribute name="Main-Class"
+              value="com.google.dataconnector.client.Client"/>
+      </manifest>
+    </jar>
+
+    <jar jarfile="${protocol.jarfile}">
+      <fileset dir="${classes}" includes="com/google/dataconnector/registration/**"/>
+      <manifest>
+        <attribute name="Implementation-Title" value="Secure Data Connector Protocol"/>
+        <attribute name="Implementation-Version" value="${version} ${TODAY}"/>
+        <attribute name="Implementation-Vendor" value="Google"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="install" depends="compile,apache-httpd">
+    <mkdir dir="${install.prefix}" />
+    <mkdir dir="${install.lib.prefix}" />
+    <mkdir dir="${install.bin.prefix}" />
+    <mkdir dir="${install.etc.prefix}" />
+    <mkdir dir="${install.var.prefix}" />
+    <mkdir dir="${install.var.prefix}/log" />
+    <mkdir dir="${install.ssh.conf.dir}" />
+    <mkdir dir="${install.ssh.user.dir}" />
+    <mkdir dir="${install.apache.conf}" />
+    <mkdir dir="${install.apache.conf}/htdocs" />
+
+    <!-- binary -->
+    <copy file="runclient.sh" todir="${install.bin.prefix}"/>
+    <chmod dir="${install.bin.prefix}" includes="*" perm="755"/>
+
+    <!-- lib -->
+    <ant 
+        antfile="build.xml"
+        dir="third-party/apache-httpd"
+        inheritAll="false"
+        target="install_httpd"/>
+
+    <copy todir="${install.lib.prefix}">
+      <fileset dir="${build}" includes="*.jar"/>
+      <fileset 
+          dir="."
+          includes="third-party/**" 
+          excludes="third-party/apache-httpd/**"/>
+    </copy>
+
+    <!-- etc -->
+    <copy todir="${install.etc.prefix}">
+      <fileset file="./config/localConfig.xml">
+        <present targetdir="{$install.etc.prefix}"/>
+      </fileset>
+    </copy>
+    <copy 
+        file="./config/localConfig.xml" 
+        tofile="${install.etc.prefix}/localConfig.xml.new"/>
+
+    <copy 
+        file="./config/resourceRules.xml-dist" 
+        tofile="${install.etc.prefix}/resourceRules.xml"/>
+    <copy 
+        file="./config/apache/httpd.conf-template"
+        tofile="${install.apache.conf}/httpd.conf-template"/>
+    <copy 
+        file="./config/apache/mime.types"
+        tofile="${install.apache.conf}/mime.types"/>
+
+    <!-- openssh -->
+    <copy 
+        file="./config/openssh/woodstock-authorized_keys"
+        tofile="${install.ssh.user.dir}/authorized_keys"/>
+    <chmod file="${install.ssh.user.dir}/authorized_keys" perm="600"/>
+    <copy todir="${install.ssh.conf.dir}">
+      <fileset dir="./config/openssh">
+        <include name="ssh_host_dsa_key*"/> 
+        <include name="ssh_host_rsa_key*"/> 
+      </fileset>
+    </copy>
+    <chmod file="${install.ssh.conf.dir}/ssh_host_dsa_key" perm="600"/>
+    <chmod file="${install.ssh.conf.dir}/ssh_host_dsa_key.pub" perm="600"/>
+    <chmod file="${install.ssh.conf.dir}/ssh_host_rsa_key" perm="600"/>
+    <chmod file="${install.ssh.conf.dir}/ssh_host_rsa_key.pub" perm="600"/>
+    <copy 
+        file="./config/openssh/sshd_config"
+        tofile="${install.ssh.conf.dir}/sshd_config"/>
+    <copy 
+        file="./config/openssh/start_sshd.sh"
+        tofile="${install.ssh.conf.dir}/start_sshd.sh"/>
+    <chmod file="${install.ssh.conf.dir}/start_sshd.sh" perm="755"/>
+  </target>
+
+  <path id="deb-classpath">
+    <fileset dir="third-party/ant-deb" includes="ant-deb-0.0.1.jar"/>
+  </path>
+
+<!--  <taskdef resource="ant_deb_task.properties" classpathref="deb-classpath"/> -->
+
+  <target name="deb" depends="install">
+    <mkdir dir="${deb}"/>
+    <copy file="third-party/openssh/dist/start_sshd.sh.debian"
+      todir="third-party/openssh/bin"/>
+    <deb todir="deb"
+         package="dataconnector"
+         section="net"
+         architecture="i386"
+         depends="sun-java6-jre, libaprutil1.0, openssh-server"
+         postinst="debian/dataconnector.postinst"
+         prerm="debian/dataconnector.prerm"
+         postrm="debian/dataconnector.postrm">
+         <version upstream="${version}" debian="${version.debian}"/>
+      <maintainer name="Sebastian Welsh"
+                  email="sebastian.welsh@gmail.com"/>
+      <description synopsis="The Google secure dataconnector client package.">
+Google secure dataconnector is used to connect from Google Apps to internal network resources. The client is a java application that
+- connects to the Google Apps termination service
+- registers the resources published to Apps
+- registers the groups able to access the resources
+- provides a socks proxy to the internal resources for those groups.
+
+The current implementation permits access to http and socket services.
+
+http://code.google.com/
+      </description>
+      <conffiles dir="config" prefix="etc/opt/dataconnector" filemode="640"
+        dirmode="750">
+        <include name="secureLinkClientTrustStore"/>
+        <include name="trustedCA.keystore"/>
+        <include name="resourceRules.xml-dist"/>
+      </conffiles>
+      <conffiles dir="config/debian" prefix="etc/opt/dataconnector"
+        filemode="640" dirmode="750">
+        <include name="apache/**"/>
+        <include name="localConfig.xml"/>
+        <include name="openssh/**"/>
+      </conffiles>
+      <tarfileset dir="build/classes" prefix="opt/dataconnector"
+        filemode="640" dirmode="750">
+      </tarfileset>
+      <tarfileset dir="third-party" prefix="opt/dataconnector/third-party"
+        excludes="**/dist/, **/src/, **/build.xml"
+        filemode="640" dirmode="750">
+        <include name="aopalliance/**"/>
+        <include name="apache-httpd/**"/>
+        <include name="apache-log4j/**"/>
+        <include name="cglib/**"/>
+        <include name="commons-cli/**"/>
+        <include name="commons-logging/**"/>
+        <include name="easymock/**"/>
+        <include name="google-feedserver/**"/>
+        <include name="guice-snapshot20081016/**"/>
+        <include name="java-service-wrapper/**"/>
+        <include name="jline/**"/>
+        <include name="json/**"/>
+        <include name="junit/**"/>
+        <include name="oauth/**"/>
+        <include name="openssh/**"/>
+      </tarfileset>
+      <tarfileset dir="third-party/jsocks/bin/" filemode="640" dirmode="750"
+                  prefix="opt/dataconnector/third-party/jsocks">
+         <include name="*.jar"/>
+      </tarfileset>
+      <tarfileset dir="." prefix="opt/dataconnector" filemode="444">
+        <include name="third-party/openssh/home/woodstock-client/.ssh/*"/>
+      </tarfileset>
+      <tarfileset dir="." prefix="opt/dataconnector" filemode="750">
+        <include name="third-party/openssh/bin/*"/>
+        <include name="third-party/openssh/sbin/*"/>
+        <include name="third-party/apache-httpd/root/bin/*"/>
+      </tarfileset>
+      <tarfileset dir="debian" prefix="etc/init.d" filemode="755">
+        <include name="dataconnector"/>
+      </tarfileset>
+    </deb>
+  </target>
+
+  <target name="all" depends="test,compile,install,deb"/>
+
+  <!-- Start of Testing-related stuff -->
+  <property name="testSrc.home"       value="src/javatests"/>
+  <property name="testClasses.home"   value="${build}/testClasses/"/>
+  <property name="testOutput.home"    value="${build}/testOutput"/>
+  <property name="junit.jar"          location="third-party/junit/junit-4.4.jar"/>
+
+  <path id="classpath.test">
+    <pathelement location="${testClasses.home}" />
+    <pathelement location="${agent.jarfile}" />
+    <fileset dir="third-party">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+  
+  <target name="test" depends="compile,cleanTests,compileTests">
+      <mkdir dir="${testOutput.home}"/>
+      <junit haltonfailure="yes" printsummary="yes">
+        <classpath refid="classpath.test"/>
+        <formatter type="plain" usefile="true" />
+        <batchtest todir="${testOutput.home}">
+          <fileset dir="${testSrc.home}">
+            <include name="**/*Test.java"/>
+          </fileset>
+        </batchtest>
+      </junit>
+  </target>
+
+  <target name="compileTests" depends="cleanTests" description="Compile Tests">
+    <mkdir dir="${testClasses.home}"/>
+    <javac 
+        srcdir="${testSrc.home}"
+        destdir="${testClasses.home}"
+        classpathref="classpath.test"
+        debug="true" 
+        debuglevel="lines,vars,source">
+    </javac>
+  </target>
+
+  <target 
+      name="cleanTests"
+      description="Delete old build and dist directories">
+    <delete dir="${testClasses.home}"/>
+    <delete dir="${testOutput.home}"/>
+  </target>
+
+  <!-- End of Testing-related stuff -->
+
+  <target name="src_jars" depends="init">
+    <tstamp/>
+    <jar jarfile="${agent-src.jarfile}">
+      <fileset dir="${src}"> 
+        <include name="com/google/dataconnector/**" />
+      </fileset>
+      <manifest>
+        <attribute name="Implementation-Title" value="Secure Data Connector"/>
+        <attribute name="Implementation-Version" value="${version} ${TODAY}"/>
+        <attribute name="Implementation-Vendor" value="Google"/>
+      </manifest>
+    </jar>
+
+    <tstamp/>
+    <jar jarfile="${protocol-src.jarfile}">
+      <fileset dir="${src}"> 
+        <include name="com/google/dataconnector/registration/**" />
+      </fileset>
+      <manifest>
+        <attribute name="Implementation-Title" value="Secure Data Connector Protocol"/>
+        <attribute name="Implementation-Version" value="${version} ${TODAY}"/>
+        <attribute name="Implementation-Vendor" value="Google"/>
+      </manifest>
+    </jar>
+  </target>
+
+</project>
+

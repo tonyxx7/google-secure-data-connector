@@ -41,6 +41,7 @@ set SDC_OPTION=-configFile %WOODSTOCK_HOME%\rules.properties
 set SDC_OPTION=%SDC_OPTION% -secureLinkServerHost enterprise-apps-tls.sandbox.google.com
 set SDC_OPTION=%SDC_OPTION% -secureLinkServerPort 443
 set SDC_OPTION=%SDC_OPTION% -logPropertiesFile %WOODSTOCK_HOME%\logging.properties
+set SDC_OPTION=%SDC_OPTION% -useSsl 
 set SDC_OPTION=%SDC_OPTION% -sslKeyStoreFile %WOODSTOCK_HOME%\config\secureLinkClientTrustStore
 set SDC_OPTION=%SDC_OPTION% -sslKeyStorePassword woodstock
 

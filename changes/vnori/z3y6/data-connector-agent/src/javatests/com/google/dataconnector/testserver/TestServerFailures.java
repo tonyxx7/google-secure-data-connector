@@ -16,7 +16,6 @@
  */
 package com.google.dataconnector.testserver;
 
-import com.google.dataconnector.client.ClientStarterForFailureTesting;
 import com.google.dataconnector.client.SecureDataConnection.KillProcessShutdownHook;
 import com.google.dataconnector.client.SecureDataConnection.RedirectStreamToLog;
 import com.google.feedserver.util.BeanCliHelper;
@@ -53,9 +52,8 @@ public class TestServerFailures {
     serverThread.setName("serverThread");
     serverThread.start();
 
-    // start the client - process.
-    // make the client startup using non-ssl socket
-    ClientStarterForFailureTesting.setupClientForNonSsl();
+    // start the client - process. not a thread, because client currently does System.exit()
+    // on error. 
     String procId = "Client Process";
     LOG.info("Starting " + procId);
     ProcessBuilder processBuilder = new ProcessBuilder("java", 

@@ -279,7 +279,7 @@ public class ResourceRuleUtil {
     // assign name of ZERO. should really be name of the last resource in the sorted list + 1
     healthzRule.setName("0");
     healthzRule.setPattern(ResourceRule.HTTPID + "localhost:" + 
-        port + "/" + clientId + "__SDCINTERNAL__/healthz");
+        port + "/" + clientId + "/__SDCINTERNAL__/healthz");
     return healthzRule;
   }
 }

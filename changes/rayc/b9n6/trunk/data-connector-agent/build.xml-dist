@@ -36,7 +36,6 @@ Build File for Secure Data Connector client and reference server.
   <target name="clean" description="Deletes all build files.">
     <delete dir="${build}" />
     <delete dir="${bin}" />
-    <delete file="${deb}" />
     <ant
         antfile="build.xml"
         dir="third-party/apache-httpd"
@@ -178,15 +177,20 @@ Build File for Secure Data Connector client and reference server.
     </copy>
 
     <!-- etc -->
-    <copy 
-        file="${install.etc.prefix}/localConfig.xml"
-        tofile="${install.etc.prefix}/localConfig.xml-existing-${timestamp}"/>
+
+    <exec executable="./install/copy_if_exists.sh">
+      <arg value="${install.etc.prefix}/localConfig.xml"/>
+      <arg value="${install.etc.prefix}/localConfig.xml-existing-${timestamp}"/>
+    </exec>
+
+    <exec executable="./install/copy_if_exists.sh">
+      <arg value="${install.etc.prefix}/resourceRules.xml"/>
+      <arg value="${install.etc.prefix}/resourceRules.xml-existing-${timestamp}"/>
+    </exec>
+
     <copy 
         file="./config/localConfig.xml" 
         tofile="${install.etc.prefix}/localConfig.xml"/>
-    <copy 
-        file="${install.etc.prefix}/resourceRules.xml"
-        tofile="${install.etc.prefix}/resourceRules.xml-existing-${timestamp}"/>
     <copy 
         file="./config/resourceRules.xml-dist" 
         tofile="${install.etc.prefix}/resourceRules.xml"/>
@@ -221,91 +225,7 @@ Build File for Secure Data Connector client and reference server.
     <chmod file="${install.ssh.conf.dir}/start_sshd.sh" perm="755"/>
   </target>
 
-  <path id="deb-classpath">
-    <fileset dir="third-party/ant-deb" includes="ant-deb-0.0.1.jar"/>
-  </path>
-
-<!--  <taskdef resource="ant_deb_task.properties" classpathref="deb-classpath"/> -->
-
-  <target name="deb" depends="install">
-    <mkdir dir="${deb}"/>
-    <copy file="third-party/openssh/dist/start_sshd.sh.debian"
-      todir="third-party/openssh/bin"/>
-    <deb todir="deb"
-         package="dataconnector"
-         section="net"
-         architecture="i386"
-         depends="sun-java6-jre, libaprutil1.0, openssh-server"
-         postinst="debian/dataconnector.postinst"
-         prerm="debian/dataconnector.prerm"
-         postrm="debian/dataconnector.postrm">
-         <version upstream="${version}" debian="${version.debian}"/>
-      <maintainer name="Sebastian Welsh"
-                  email="sebastian.welsh@gmail.com"/>
-      <description synopsis="The Google secure dataconnector client package.">
-Google secure dataconnector is used to connect from Google Apps to internal network resources. The client is a java application that
-- connects to the Google Apps termination service
-- registers the resources published to Apps
-- registers the groups able to access the resources
-- provides a socks proxy to the internal resources for those groups.
-
-The current implementation permits access to http and socket services.
-
-http://code.google.com/
-      </description>
-      <conffiles dir="config" prefix="etc/opt/dataconnector" filemode="640"
-        dirmode="750">
-        <include name="secureLinkClientTrustStore"/>
-        <include name="trustedCA.keystore"/>
-        <include name="resourceRules.xml-dist"/>
-      </conffiles>
-      <conffiles dir="config/debian" prefix="etc/opt/dataconnector"
-        filemode="640" dirmode="750">
-        <include name="apache/**"/>
-        <include name="localConfig.xml"/>
-        <include name="openssh/**"/>
-      </conffiles>
-      <tarfileset dir="build/classes" prefix="opt/dataconnector"
-        filemode="640" dirmode="750">
-      </tarfileset>
-      <tarfileset dir="third-party" prefix="opt/dataconnector/third-party"
-        excludes="**/dist/, **/src/, **/build.xml"
-        filemode="640" dirmode="750">
-        <include name="aopalliance/**"/>
-        <include name="apache-httpd/**"/>
-        <include name="apache-log4j/**"/>
-        <include name="cglib/**"/>
-        <include name="commons-cli/**"/>
-        <include name="commons-logging/**"/>
-        <include name="easymock/**"/>
-        <include name="google-feedserver/**"/>
-        <include name="guice-snapshot20081016/**"/>
-        <include name="java-service-wrapper/**"/>
-        <include name="jline/**"/>
-        <include name="json/**"/>
-        <include name="junit/**"/>
-        <include name="oauth/**"/>
-        <include name="openssh/**"/>
-      </tarfileset>
-      <tarfileset dir="third-party/jsocks/bin/" filemode="640" dirmode="750"
-                  prefix="opt/dataconnector/third-party/jsocks">
-         <include name="*.jar"/>
-      </tarfileset>
-      <tarfileset dir="." prefix="opt/dataconnector" filemode="444">
-        <include name="third-party/openssh/home/woodstock-client/.ssh/*"/>
-      </tarfileset>
-      <tarfileset dir="." prefix="opt/dataconnector" filemode="750">
-        <include name="third-party/openssh/bin/*"/>
-        <include name="third-party/openssh/sbin/*"/>
-        <include name="third-party/apache-httpd/root/bin/*"/>
-      </tarfileset>
-      <tarfileset dir="debian" prefix="etc/init.d" filemode="755">
-        <include name="dataconnector"/>
-      </tarfileset>
-    </deb>
-  </target>
-
-  <target name="all" depends="test,compile,install,deb"/>
+  <target name="all" depends="test,compile,install"/>
 
   <!-- Start of Testing-related stuff -->
   <property name="testSrc.home"       value="src/javatests"/>

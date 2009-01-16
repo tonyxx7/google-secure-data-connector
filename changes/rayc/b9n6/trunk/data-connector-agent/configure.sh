@@ -13,16 +13,20 @@ PACKAGE="google-secure-data-connector"
 PREFIX="/usr/local"
 ETCPREFIX=
 VARPREFIX=
-APACHECTL==
+APACHECTL=
 HTPASSWD=
-MODULESDIR==
+MODULESDIR=
 OPENSSHD=
 JAVAHOME=
 USE_SUPPLIED_APACHE="false"
 LSB="false"
 APACHE_MODULES="auth_basic authn_file authz_host authz_user proxy proxy_httpd"
+
+# Check for getopt gnu util
+[ -x "$(which getopt)" ] || { echo "gnu getopt binary not found." ; exit 1; }
+
 # Command line arguments
-OPTS=`getopt -o h --long lsb,prefix:,etcprefix::,varprefix::,binprefix::,apachectl:,htpasswd:,opensshd::,apache_modules_dir::,javahome::,use_supplied_apache -n 'configure' -- "$@"` 
+OPTS=$(getopt -o h --long lsb,prefix:,etcprefix::,varprefix::,binprefix::,apachectl:,htpasswd:,opensshd::,apache_modules_dir::,javahome::,use_supplied_apache -n 'configure' -- "$@") 
 if [ $? != 0 ]; then 
   echo -e "\nUsage:
     --lsb) use LSB defaults no other PREFIX options are neccessary
@@ -60,63 +64,63 @@ while true; do
 done
 
 # Argument logic - set other prefixes
-if [[ $ETCPREFIX == "" ]]; then
-  ETCPREFIX=$PREFIX/etc
+if [ -z ${ETCPREFIX} ]; then
+  ETCPREFIX=${PREFIX}/etc
 fi
 
-if [[ $VARPREFIX == "" ]]; then
-  VARPREFIX=$PREFIX/var
+if [ -z ${VARPREFIX} ]; then
+  VARPREFIX=${PREFIX}/var
 fi
   
 # LSB Check.
-if [[ $LSB == "true" ]]; then
-  PREFIX=/opt/$PACKAGE
-  ETCPREFIX=/etc/opt/$PACKAGE
-  VARPREFIX=/var/opt/$PACKAGE
+if [ ${LSB} = "true" ]; then
+  PREFIX=/opt/${PACKAGE}
+  ETCPREFIX=/etc/opt/${PACKAGE}
+  VARPREFIX=/var/opt/${PACKAGE}
 fi
 
 # Check supplied apache and check.
-if [[ $USE_SUPPLIED_APACHE == "true" ]]; then
-  HTPASSWD=$PREFIX/lib/apache/bin/htpasswd
-  APACHECTL=$PREFIX/lib/apache/bin/apachectl
+if [ ${USE_SUPPLIED_APACHE} = "true" ]; then
+  HTPASSWD=${PREFIX}/lib/apache/bin/htpasswd
+  APACHECTL=${PREFIX}/lib/apache/bin/apachectl
   APACHEMODULES=""  # we dont use modules in the supplied apache.
 fi
 
 # Semantic Checks
-if [[ ! -x $OPENSSHD ]]; then
-  echo "opensshd: $OPENSSHD not found"
+if [ ! -x "${OPENSSHD}" ]; then
+  echo "opensshd: ${OPENSSHD} not found"
   exit 1
 fi
 
-if [[ $USE_SUPPLIED_APACHE == "false" ]]; then
-  if [[ ! -x $APACHECTL ]]; then
-    echo "httpd: $APACHECTL not found"
+if [ ${USE_SUPPLIED_APACHE} = "false" ]; then
+  if [ ! -x "${APACHECTL}" ]; then
+    echo "httpd: ${APACHECTL} not found"
     exit 1
   fi
 
-  if [[ ! -x $HTPASSWD ]]; then
-    echo "htpasswd: $HTPASSWD not found"
+  if [ ! -x "${HTPASSWD}" ]; then
+    echo "htpasswd: ${HTPASSWD} not found"
     exit 1
   fi
 
   # Check version
   echo checking apache version for 2.2
-  $APACHECTL -v |grep version |grep 2.2 > /dev/null 2>&1
+  ${APACHECTL} -v |grep version |grep -q 2.2
   if [ $? != 0 ]; then
     echo "Secure Data Connector requires apache 2.2"
     exit 1
   fi
 
   FOUND_MODULES=""
-  for module in $APACHE_MODULES; do
+  for module in ${APACHE_MODULES}; do
 
     echo checking apache for $module
-    $APACHECTL -l |grep $module > /dev/null 2>&1
-    if [ $? == 0 ]; then
+    ${APACHECTL} -l |grep -q $module
+    if [ $? = 0 ]; then
       continue
     fi
   
-    if [[ ! -x $MODULESDIR/mod_${module}.so ]]; then
+    if [ ! -x "${MODULESDIR}/mod_${module}.so" ]; then
       echo "$module required.  for full list see APACHE_MODULES in this script."
       exit 1
     fi
@@ -127,7 +131,7 @@ fi
 
 # Check woodstock user
 HOMEDIR=~woodstock
-if [[ $HOMEDIR == '~woodstock' ]]; then
+if [ ${HOMEDIR} = '~woodstock' ]; then
   # if the user doesnt exist, the string '~woodstock' will be present
   echo "'woodstock' user does not exist."
   echo "Create woodstock user with homedir as ${ETCPREFIX}/woodstock-user"
@@ -135,22 +139,22 @@ if [[ $HOMEDIR == '~woodstock' ]]; then
   echo "useradd --home-dir=${ETCPREFIX}/woodstock-user" \
       "--comment='Woodstock User' --shell=/bin/false" 
   exit 1
-elif [[ $HOMEDIR != ${ETCPREFIX}/woodstock-user ]]; then
+elif [ ${HOMEDIR} != ${ETCPREFIX}/woodstock-user ]; then
   echo "'woodstock' home directory is incorrect."
-  echo It should be ${ETCPREFIX}/woodstock-user;
+  echo It should be \"${ETCPREFIX}/woodstock-user\"
   exit 1
 fi
 
 # Check java version
-if [[ $JAVAHOME == "" ]]; then
+if [ -z ${JAVAHOME} ]; then
   JAVABIN=$(which java)
 else 
   JAVABIN=${JAVAHOME}/bin/java
 fi
 
-if [[ -x $JAVABIN ]]; then
-  $JAVABIN -version 2>&1 | grep 'java version' |grep '1.[65]' > /dev/null 2>&1
-  if [[ $? != 0 ]]; then
+if [ -x "${JAVABIN}" ]; then
+  ${JAVABIN} -version 2>&1 | grep 'java version' |grep -q '1.[65]'
+  if [ $? != 0 ]; then
     echo "Secure Data Connector requires JDK 1.6"
     exit 1
   fi
@@ -159,66 +163,71 @@ else
   exit 1
 fi
       
+# Edit build.properties
+template=build.properties
+cp build.properties-dist ${template}
+echo Generating ${template}
+sed -i ${template} -e 's^__PREFIX__^'${PREFIX}'^'
+sed -i ${template} -e 's^__ETCPREFIX__^'${ETCPREFIX}'^'
+sed -i ${template} -e 's^__VARPREFIX__^'${VARPREFIX}'^'
+
 # Edit build.xml
 template=build.xml
-cp build.xml-dist $template
-echo Generating $template
-sed -i $template -e 's^__PREFIX__^'$PREFIX'^'
-sed -i $template -e 's^__ETCPREFIX__^'$ETCPREFIX'^'
-sed -i $template -e 's^__VARPREFIX__^'$VARPREFIX'^'
-
-if [[ $USE_SUPPLIED_APACHE == "true" ]]; then
-  sed -i $template -e 's^__BUILDHTTPD__^,apache-httpd^'
+cp build.xml-dist ${template}
+echo Generating ${template}
+if [ ${USE_SUPPLIED_APACHE} = "true" ]; then
+  sed -i ${template} -e 's^__BUILDHTTPD__^,apache-httpd^'
 else 
-  sed -i $template -e 's^__BUILDHTTPD__^^'
+  sed -i ${template} -e 's^__BUILDHTTPD__^^'
 fi
 
 # Edit httpd.conf-dist
 template=config/apache/httpd.conf-template
-cp config/apache/httpd.conf-dist $template
-echo Generating $template
+cp config/apache/httpd.conf-dist ${template}
+echo Generating ${template}
 
-for module in $FOUND_MODULES; do  # Add modules to template
-  echo "LoadModule ${module}_module $APACHEMODULES/mod_${module}.so" >> config/$template
+for module in ${FOUND_MODULES}; do  # Add modules to template
+  echo "LoadModule ${module}_module ${APACHEMODULES}/mod_${module}.so" >> config/${template}
 done
-sed -i $template -e 's^_APACHE_ROOT_^'${ETCPREFIX}'/apache^'
-sed -i $template -e 's^_APACHE_LOG_DIR_^'${VARPREFIX}'/log^'
+sed -i ${template} -e 's^_APACHE_ROOT_^'${ETCPREFIX}'/apache^'
+sed -i ${template} -e 's^_APACHE_LOG_DIR_^'${VARPREFIX}'/log^'
 
 # Edit localConf.xml-dist
 template=config/localConfig.xml
-cp config/localConfig.xml-dist $template
-echo Generating $template
-sed -i $template -e 's^_APACHE_CTL_^'${APACHECTL}'^'
-sed -i $template -e 's^_APACHE_HTPASSWD_^'${HTPASSWD}'^'
-sed -i $template -e 's^_APACHE_CONF_DIR_^'${ETCPREFIX}'/apache^'
-sed -i $template -e 's^_START_SSHD_^'${ETCPREFIX}'/openssh/start_sshd.sh^'
+cp config/localConfig.xml-dist ${template}
+echo Generating ${template}
+sed -i ${template} -e 's^_APACHE_CTL_^'${APACHECTL}'^'
+sed -i ${template} -e 's^_APACHE_HTPASSWD_^'${HTPASSWD}'^'
+sed -i ${template} -e 's^_APACHE_CONF_DIR_^'${ETCPREFIX}'/apache^'
+sed -i ${template} -e 's^_START_SSHD_^'${ETCPREFIX}'/openssh/start_sshd.sh^'
 
 # Openssh start_ssh.sh-dist
 template=config/openssh/start_sshd.sh
-cp config/openssh/start_sshd.sh-dist $template
-echo Generating $template
-sed -i $template -e 's^_SSHD_^'${OPENSSHD}'^'
-sed -i $template -e 's^_OPENSSHCONF_^'${ETCPREFIX}'/openssh^'
+cp config/openssh/start_sshd.sh-dist ${template}
+echo Generating ${template}
+sed -i ${template} -e 's^_SSHD_^'${OPENSSHD}'^'
+sed -i ${template} -e 's^_OPENSSHCONF_^'${ETCPREFIX}'/openssh^'
 
 # Openssh sshd_config-dist.
 template=config/openssh/sshd_config
-cp config/openssh/sshd_config-dist $template
-echo Generating $template
-sed -i $template -e 's^_OPENSSHCONF_^'${ETCPREFIX}'/openssh^'
+cp config/openssh/sshd_config-dist ${template}
+echo Generating ${template}
+sed -i ${template} -e 's^_OPENSSHCONF_^'${ETCPREFIX}'/openssh^'
 
 # Runclient
 template=runclient.sh
 cp runclient.sh-dist runclient.sh
-echo Generating $template
-sed -i $template -e 's^_PREFIX_^'${PREFIX}'^'
-sed -i $template -e 's^_JAVABIN_^'${JAVABIN}'^'
+echo Generating ${template}
+sed -i ${template} -e 's^_PREFIX_^'${PREFIX}'^'
+sed -i ${template} -e 's^_ETCPREFIX_^'${ETCPREFIX}'^'
+sed -i ${template} -e 's^_JAVABIN_^'${JAVABIN}'^'
 
 # Supplied Apache build.xml
-if [[ $USE_SUPPLIED_APACHE == "true" ]]; then
+if [ ${USE_SUPPLIED_APACHE} = "true" ]; then
   template=third-party/apache-httpd/build.xml
-  cp third-party/apache-httpd/build.xml-dist $template
-  echo Generating $template
-  sed -i $template -e 's^_APACHE_ROOT_^'${PREFIX}'/lib/apache^'
+  cp third-party/apache-httpd/build.xml-dist ${template}
+  echo Generating ${template}
+  sed -i ${template} -e 's^_APACHE_ROOT_^'${PREFIX}'/lib/apache^'
 fi
 
 

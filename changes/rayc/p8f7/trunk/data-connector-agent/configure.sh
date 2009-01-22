@@ -22,7 +22,7 @@ USER=daemon
 GROUP=daemon
 USE_SUPPLIED_APACHE="false"
 LSB="false"
-APACHE_MODULES="auth_basic authn_file authz_host authz_user proxy proxy_http"
+APACHE_MODULES="auth_basic authn_file authz_host authz_user proxy proxy_http mime mime_magic"
 
 # Check for getopt gnu util
 [ -x "$(which getopt)" ] || { echo "gnu getopt binary not found." ; exit 1; }
@@ -145,11 +145,11 @@ if [ ${USE_SUPPLIED_APACHE} = "false" ]; then
     fi
   
     if [ ! -x "${MODULESDIR}/mod_${module}.so" ]; then
-      echo "$module required.  for full list see APACHE_MODULES in this script."
+      echo "${module} required.  for full list see APACHE_MODULES in this script."
       exit 1
     fi
 
-    FOUND_MODULES="${FOUND_MODULES} module"
+    FOUND_MODULES="${FOUND_MODULES} ${module}"
   done
 fi
 
@@ -229,8 +229,10 @@ template=config/apache/httpd.conf-template
 cp config/apache/httpd.conf-dist ${template}
 echo Generating ${template}
 
+echo ${FOUND_MODULES}
 for module in ${FOUND_MODULES}; do  # Add modules to template
-  echo "LoadModule ${module}_module ${APACHEMODULES}/mod_${module}.so" >> config/${template}
+  echo Configuring load for ${module}
+  echo "LoadModule ${module}_module ${MODULESDIR}/mod_${module}.so" >> ${template}
 done
 sed -i ${template} -e 's^_APACHE_ROOT_^'${ETCPREFIX}'/apache^'
 sed -i ${template} -e 's^_APACHE_LOG_DIR_^'${VARPREFIX}'/log^'

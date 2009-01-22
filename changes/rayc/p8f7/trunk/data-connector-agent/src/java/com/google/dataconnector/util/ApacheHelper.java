@@ -204,7 +204,14 @@ public class ApacheHelper {
    * @return path used for apache configuration file.
    */
   public static String getHttpdConfFileName(LocalConf localConf) {
-      return localConf.getApacheConfDir() + File.separator + HTTP_CONF_FILE_NAME;
+    try {
+      return localConf.getApacheConfDir() + File.separator + HTTP_CONF_FILE_NAME +
+          "." + URLEncoder.encode(localConf.getClientId(), "UTF8");
+    } catch (UnsupportedEncodingException e) {
+      // meh, we only catch this because URLEncoder is dumb and throws a checked exception for
+      // what is programmer error.
+      throw new RuntimeException(e);
+    }
   }
   
   /**
@@ -213,13 +220,7 @@ public class ApacheHelper {
    * @return path used for apache configuration file.
    */
   static String getHttpdConfTemplateFileName(LocalConf localConf) {
-    try {
-      return localConf.getApacheConfDir() + File.separator + LocalConf.HTTPD_CONF_TEMPLATE_FILE  +
-          "." + URLEncoder.encode(localConf.getClientId(), "UTF8");
-    } catch (UnsupportedEncodingException e) {
-      // meh, we only catch this because URLEncoder is dumb and throws a checked exception for
-      // what is programmer error.
-      throw new RuntimeException(e);
+    return localConf.getApacheConfDir() + File.separator + LocalConf.HTTPD_CONF_TEMPLATE_FILE;
   }
   
   /**

@@ -114,14 +114,13 @@ public class SecureDataConnection {
     
     // We add something like -oPermitOpen=127.0.0.1:1080 to the SSHD to restrict portforwards
     // to only ourselves.  Otherwise the remote side could forward any where they want.
-    
     String startSshdArgs =  (localConf.getDebug() ? "debug " : " ") + 
         PERMIT_OPEN_OPT + "127.0.0.1" + ":" + localConf.getSocksServerPort();
-    
     log.debug("startSshdArgs command: " + startSshdArgs);
 
     
     // Add PermitOpen to SSHD exectuable to restrict portforwards based on configuration.
+    log.debug("Executing sshd: " + localConf.getSshd() + " " + startSshdArgs);
     Process sshdProcess = Runtime.getRuntime().exec(localConf.getSshd() + " " + startSshdArgs);
     if (sshdProcess == null) {
       // couldn't start openssh? not good

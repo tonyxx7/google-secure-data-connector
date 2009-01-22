@@ -22,7 +22,7 @@ USER=daemon
 GROUP=daemon
 USE_SUPPLIED_APACHE="false"
 LSB="false"
-APACHE_MODULES="auth_basic authn_file authz_host authz_user proxy proxy_httpd"
+APACHE_MODULES="auth_basic authn_file authz_host authz_user proxy proxy_http"
 
 # Check for getopt gnu util
 [ -x "$(which getopt)" ] || { echo "gnu getopt binary not found." ; exit 1; }
@@ -213,11 +213,15 @@ template=build.xml
 cp build.xml-dist ${template}
 echo Generating ${template}
 if [ ${USE_SUPPLIED_APACHE} = "true" ]; then
-  sed -i ${template} -e 's^__BUILDHTTPD__^,apache-httpd^'
+  sed -i ${template} -e 's^__BUILDHTTPD__^,compile-httpd^'
   sed -i ${template} -e 's^__INSTALLHTTPD__^,install-httpd^'
+  sed -i ${template} -e 's^__CLEANHTTPD__^clean-httpd^'
+  sed -i ${template} -e 's^__DISTCLEANHTTPD__^,dist-clean-httpd^'
 else 
   sed -i ${template} -e 's^__BUILDHTTPD__^^'
   sed -i ${template} -e 's^__INSTALLHTTPD__^^'
+  sed -i ${template} -e 's^__CLEANHTTPD__^^'
+  sed -i ${template} -e 's^__DISTCLEANHTTPD__^^'
 fi
 
 # Edit httpd.conf-dist

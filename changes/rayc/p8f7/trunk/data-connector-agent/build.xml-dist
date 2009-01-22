@@ -33,9 +33,15 @@ Build File for Secure Data Connector client and reference server.
     <mkdir dir="${classes}" />
   </target>
 
-  <target name="clean" description="Deletes all build files.">
+  <target 
+      name="clean" 
+      description="Deletes all build files."
+      depends="__CLEANHTTPD__">
     <delete dir="${build}" />
     <delete dir="${bin}" />
+  </target>
+
+  <target name="clean-httpd">
     <ant
         antfile="build.xml"
         dir="third-party/apache-httpd"
@@ -45,7 +51,7 @@ Build File for Secure Data Connector client and reference server.
 
   <target 
       name="dist-clean" 
-      depends="clean"
+      depends="clean__DISTCLEANHTTPD__"
       description="Deletes all files to pre configured state.">
     <delete file="build.xml"/>
     <delete file="build.properties"/>
@@ -55,11 +61,14 @@ Build File for Secure Data Connector client and reference server.
     <delete file="config/openssh/start_sshd.sh"/>
     <delete file="config/openssh/sshd_config"/>
     <delete file="config/apache/httpd.conf-template"/>
+  </target>
+
+  <target name="dist-clean-httpd" depends="clean">
     <delete file="third-party/apache-httpd/build.xml"/>
     <delete file="third-party/apache-httpd/apache-install-out"/>
   </target>
 
-  <target name="apache-httpd" depends="init">
+  <target name="compile-httpd" depends="init">
     <ant 
         antfile="build.xml"
         dir="third-party/apache-httpd"
@@ -150,7 +159,7 @@ Build File for Secure Data Connector client and reference server.
   <!-- install -->
   <target name="install" depends="install-sdc__INSTALLHTTPD__"/>
 
-  <target name="install-httpd" depends="apache-httpd">
+  <target name="install-httpd" depends="compile-httpd">
     <!-- install apache -->
     <ant 
         antfile="build.xml"

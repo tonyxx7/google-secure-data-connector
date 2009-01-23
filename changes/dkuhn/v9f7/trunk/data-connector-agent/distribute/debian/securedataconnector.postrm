@@ -1,0 +1,21 @@
+#!/bin/sh
+
+set -e
+
+PKG_NAME="google-secure-data-connector"
+
+installinit_error() {
+  exit $?
+}
+
+if [ "$1" = "purge" ] ; then
+#  update-rc.d $PKG_NAME remove >/dev/null || installinit_error
+fi
+
+if [ "$1" = "purge" ]; then
+  deluser --system --quiet woodstock || true
+  [ -d /opt/$PKG_NAME ] && rm -rf /opt/$PKG_NAME
+  [ -d /etc/opt/$PKG_NAME ] && rm -rf /etc/opt/$PKG_NAME
+  [ -d /var/log/$PKG_NAME ] && rm -rf /var/log/$PKG_NAME
+  [ -d /var/opt/$PKG_NAME ] && rm -rf /var/opt/$PKG_NAME
+fi

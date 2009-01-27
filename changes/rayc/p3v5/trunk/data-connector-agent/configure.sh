@@ -102,7 +102,7 @@ if [ ${USE_SUPPLIED_APACHE} = "true" ]; then
   APACHEMODULES=""  # we dont use modules in the supplied apache.
 fi
 
-# Infert java binary location from JAVAHOME setting.
+# Infer java binary location from JAVAHOME setting.
 if [ -z ${JAVAHOME} ]; then
   JAVABIN=$(which java)
 else 

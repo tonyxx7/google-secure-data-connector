@@ -38,6 +38,7 @@ import java.net.SocketTimeoutException;
 import java.security.Principal;
 import java.util.List;
 
+import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
@@ -101,26 +102,7 @@ public class SecureDataConnection {
       clientSocket.connect(new InetSocketAddress(localConf.getSdcServerHost(),
           localConf.getSdcServerPort()), 30 *1000);
       
-      // Verify that the server certificate has the correct Subject DN name.
-      // Otherwise abort (the server may be impersonating a legitimate Tunnel Server).
-      
-      SSLSession session = clientSocket.getSession();
-      X509Certificate[] certificates = session.getPeerCertificateChain();
-
-      X509Certificate certificate = certificates[0];  // The first one is the server.
-      Principal principal = certificate.getSubjectDN();
-      if (!(principal instanceof X500Name)) {
-        log.error("Certificate DN was not a proper X.500 name.");
-        throw new ConnectionException("Certificate DN was not a proper X.500 name.");
-      }
-      X500Name name = (X500Name) principal;
-      String serverName = name.getCommonName();
-      if (serverName == null || !serverName.equals(localConf.getSdcServerHost())) {
-        String errorMessage = "Wrong server X.500 name. Expected: <"
-          + localConf.getSdcServerHost() + ">. Actual: <" + serverName + ">.";
-        log.error(errorMessage);
-        throw new ConnectionException(errorMessage);
-      }
+      verifySubjectInCertificate(clientSocket);
       
     } catch (SocketTimeoutException e) {
       throw new ConnectionException(e);
@@ -173,6 +155,33 @@ public class SecureDataConnection {
      * as our transport is openssh.  NOTE that this thread will run forever.
      */
     new RedirectStreamToLog(sshdProcess.getErrorStream(), log, "OpenSSH Logline").start();
+  }
+
+  /**
+   * Verifies that the server certificate has the correct Subject DN name.
+   * Throws an exception otherwise, since the server may be impersonating a 
+   * legitimate Tunnel Server.
+   */
+  private void verifySubjectInCertificate(SSLSocket clientSocket)
+      throws SSLPeerUnverifiedException, ConnectionException, IOException {
+    
+    SSLSession session = clientSocket.getSession();
+    X509Certificate[] certificates = session.getPeerCertificateChain();
+
+    X509Certificate certificate = certificates[0];  // The first one is the server.
+    Principal principal = certificate.getSubjectDN();
+    if (!(principal instanceof X500Name)) {
+      log.error("Certificate DN was not a proper X.500 name.");
+      throw new ConnectionException("Certificate DN was not a proper X.500 name.");
+    }
+    X500Name name = (X500Name) principal;
+    String serverName = name.getCommonName();
+    if (serverName == null || !serverName.equals(localConf.getSdcServerHost())) {
+      String errorMessage = "Wrong server X.500 name. Expected: <"
+        + localConf.getSdcServerHost() + ">. Actual: <" + serverName + ">.";
+      log.error(errorMessage);
+      throw new ConnectionException(errorMessage);
+    }
   }
 
   /**

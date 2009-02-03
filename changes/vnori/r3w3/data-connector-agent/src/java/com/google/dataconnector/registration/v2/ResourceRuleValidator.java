@@ -135,7 +135,6 @@ public class ResourceRuleValidator {
     }
     
     // seqNum
-    System.out.println("\n\n\n\nseqnum is " + resourceRule.getSeqNum() + "\n\n\n\n");
     if (resourceRule.getSeqNum() > 0) {
       // set name to seqNum
       resourceRule.setName(String.valueOf(resourceRule.getSeqNum()));

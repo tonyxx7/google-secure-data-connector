@@ -16,7 +16,6 @@
  */
 package com.google.dataconnector.registration.v2;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -131,17 +130,18 @@ public class ResourceRuleValidator {
     
     // Name - this is not to be used anymore.
     if (resourceRule.getName() != null) {
-      throw new ResourceException("'name' field is deprecated. please use seqNum instead. " +
-          "check the resource with name = " + resourceRule.getName());
+      throw new ResourceException("Resource " +  resourceRule.getName() + " uses deprecated " +
+          "<name/> element.  Please use <seqNum>" + resourceRule.getName() + "</seqNum> instead.");
     }
     
-    // seqNum 
+    // seqNum
+    System.out.println("\n\n\n\nseqnum is " + resourceRule.getSeqNum() + "\n\n\n\n");
     if (resourceRule.getSeqNum() > 0) {
       // set name to seqNum
       resourceRule.setName(String.valueOf(resourceRule.getSeqNum()));
     } else {
-      throw new ResourceException("'seqNum' field must be present and be greater than zero. " + 
-          "check resource pattern: " + resourceRule.getPattern());
+      throw new ResourceException("Resource " + resourceRule.getPattern() + "must have <seqNum/> " +
+          "greater than 0.");
     }
     
     // clientId

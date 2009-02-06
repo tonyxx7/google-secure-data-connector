@@ -63,6 +63,8 @@ public class ApacheHelper {
       "</ProxyMatch>\n" +
       "</VirtualHost>\n";
   
+  // For now the templates are the same between versions, however, this certainly isn't guaranteed
+  // going forward.
   static final String PROXY_MATCH_RULE_TEMPLATE_22 = PROXY_MATCH_RULE_TEMPLATE_20;
   
   /**
@@ -100,19 +102,31 @@ public class ApacheHelper {
   }
   
   /**
-   * Runs the apache binary specified in the {@link LocalConf} to determine its version and returns
-   * the version.
+   * Runs the apache binary specified in the {@link LocalConf} to determine its version. 
    * 
    * @return the version in enum form.
    * @throws ApacheSetupException if the apache binary cannot be executed or read from.
    */
   ApacheVersion getApacheVersion() throws ApacheSetupException {
     try {
+      // Read in the version from the binary.
       Process p;
       p = runtime.exec(new String[] { localConf.getApacheCtl(), "-v" });
       BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-      String version = br.readLine();
+      String version = "";
+      while ((version = br.readLine()) != null) {
+        if (version.matches(".*Server version.*")) {
+          break;
+        }
+      }
       p.destroy();
+      
+      // Check to see we got a version line.
+      if (version.isEmpty()) {
+        throw new ApacheSetupException("Httpd binary did not return version string");
+      }
+      
+      // Figure out the version.
       // eg: Server version: Apache/2.2.6 (Unix)
       if (version.matches(".*/2\\.2\\..*")) {
         return ApacheVersion.TWOTWO;
@@ -155,6 +169,8 @@ public class ApacheHelper {
   
   /**
    * Creates "Listen" entries for httpd conf.
+   * 
+   * @return all "Listen" ip:port entries needed for this rule configuration.
    */
   String makeListenEntries() {
     StringBuilder listenConfigEntries = new StringBuilder();
@@ -204,7 +220,7 @@ public class ApacheHelper {
           proxyMatchRule = PROXY_MATCH_RULE_TEMPLATE_20;
           break;
         default:
-          throw new ApacheSetupException("Incorrect apache version");
+          throw new ApacheSetupException("Unsupported apache version");
       }
         
       // Add sequence number to config file for debugging.

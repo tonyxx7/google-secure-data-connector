@@ -147,16 +147,18 @@ public class ResoureRuleUtilTest extends TestCase {
     ResourceRuleUtil resourceRuleUtil = new ResourceRuleUtil(new XmlUtil(), new BeanUtil(),
         mockSocketFactory, mockSocketAddress);
     
-    // Set the fake http proxy port to null.
+    // Set each rule's httpProxyPort port to null.
     for (ResourceRule resourceRule : fakeResourceRuleConfig.getFakeRuntimeResourceRules()) {
       resourceRule.setHttpProxyPort(null);
     }
     
     // Test
-    resourceRuleUtil.getVirtualHostBindPortsAndSetHttpProxyPorts(fakeResourceRuleConfig.getFakeRuntimeResourceRules());
+    resourceRuleUtil.getVirtualHostBindPortsAndSetHttpProxyPorts(
+        fakeResourceRuleConfig.getFakeRuntimeResourceRules());
     
-    // Verify.  HTTP should have an integer, others should still have null.
+    // Verify.  
     for (ResourceRule resourceRule : fakeResourceRuleConfig.getFakeRuntimeResourceRules()) {
+      // HTTP should have an integer, others should still have null.
       if (resourceRule.getPattern().startsWith(ResourceRule.HTTPID)) {
         assertNotNull(resourceRule.getHttpProxyPort());
       } else {

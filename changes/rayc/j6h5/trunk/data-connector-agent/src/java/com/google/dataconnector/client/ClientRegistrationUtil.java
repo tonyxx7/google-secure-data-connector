@@ -101,9 +101,8 @@ public class ClientRegistrationUtil {
        // set the password now - to avoid having it printed in the above step
         authRequest.setPassword(localConf.getPassword());
       } else {
-        // shouldn't haave come here because LocalConfValidator should have thrown error
-        throw new AuthenticationException(
-            "Could not find password. Cannot authenticate, exiting.");
+        // shouldn't have come here because LocalConfValidator should have thrown error
+        throw new AuthenticationException("Unsupported AuthType specified. Check localConfig.");
       }
       
       // send auth request packet

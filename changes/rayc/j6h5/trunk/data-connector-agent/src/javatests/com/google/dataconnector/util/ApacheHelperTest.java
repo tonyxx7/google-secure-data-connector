@@ -17,7 +17,6 @@
 package com.google.dataconnector.util;
 
 import com.google.dataconnector.client.testing.FakeLocalConfGenerator;
-import com.google.dataconnector.client.testing.StringArrayMatcher;
 import com.google.dataconnector.registration.v2.ResourceRule;
 import com.google.dataconnector.registration.v2.ResourceRuleUtil;
 import com.google.dataconnector.registration.v2.testing.FakeResourceRuleConfig;
@@ -300,7 +299,7 @@ public class ApacheHelperTest extends TestCase {
    * @param apacheVersion the version of conf we should check validity for.
    */
   public String checkHttpConf(ApacheVersion apacheVersion) {
-    EasyMock.reportMatcher(new HttpConfChecker(localConf, resourceRules, apacheVersion));
+    EasyMock.reportMatcher(new HttpConfChecker(localConf, resourceRules));
     return null; 
   }
   
@@ -313,7 +312,6 @@ public class ApacheHelperTest extends TestCase {
     
     private LocalConf localConf;
     private List<ResourceRule> resourceRules;
-    private ApacheVersion apacheVersion;
     
     /**
      * Creates argument matcher with test data that is used to verify http conf.
@@ -321,11 +319,9 @@ public class ApacheHelperTest extends TestCase {
      * @param localConf the local agent configuration used in the test.
      * @param resourceRules the resource rules used in the test.
      */
-    public HttpConfChecker(LocalConf localConf, List<ResourceRule> resourceRules,
-        ApacheVersion apacheVersion) {
+    public HttpConfChecker(LocalConf localConf, List<ResourceRule> resourceRules) {
       this.localConf = localConf;
       this.resourceRules = resourceRules;
-      this.apacheVersion = apacheVersion;
     }
     
     /**

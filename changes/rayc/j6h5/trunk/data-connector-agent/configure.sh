@@ -6,7 +6,6 @@
 # OPTIONS
 # -prefix Secure Data Connector install location
 # -httpd Apache2 httpd location (Must have mod_proxy).
-# -htpasswd Apache2 htpassword location
 # -opensshd OpenSSH daemon binary.
 
 PACKAGE="google-secure-data-connector"
@@ -34,7 +33,7 @@ chmod 755 config.status
 [ -x "$(which getopt)" ] || { echo "gnu getopt binary not found." ; exit 1; }
 
 # Command line arguments
-OPTS=$(getopt -o h --long lsb,noverify,prefix:,etcprefix::,varprefix::,binprefix::,apachectl:,htpasswd::,opensshd:,apache_modules_dir::,javahome::,use_supplied_apache,user::,group::,apacheversion:: -n 'configure' -- "$@") 
+OPTS=$(getopt -o h --long lsb,noverify,prefix:,etcprefix::,varprefix::,binprefix::,apachectl::,opensshd:,apache_modules_dir::,javahome::,use_supplied_apache,user::,group:: -n 'configure' -- "$@") 
 if [ $? != 0 ] || [ $# = 0 ]; then 
   echo -e "\nUsage:
     --lsb) use LSB defaults no other PREFIX options are neccessary
@@ -42,9 +41,7 @@ if [ $? != 0 ] || [ $# = 0 ]; then
     --etcprefix) etc prefix.  defaults to $PREFIX/etc
     --varprefix) var prefix. defaults to $PREFIX/var
     --use_supplied_apache) no other apache/ht options are needed.
-    --apacheversion) \"2.0\" or \"2.2\" are supported.
     --apachectl) location of apachectl binary.
-    --htpasswd) location of apache htpasswd binary.
     --apache_modules_dir) location of apache modules dir.
     --opensshd) location of openssh's sshd binary.
     --user) user to run woodstock as. Default is 'daemon'
@@ -66,7 +63,6 @@ while true; do
     --etcprefix) ETCPREFIX=$2; shift 2 ;;
     --varprefix) VARPREFIX=$2; shift 2 ;;
     --binprefix) BINPREFIX=$2; shift 2 ;;
-    --apacheversion) APACHEVERSION=$2 ; shift 2 ;;
     --apachectl) APACHECTL=$2 ; shift 2 ;;
     --apache_modules_dir) MODULESDIR=$2 ; shift 2 ;;
     --opensshd) OPENSSHD=$2 ; shift 2 ;;
@@ -197,7 +193,6 @@ if [ ${NOVERIFY} = "false" ]; then
 
 fi
 
-
 #
 ### Getting Apache Module list for config files.
 #
@@ -211,6 +206,8 @@ fi
 #
 # Checks MODULESDIR for both apache 2.0 and 2.2 style module names and
 # echos the results (for use with eval).
+#
+# $1 module name.
 # 
 function getPathToModuleFile {
 

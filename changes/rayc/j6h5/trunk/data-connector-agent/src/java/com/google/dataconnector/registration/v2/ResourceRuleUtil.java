@@ -56,22 +56,22 @@ public class ResourceRuleUtil {
   private XmlUtil xmlUtil;
   private BeanUtil beanUtil;
   private SocketFactory socketFactory;
-  private SocketAddress socketAddress;
+  private SocketAddress ephemeralLocalhostAddress;
 
   /**
    * Creates a new resource util with provided dependcies
    * 
    * @param xmlUtil utility to convert XML into map properties
    * @param beanUtil utility to covert properties map into a bean.
-   * @param socketAddress a created InetAddress resolved to localhost.
+   * @param ephemeralLocalhostAddress a created InetAddress resolved to localhost.
    * @param socketFactory a way to get sockets such that we can bind with to get ephemeral ports.
    */
   @Inject
   public ResourceRuleUtil(XmlUtil xmlUtil, BeanUtil beanUtil, SocketFactory socketFactory, 
-      @MyHostname SocketAddress socketAddress) {
+      @MyHostname SocketAddress ephemeralLocalhostAddress) {
     this.xmlUtil = xmlUtil;
     this.beanUtil = beanUtil;
-    this.socketAddress = socketAddress;
+    this.ephemeralLocalhostAddress = ephemeralLocalhostAddress;
     this.socketFactory = socketFactory;
   }
 
@@ -87,7 +87,7 @@ public class ResourceRuleUtil {
   }
   
   /**
-   * Gets ephermal port for each rule such that Apache can listen on.
+   * Gets ephermal port for each rule that is used to bind an Apache VirtualHost proxy to. 
    * 
    * @param resourceRules list of resource rules for this domain.
    * @throws ResourceException if any socket errors occur while trying to bind.
@@ -95,13 +95,16 @@ public class ResourceRuleUtil {
   public void getVirtualHostBindPortsAndSetHttpProxyPorts(List<ResourceRule> resourceRules) 
       throws ResourceException {
     for (ResourceRule resourceRule : resourceRules) {
-      // We only recreate VirtualHosts for HTTP rules.
+      // We only get ports for HTTP rules as others do not transverse the HTTP Proxy (apache)
       if (!resourceRule.getPattern().startsWith(HTTP)) {
         continue;
       }
       try {
+        // In order for the OS to return us an available ephemeral port we have to bind a socket
+        // to "127.0.0.1:0" we get the port then close the socket.  Its a bit lame but I have
+        // not found a better way to do it.
         Socket socket = socketFactory.createSocket();
-        socket.bind(socketAddress);
+        socket.bind(ephemeralLocalhostAddress);
         resourceRule.setHttpProxyPort(socket.getLocalPort());
         socket.close();
       } catch (IOException e) {

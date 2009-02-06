@@ -47,6 +47,8 @@ public class RegistrationRequestTest extends TestCase {
     JSONArray jsonArray = new JSONArray();
     jsonArray.put(FakeResourceRuleConfig.RUNTIME_RESOURCE_ENTITY_XML);
     registrationJson.put("resources", jsonArray);
+    // We don't need to provide socket and inet address because ResourceRequest does not call 
+    // RegistrationUtil#getVirtualHostBindPortsAndSetHttpProxyPorts
     resourceRuleUtil = new ResourceRuleUtil(new XmlUtil(), new BeanUtil(), null, null);
   }
   

@@ -16,9 +16,9 @@
  */
 package com.google.dataconnector.registration.v2;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Validates a resource rule and produces errors.
@@ -64,18 +64,17 @@ public class ResourceRuleValidator {
           "parsing issue where you must specify '<entity repeatable=\"true\">' even if one" +
           "rule is specified."); 
     }
-    Collection<String> seenNames = new ArrayList<String>(); 
-    
-    // Go through each rule.
+     
+    // Go through each rule and validate it and make sure no two resources have the same ruleNum.
+    Set<Integer> seenRuleNums = new HashSet<Integer>();
     for (ResourceRule resourceRule : resourceRules) {
-      // Rules must have unique names.
-      if (seenNames.contains(resourceRule.getName())) {
-        throw new ResourceException("Duplicate <name/> entries not allowed. Resource: " + 
-            resourceRule.getName());
-      } else {
-        seenNames.add(resourceRule.getName());
-      }
       validate(resourceRule);
+      if (seenRuleNums.contains(resourceRule.getRuleNum())) {
+        throw new ResourceException("Duplicate <ruleNum/> entries not allowed. Resource: " + 
+            resourceRule.getRuleNum());
+      } else {
+        seenRuleNums.add(resourceRule.getRuleNum());
+      }
     }
   }
   
@@ -129,15 +128,20 @@ public class ResourceRuleValidator {
    */
   public void validate(ResourceRule resourceRule) throws ResourceException {
     
-    // Name 
+    // Name - this is not to be used anymore.
     if (resourceRule.getName() != null) {
-      try {
-        Integer.valueOf(resourceRule.getName().trim());
-       } catch (NumberFormatException e) {
-         throw new ResourceException("'name' field must be a valid integer", e);
-       }
+      throw new ResourceException("Resource " +  resourceRule.getName() + " uses deprecated " +
+          "<name/> element.  Please use <ruleNum>" + resourceRule.getName() + 
+          "</ruleNum> instead.");
+    }
+    
+    // ruleNum
+    if (resourceRule.getRuleNum() > 0) {
+      // set name to ruleNum
+      resourceRule.setName(String.valueOf(resourceRule.getRuleNum()));
     } else {
-      throw new ResourceException("'name' field must be present");
+      throw new ResourceException("Resource " + resourceRule.getPattern() + 
+          " must have <ruleNum/> greater than 0.");
     }
     
     // clientId

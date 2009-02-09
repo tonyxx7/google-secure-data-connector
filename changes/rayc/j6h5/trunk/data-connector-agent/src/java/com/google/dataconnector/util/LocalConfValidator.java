@@ -148,8 +148,9 @@ public class LocalConfValidator {
     
     // clientId
     if (localConf.getClientId() != null) {
-      if (localConf.getClientId().matches("\\s")) {
-        errors.append("'clientId' contains spaces\n");
+      if (!localConf.getClientId().matches("^[A-z0-9_-]+$")) {
+        errors.append("'clientId' " + localConf.getClientId() + " not valid.  Only a-z,A-Z,0-9," +
+            "-_ allowed.\n");
       }
     } else {
       errors.append("'clientId' required\n");

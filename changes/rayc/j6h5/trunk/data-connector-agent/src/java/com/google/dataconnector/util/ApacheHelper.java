@@ -186,7 +186,7 @@ public class ApacheHelper {
   
   
   /**
-   * For each http resource rule, we take the template {@link #PROXY_MATCH_RULE_TEMPLATE} and 
+   * For each http resource rule, we take the template {@link #PROXY_MATCH_RULE_TEMPLATE_20}
    * substitute the correct value based on the resource configuration.  We build up the entire
    * &lt;ProxyMatch&gt; section and return it.
    * 
@@ -209,7 +209,7 @@ public class ApacheHelper {
         continue;
       }
       
-      LOG.info("Creating <ProxyMatch> section for resource " + resourceRule.getName());
+      LOG.info("Creating <ProxyMatch> section for resource " + resourceRule.getRuleNum());
       // Get apache version from apache binary then select appropriate template.
       String proxyMatchRule = "";
       switch(getApacheVersion()) {
@@ -224,11 +224,12 @@ public class ApacheHelper {
       }
         
       // Add sequence number to config file for debugging.
-      proxyMatchRule = "# Sequence Number " + resourceRule.getName() + "\n" + proxyMatchRule;
+      proxyMatchRule = "# Sequence Number " + resourceRule.getRuleNum() + "\n" + proxyMatchRule;
       proxyMatchRule = proxyMatchRule.replace("__DOCUMENT_ROOT__", localConf.getApacheConfDir() + 
           "/htdocs");
       proxyMatchRule = proxyMatchRule.replace("__PATTERN__", resourceRule.getPattern());
-      proxyMatchRule = proxyMatchRule.replace("__SEQNUM__", resourceRule.getName()); 
+      proxyMatchRule = proxyMatchRule.replace("__SEQNUM__", Integer.toString(
+          resourceRule.getRuleNum())); 
       proxyMatchRule = proxyMatchRule.replace("__BIND_HOST__", localConf.getHttpProxyBindHost());
       proxyMatchRule = proxyMatchRule.replace("__PORT__", 
           resourceRule.getHttpProxyPort().toString());

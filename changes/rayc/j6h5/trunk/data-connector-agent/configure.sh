@@ -16,7 +16,7 @@ APACHEVERSION="2.2"
 APACHECTL=
 MODULESDIR=
 OPENSSHD=
-JAVAHOME=
+JAVAHOME=${JAVAHOME}  # Get it from the environment
 USER=daemon
 GROUP=daemon
 USE_SUPPLIED_APACHE="false"
@@ -99,11 +99,14 @@ if [ ${USE_SUPPLIED_APACHE} = "true" ]; then
   APACHEMODULES=""  # we dont use modules in the supplied apache.
 fi
 
-# Infer java binary location from JAVAHOME setting.
-if [ -z ${JAVAHOME} ]; then
-  JAVABIN=$(which java)
-else 
+# Infer java binary location from JAVA_HOME env, JAVAHOME env 
+# or --javabin setting.
+if [ ${JAVA_HOME} ]; then
+  JAVABIN=${JAVA_HOME}/bin/java
+elif [ ${JAVAHOME} ]; then
   JAVABIN=${JAVAHOME}/bin/java
+else # Try to figure it out.
+  JAVABIN=$(which java)
 fi
 
 
@@ -181,10 +184,13 @@ if [ ${NOVERIFY} = "false" ]; then
 
   # verify java binary.
   if [ -x "${JAVABIN}" ]; then
-    ${JAVABIN} -version 2>&1 | grep 'java version' |grep -q '1.[65]'
+    ${JAVABIN} -version 2>&1 | grep 'java version' |grep -q '1.6'
     if [ $? != 0 ]; then
+      echo "Java found at ${JAVABIN} not suitable."
       echo "Secure Data Connector requires JDK 1.6"
       exit 1
+    else
+      echo "Found java at ${JAVABIN}"
     fi
   else
     echo "Java could not be found at $JAVABIN"

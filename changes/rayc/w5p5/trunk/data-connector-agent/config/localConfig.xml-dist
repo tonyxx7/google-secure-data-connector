@@ -6,7 +6,6 @@
   <password>ValidDomainUserPassword</password>
   <clientId>test_example.com</clientId>
   <sshd>_START_SSHD_</sshd>
-  <startingHttpProxyPort>18000</startingHttpProxyPort>
   <socksServerPort>1080</socksServerPort>
   <apacheCtl>_APACHE_CTL_</apacheCtl>
   <apacheConfDir>_APACHE_CONF_DIR_</apacheConfDir>

@@ -122,8 +122,9 @@ public class ApacheHelper {
       p.destroy();
       
       // Check to see we got a version line.
-      if (version.isEmpty()) {
-        throw new ApacheSetupException("Httpd binary did not return version string");
+      if (version == null) {
+        LOG.warn("Apache version call returned null!");
+        return ApacheVersion.INVALID;
       }
       
       // Figure out the version.
@@ -133,6 +134,7 @@ public class ApacheHelper {
       } else if (version.matches(".*/2\\.0\\..*")) {
         return ApacheVersion.TWOZERO;
       } else {
+        LOG.warn("Apache version: " + version + " not valid");
         return ApacheVersion.INVALID;
       }
     } catch (IOException e) {

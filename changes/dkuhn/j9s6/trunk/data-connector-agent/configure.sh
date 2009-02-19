@@ -326,6 +326,11 @@ sed -i ${template} -e 's^_APACHE_CTL_^'${APACHECTL}'^'
 sed -i ${template} -e 's^_APACHE_MODULESDIR_^'${MODULESDIR}'^'
 sed -i ${template} -e 's^_APACHE_CONF_DIR_^'${ETCPREFIX}'/apache^'
 
+# Edit configure_sshdconf.sh
+template=config/openssh/configure_sshdconf.sh
+cp config/openssh/configure_sshdconf.sh-dist ${template}
+echo Generating ${template}
+sed -i ${template} -e 's^_SSHDCONF_^'${ETCPREFIX}'/openssh/sshd_config^'
 
 # Edit localConf.xml-dist
 template=config/localConfig.xml

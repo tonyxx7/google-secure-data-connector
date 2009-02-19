@@ -45,16 +45,17 @@ fi
 #
 # $1 module name.
 # 
-function getPathToModuleFile {
-
+getPathToModuleFile ()
+{
   module=$1
   if [ -e "${MODULESDIR}/mod_${module}.so" ]; then
     echo "${MODULESDIR}/mod_${module}.so"
-  else 
-    echo "NOTFOUND"
+    return 0 
+ else 
+    echo "Module not found"
+    return 1
   fi
 
-  return
 }
 
 FOUND_MODULES=""
@@ -69,7 +70,7 @@ FOUND_MODULES=""
 
     echo -n checking dynamically compiled apache for: ${module}:
     modulepath=$(getPathToModuleFile ${module})
-    if [ $modulepath = "NOTFOUND" ]; then
+    if [ $? = 1 ]; then
       echo " no"
       echo "Please install module \"${module}\"."
       exit 1

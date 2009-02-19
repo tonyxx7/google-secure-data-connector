@@ -46,19 +46,31 @@ Build File for Secure Data Connector client and reference server.
     <mkdir dir="${dist}" />
   </target>
 
-  <target name="clean-distro" description="Deletes all build files.">
+  <target name="clean-distro-all" depends="clean">
+    <delete file="${dist}/${name}-${version}-${release}-bin.tar.gz" />
+    <delete file="${dist}/${name}-${version}-${release}-src.tar.gz" />
+    <delete file="${dist}/${name}_${version}-${release}_i386.deb" />
+    <delete file="${dist}/${name}-${version}-${release}.noarch.rpm" />
+    <delete file="${dist}/${name}-${version}-${release}.src.rpm" />
+  </target>
+
+  <target name="clean-distro" depends="clean">
     <delete file="${dist}/${name}-${version}-${release}-bin.tar.gz" />
     <delete file="${dist}/${name}-${version}-${release}-src.tar.gz" />
   </target>
  
   <target name="clean" description="Deletes all build files.">
     <delete file="${deb}" />
+    <exec dir="." executable="ant">
+      <arg value="dist-clean"/>
+    </exec>
   </target>
  
   <target name="lsb" depends="init">
     <exec dir="." executable="./configure.sh">
       <arg value="--lsb"/>
       <arg value="--openssh=/usr/sbin/sshd"/>
+      <arg value="--noverify"/>
       <arg value="--apachectl=/usr/sbin/apache2ctl"/>
       <arg value="--javahome=/usr"/>
     </exec>
@@ -69,7 +81,7 @@ Build File for Secure Data Connector client and reference server.
    </target>
 
 
-  <target name="cfgdeb" depends="init,clean-distro">
+  <target name="cfgdeb" depends="init,clean">
     <exec dir="." executable="./configure.sh">
       <arg value="--lsb"/>
       <arg value="--noverify"/>
@@ -85,7 +97,7 @@ Build File for Secure Data Connector client and reference server.
    </target>
 
 
-  <target name="cfgrpm" depends="init,clean-distro">
+  <target name="cfgrpm" depends="init,clean">
    <mkdir dir="/rpm" /> 
    <exec dir="." executable="./configure.sh">
       <arg value="--lsb"/>
@@ -118,6 +130,8 @@ Build File for Secure Data Connector client and reference server.
         <include name="COPYING"/>
         <include name="README"/>
         <include name="config/**"/>
+        <include name="distribute/*"/>
+        <include name="distribute/debian/*"/>
         <include name="third-party/**"/>
       </tarfileset>
       <tarfileset dir="." mode="755" prefix="data-connector-agent">
@@ -164,6 +178,9 @@ Build File for Secure Data Connector client and reference server.
         compression="gzip">
       <tarfileset dir="." mode="600">
         <include name="config/openssh/*"/>
+      </tarfileset>
+      <tarfileset dir="." mode="755">
+        <include name="config/openssh/configure_sshdconf.sh"/>
       </tarfileset>
       <tarfileset dir="." mode="755">
         <include name="config/apache/configure_apache.sh"/>
@@ -246,6 +263,9 @@ http://code.google.com/
         <include name="runclient.sh"/>
       </tarfileset>
       <tarfileset dir="config" prefix="etc/opt/${name}" filemode="750">
+        <include name="openssh/configure_sshdconf.sh"/>
+      </tarfileset>
+      <tarfileset dir="config" prefix="etc/opt/${name}" filemode="750">
         <include name="apache/configure_apache.sh"/>
       </tarfileset>
       <tarfileset dir="config" prefix="etc/opt/${name}" filemode="750">
@@ -263,7 +283,7 @@ http://code.google.com/
  In the mean time we can run ant deb and ant rpm separately and then all for tarballs.
 --> 
 
-	  <target name="all" depends="clean-distro,source-distro,binary-distro"/>
+	  <target name="all" depends="clean-distro-all,source-distro,binary-distro,rpm,deb"/>
 
 </project>
 

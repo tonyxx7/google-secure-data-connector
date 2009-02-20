@@ -10,8 +10,14 @@ sshd_UseDNS=37
 sshd_UseTCPKeepAlive=38
 sshd_CompressionDelayed=41
 
+
 # Get sshd version and convert it to integer i.e version 3.6 = 36
-sshd_ver=`sshd -v 2>&1 | grep -i version | awk -F _ '{ print $2 }' | awk -F . '{ print $1$2 }'`
+sshd_ver=`sshd -v 2>&1 | grep -i openssh_ | awk -F _ '{ print $2 }' | awk -F . '{ print $1 substr($2,1,1) }  '`
+
+if [ $sshd_ver = 0 ]; then
+ echo "Could not determine sshd version number. You might have to edit your config_sshd file manually"
+ exit 0
+fi
 
 #sshd 3.7 changed directive  VerifyReverseMapping to UseDNS
 if [ $sshd_ver -lt $sshd_UseDNS ]; then

@@ -146,13 +146,18 @@ if [ ${NOVERIFY} = "false" ]; then
     fi
  
    if [ -z ${MODULESDIR} ]; then
-     echo "----apache_modules_dir option is missing!"
+     echo "--apache_modules_dir option is missing!"
      exit 1
     fi
 
     if [ ! -x "${APACHECTL}" ]; then
       echo "httpd: ${APACHECTL} not found"
       exit 1
+    fi
+ 
+   if [ ! -x ${MODULESDIR} ]; then
+     echo "Apache modules directory ${MODULESDIR} not found!" 
+     exit 1
     fi
 
   fi

@@ -152,7 +152,8 @@ Build File for Secure Data Connector client and reference server.
           config/apache/*,
           COPYING,
           CHANGE_LOG,
-          build/agent.jar,
+          *-dist,
+	  build/agent.jar,
           build/protocol.jar,
           third-party/jsocks/jsocks.jar,
           third-party/jsocks/third-party/**,
@@ -178,6 +179,9 @@ Build File for Secure Data Connector client and reference server.
         compression="gzip">
       <tarfileset dir="." mode="600">
         <include name="config/openssh/*"/>
+      </tarfileset>
+      <tarfileset dir="." mode="755">
+        <include name="configure.sh"/>
       </tarfileset>
       <tarfileset dir="." mode="755">
         <include name="config/openssh/configure_sshdconf.sh"/>

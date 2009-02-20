@@ -15,9 +15,13 @@ sshd_CompressionDelayed=41
 sshd_ver=`sshd -v 2>&1 | grep -i openssh_ | awk -F _ '{ print $2 }' | awk -F . '{ print $1 substr($2,1,1) }  '`
 
 if [ $sshd_ver = 0 ]; then
- echo "Could not determine sshd version number. You might have to edit your config_sshd file manually"
+ echo "Could not determine sshd version number. You might need to edit your config_sshd file manually"
+ echo "  If sshd version < 3.7 replace directive UseDNS with directive VerifyReverseMapping in sshd_config"
+ echo "  If sshd version < 3.8 replace directive TCPKeepAlive with directive KeepAlive in sshd_config"
+ echo "  If sshd version < 4.1 replace directive 'Compression delayed' with directive 'Compression yes'"
  exit 0
 fi
+
 
 #sshd 3.7 changed directive  VerifyReverseMapping to UseDNS
 if [ $sshd_ver -lt $sshd_UseDNS ]; then

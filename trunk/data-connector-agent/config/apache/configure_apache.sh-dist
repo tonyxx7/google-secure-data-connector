@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # * Copyright 2008 Google Inc.
 # *
@@ -34,8 +35,9 @@ case ${APACHEVERSION} in
   2.0 )
     echo ${APACHEVERSION} ;;
   * )
-    echo Apache version not correct - must be 2.0 or 2.2
-    exit 1 ;;
+    echo Apache version not correct or could not be determined - must be 2.0 or 2.2
+    echo Try running configure_apache.sh manually.
+    exit 0 ;;
 esac
 
 if [ -z ${APACHECTL} ]; then

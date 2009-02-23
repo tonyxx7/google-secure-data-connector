@@ -152,7 +152,6 @@ Build File for Secure Data Connector client and reference server.
           config/apache/*,
           COPYING,
           CHANGE_LOG,
-          *-dist,
 	  build/agent.jar,
           build/protocol.jar,
           third-party/jsocks/jsocks.jar,

@@ -299,16 +299,26 @@ public class ResourceRuleUtil {
    * @param domain the domain the above user belongs to
    * @param clientId the clientId this resource is attached to
    * @param port the port HealthzRequestHandler is listening on
-   * @return the healthz ResourceRule created
+   * @param healthzGadgetUsers the users who are allowed access to the healthz gadget
+   * @return the list of system resources created
    */
   public List<ResourceRule> createSystemRules(String user, String domain, String clientId, 
-      int port) {
+      int port, String healthzGadgetUsers) {
     List<ResourceRule> systemRules = new ArrayList<ResourceRule>();
     int nextRuleNum = Integer.MAX_VALUE;
     
+    // if the input param healthzGadgetUsers is not null, add the input user to the list of users
+    String[] allowedEntities;
+    String implicitUser = user + "@" + domain;
+    if (healthzGadgetUsers != null) {
+      allowedEntities = (healthzGadgetUsers + "," + implicitUser).split(",");
+    } else {
+      allowedEntities = new String[] {implicitUser};
+    }
+    
     // create healthz rule
     ResourceRule healthzRule = new ResourceRule();
-    healthzRule.setAllowedEntities(new String[] {user + "@" + domain});
+    healthzRule.setAllowedEntities(allowedEntities);
     healthzRule.setClientId(clientId);
     // assign name of Integer.MAX_VALUE
     healthzRule.setRuleNum(nextRuleNum--);
@@ -318,10 +328,11 @@ public class ResourceRuleUtil {
     
     // create rule to let users access healthcheck feeds
     ResourceRule feedAccessRule = new ResourceRule();
-    feedAccessRule.setAllowedEntities(new String[] {user + "@" + domain});
+    feedAccessRule.setAllowedEntities(allowedEntities);
     feedAccessRule.setClientId("all");
     feedAccessRule.setRuleNum(nextRuleNum--);
-    feedAccessRule.setPattern("http://www.google.com/a/feeds/server/g/domain/" + domain + "/.*");
+    feedAccessRule.setPattern("http://www.google.com/a/feeds/server/g/domain/" + domain 
+        + "/HealthCheck.*");
     systemRules.add(feedAccessRule);
     
     return systemRules;

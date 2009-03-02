@@ -314,4 +314,20 @@ public class ResourceRuleUtil {
         port + "/" + clientId + "/__SDCINTERNAL__/healthz");
     return healthzRule;
   }
+  
+  /**
+   * creates resource rules to allow access to healthcheck feeds to the given user
+   * 
+   * @param user the userid who should be allowed to access this resource
+   * @param domain the domain the above user belongs to
+   * @return the healthcheck feed access ResourceRule created
+   */
+  public ResourceRule createHealthCheckFeedAccessRule(String user, String domain) {
+    ResourceRule feedAccessRule = new ResourceRule();
+    feedAccessRule.setAllowedEntities(new String[] {user + "@" + domain});
+    feedAccessRule.setClientId("all");
+    feedAccessRule.setRuleNum(Integer.MAX_VALUE - 1);
+    feedAccessRule.setPattern("http://www.google.com/a/feeds/server/g/domain/" + domain + "/.*");
+    return feedAccessRule;
+  }
 }

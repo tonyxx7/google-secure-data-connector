@@ -131,6 +131,11 @@ public class ClientGuiceModule extends AbstractModule {
       resourceRules.add(resourceRuleUtil.createHealthzRule(localConf.getUser(),
           localConf.getDomain(), localConf.getClientId(), healthzRequestHandler.getPort()));
       
+      // Add rules to allow access to healthcheck feeds
+      LOG.info("Adding healthcheck feeds access rule");
+      resourceRules.add(resourceRuleUtil.createHealthCheckFeedAccessRule(localConf.getUser(),
+          localConf.getDomain()));
+      
       // Validate Resource Rules
       ResourceRuleValidator resourceRuleValidator = new ResourceRuleValidator();
       resourceRuleValidator.validate(resourceRules);

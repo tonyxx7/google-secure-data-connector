@@ -290,13 +290,10 @@ public class ResourceRuleUtil {
   }
   
   /**
-   * creates a healthz resource rule by for the given clientId with allowed entity being the given
-   * user + domain. 
+   * creates the following system resource rules
    * 
-   * healthz rule looks like this
-   *    http://localhost:portnum/<clientId>/__SDCINTERNAL__/healthz
-   *       clientId helps make url unique if two clients in the same domain 
-   *       start the HealthzRequest service on the same (ephemeral) portnum.
+   * 1. healthz rule:  http://localhost:portnum/<clientId>/__SDCINTERNAL__/healthz
+   * 2. rules to allow access to healthcheck feeds
    * 
    * @param user the userid who should be allowed to access this resource
    * @param domain the domain the above user belongs to
@@ -304,30 +301,29 @@ public class ResourceRuleUtil {
    * @param port the port HealthzRequestHandler is listening on
    * @return the healthz ResourceRule created
    */
-  public ResourceRule createHealthzRule(String user, String domain, String clientId, int port) {
+  public List<ResourceRule> createSystemRules(String user, String domain, String clientId, 
+      int port) {
+    List<ResourceRule> systemRules = new ArrayList<ResourceRule>();
+    int nextRuleNum = Integer.MAX_VALUE;
+    
+    // create healthz rule
     ResourceRule healthzRule = new ResourceRule();
     healthzRule.setAllowedEntities(new String[] {user + "@" + domain});
     healthzRule.setClientId(clientId);
     // assign name of Integer.MAX_VALUE
-    healthzRule.setRuleNum(Integer.MAX_VALUE);
+    healthzRule.setRuleNum(nextRuleNum--);
     healthzRule.setPattern(ResourceRule.HTTPID + "localhost:" + 
-        port + "/" + clientId + "/__SDCINTERNAL__/healthz");
-    return healthzRule;
-  }
-  
-  /**
-   * creates resource rules to allow access to healthcheck feeds to the given user
-   * 
-   * @param user the userid who should be allowed to access this resource
-   * @param domain the domain the above user belongs to
-   * @return the healthcheck feed access ResourceRule created
-   */
-  public ResourceRule createHealthCheckFeedAccessRule(String user, String domain) {
+        port + "/" + clientId + "/__SDCINTERNAL__/healthz" + ".*");
+    systemRules.add(healthzRule);
+    
+    // create rule to let users access healthcheck feeds
     ResourceRule feedAccessRule = new ResourceRule();
     feedAccessRule.setAllowedEntities(new String[] {user + "@" + domain});
     feedAccessRule.setClientId("all");
-    feedAccessRule.setRuleNum(Integer.MAX_VALUE - 1);
+    feedAccessRule.setRuleNum(nextRuleNum--);
     feedAccessRule.setPattern("http://www.google.com/a/feeds/server/g/domain/" + domain + "/.*");
-    return feedAccessRule;
+    systemRules.add(feedAccessRule);
+    
+    return systemRules;
   }
 }

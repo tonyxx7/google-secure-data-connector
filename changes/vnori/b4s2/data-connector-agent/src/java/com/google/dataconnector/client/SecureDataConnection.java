@@ -122,12 +122,12 @@ public class SecureDataConnection {
     // login to SDC server
     AuthRequest authRequest = clientRegistrationUtil.authorize(clientSocket, localConf);
     
+    // register the resource rules
+    clientRegistrationUtil.register(clientSocket, authRequest,  resourceRules);
+
     // start apache and jsocks
     apacheStarter.startApacheHttpd();
     jsocksStarter.startJsocksProxy();
-    
-    // register the resource rules
-    clientRegistrationUtil.register(clientSocket, authRequest,  resourceRules);
 
     /*
      * startup is successful. lets start the port forwarding using SSH.

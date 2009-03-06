@@ -137,7 +137,7 @@ public class ResourceRuleValidator {
   public void validate(ResourceRule resourceRule) throws ResourceException {
     
     // ruleNum
-    if (resourceRule.getRuleNum() < 0) {
+    if (resourceRule.getRuleNum() <= 0) {
       throw new ResourceException("Resource " + resourceRule.getPattern() + 
           " must have <ruleNum/> greater than 0.");
     }
@@ -198,7 +198,7 @@ public class ResourceRuleValidator {
     if (!pattern.startsWith(ResourceRule.HTTPID) && 
         !pattern.startsWith(ResourceRule.HTTPSID) && 
         !pattern.startsWith(ResourceRule.SOCKETID)) {
-      throwResourceException(ruleNum, " Invalid pattern, missing identifier: " + pattern);
+      throwResourceException(ruleNum, " Invalid pattern: " + pattern);
     }
     
     //  pattern type

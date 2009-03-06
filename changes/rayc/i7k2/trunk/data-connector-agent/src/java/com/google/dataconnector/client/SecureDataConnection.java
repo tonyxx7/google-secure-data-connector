@@ -18,7 +18,6 @@ package com.google.dataconnector.client;
 
 import com.google.dataconnector.registration.v2.AuthRequest;
 import com.google.dataconnector.registration.v2.ResourceRule;
-import com.google.dataconnector.registration.v2.ResourceRuleUtil;
 import com.google.dataconnector.util.ApacheSetupException;
 import com.google.dataconnector.util.ConnectionException;
 import com.google.dataconnector.util.LocalConf;
@@ -73,7 +72,6 @@ public class SecureDataConnection {
   private ClientRegistrationUtil clientRegistrationUtil;
   private JsocksStarter jsocksStarter;
   private ApacheStarter apacheStarter;
-  private ResourceRuleUtil resourceRuleUtil;
 
   /**
    * Sets up a Secure Data connection to a Secure Link server with the supplied configuration.
@@ -85,15 +83,13 @@ public class SecureDataConnection {
   @Inject
   public SecureDataConnection(LocalConf localConf, List<ResourceRule> resourceRules,
       SSLSocketFactory sslSocketFactory, ClientRegistrationUtil clientRegistrationUtil,
-      ApacheStarter apacheStarter, JsocksStarter jsocksStarter, 
-      ResourceRuleUtil resourceRuleUtil) {
+      ApacheStarter apacheStarter, JsocksStarter jsocksStarter) {
     this.localConf = localConf;
     this.resourceRules = resourceRules;
     this.sslSocketFactory = sslSocketFactory;
     this.clientRegistrationUtil = clientRegistrationUtil;
     this.apacheStarter = apacheStarter;
     this.jsocksStarter = jsocksStarter;
-    this.resourceRuleUtil = resourceRuleUtil;
   }
 
   /**
@@ -129,12 +125,8 @@ public class SecureDataConnection {
     // register the resource rules
     clientRegistrationUtil.register(clientSocket, authRequest,  resourceRules);
 
-    // start apache only if we have URLEXACT rules.
-    if (resourceRuleUtil.hasUrlExactRules(resourceRules)) {
-      apacheStarter.startApacheHttpd();
-    }
-    
-    // start jsocks.
+    // start apache and jsocks
+    apacheStarter.startApacheHttpd();
     jsocksStarter.startJsocksProxy();
 
     /*

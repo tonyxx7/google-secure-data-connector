@@ -313,30 +313,7 @@ public class ResourceRuleUtil {
 	  "/__SDCINTERNAL__/healthz" + ".*");
     healthzRule.setPatternType(ResourceRule.URLEXACT);
     systemRules.add(healthzRule);
-//    
-//    // create rule to let users access healthcheck feeds
-//    ResourceRule feedAccessRule = new ResourceRule();
-//    feedAccessRule.setAllowedEntities(allowedEntities);
-//    feedAccessRule.setClientId("all");
-//    feedAccessRule.setRuleNum(nextRuleNum--);
-//    feedAccessRule.setPattern("http://www.google.com/a/feeds/server/g/domain/" + domain 
-//        + "/HealthCheck.*");
-//    systemRules.add(feedAccessRule);
-    
     return systemRules;
-  }
-  
-  /**
-   * Returns true if any configured resource rule has pattern type of URLEXACT.
-   */
-  public boolean hasUrlExactRules(List<ResourceRule> resourceRules) {
-    
-    for (ResourceRule resourceRule : resourceRules) {
-      if (resourceRule.getPatternType().equals(ResourceRule.URLEXACT)) {
-        return true;
-      }
-    }
-    return false;
   }
   
   /**

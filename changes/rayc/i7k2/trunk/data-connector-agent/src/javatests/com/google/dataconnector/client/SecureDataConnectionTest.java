@@ -17,7 +17,6 @@
 package com.google.dataconnector.client;
 
 import com.google.dataconnector.client.testing.FakeLocalConfGenerator;
-import com.google.dataconnector.registration.v2.ResourceRuleUtil;
 import com.google.dataconnector.util.ApacheSetupException;
 import com.google.dataconnector.util.ConnectionException;
 import com.google.dataconnector.util.LocalConf;
@@ -48,14 +47,11 @@ public class SecureDataConnectionTest extends TestCase {
   private LocalConf fakeLocalConf;
   private JsocksStarter mockJsocksStarter;
   private ApacheStarter mockApacheStarter;
-  private ResourceRuleUtil resourceRuleUtil;
   
   @Override
   protected void setUp() throws Exception {
     // TODO Auto-generated method stub
     super.setUp();
-    // SecureDataConnection only uses hasUrlExactRules which does not make use of deps
-    resourceRuleUtil = new ResourceRuleUtil(null, null, null, null);
     fakeLocalConf =  new FakeLocalConfGenerator().getFakeLocalConf();
   }
   @Override
@@ -107,7 +103,7 @@ public class SecureDataConnectionTest extends TestCase {
     
     // Execute
     SecureDataConnection sdc = new SecureDataConnection(fakeLocalConf, null, null, null,
-        mockApacheStarter, mockJsocksStarter, resourceRuleUtil);
+        mockApacheStarter, mockJsocksStarter); 
     sdc.verifySubjectInCertificate(mockSession);
     
     // Verify
@@ -123,7 +119,7 @@ public class SecureDataConnectionTest extends TestCase {
     
     // Execute
     SecureDataConnection sdc = new SecureDataConnection(fakeLocalConf, null, null, null,
-        mockApacheStarter, mockJsocksStarter, resourceRuleUtil); 
+        mockApacheStarter, mockJsocksStarter); 
     try {
       sdc.verifySubjectInCertificate(mockSession);
     } catch (ConnectionException e) {
@@ -142,7 +138,7 @@ public class SecureDataConnectionTest extends TestCase {
     EasyMock.replay(mockSession);
     
     SecureDataConnection sdc = new SecureDataConnection(null, null, null, null,
-        mockApacheStarter, mockJsocksStarter, resourceRuleUtil); 
+        mockApacheStarter, mockJsocksStarter); 
     try {
       sdc.verifySubjectInCertificate(mockSession);
     } catch (ConnectionException e) {

@@ -170,8 +170,8 @@ public class ClientRegistrationUtil {
           new JSONObject(jsonResponseString));
 
       if (regResponse.getStatus() != RegistrationResponse.Status.OK) {
-        throw new RegistrationException("Registration Failed: " + regResponse.getStatus() + 
-            " reason: " + (regResponse.getErrorMsg() != null ? regResponse.getErrorMsg() : "none"));
+        throw new RegistrationException("Registration Failed" + regResponse.getStatus() + 
+            (regResponse.getErrorMsg() != null ? ": " + regResponse.getErrorMsg() : "."));
       }
       LOG.info("Registration successful");
     } catch (JSONException e) {

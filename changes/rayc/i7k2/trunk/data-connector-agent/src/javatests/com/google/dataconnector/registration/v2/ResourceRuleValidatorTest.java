@@ -180,7 +180,7 @@ public class ResourceRuleValidatorTest extends TestCase {
     }
     
     // Reset test.
-    runtimeHttpResourceRule.setRuleNum(0);
+    runtimeHttpResourceRule.setRuleNum(1);
     String[] allowedEntitiesSpace = { "has a space" };   
     runtimeHttpResourceRule.setAllowedEntities(allowedEntitiesSpace);
     try {

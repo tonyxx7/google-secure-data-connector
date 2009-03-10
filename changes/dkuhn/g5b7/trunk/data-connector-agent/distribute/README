@@ -1,4 +1,4 @@
-nt build.xml in this directory allows one to build the different
+The ant build.xml in this directory allows one to build the different
 packages for the Google Secure Data Connector. Both the DEB/RPM builds 
 use the --lsb as the default prefix.
 
@@ -7,3 +7,5 @@ To build all packages or for a product release run: ant all
 To build a specific package use the following:
 DEB: ant deb
 RPM: ant rpm
+
+To clean all configure and distro files run: ant clean-all

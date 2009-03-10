@@ -1,0 +1,15 @@
+#!/bin/sh
+
+set -e
+
+PKG_NAME="google-secure-data-connector"
+
+installinit_error() {
+  exit $?
+}
+
+echo $PKG_NAME --- package name
+
+if [ "$1" = "purge" ]; then
+  deluser --system --quiet woodstock || true
+fi

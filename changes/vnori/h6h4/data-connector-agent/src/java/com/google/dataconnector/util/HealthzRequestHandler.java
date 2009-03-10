@@ -101,7 +101,7 @@ public class HealthzRequestHandler extends Thread {
         out.print("ok\r\n");
         out.flush();
         out.close();
-        LOG.info("processed healthz request");
+        LOG.debug("processed healthz request");
       }
     } catch (IOException e) {
       LOG.warn("Healthz service IOException", e);

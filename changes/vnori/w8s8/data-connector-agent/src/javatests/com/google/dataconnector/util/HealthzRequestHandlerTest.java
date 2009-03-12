@@ -63,7 +63,7 @@ public class HealthzRequestHandlerTest extends TestCase {
     try {
       testHealthzRequestHandler.run();
       String strOut = ((ByteArrayOutputStream) os).toString("utf8");
-      assertTrue(strOut.startsWith("ok"));
+      assertTrue(strOut.contains("ok"));
     } catch (IOException e) {
       if (!e.getMessage().contains("test done")) {
         fail(e.getMessage());

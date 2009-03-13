@@ -14,7 +14,6 @@
  */ 
 package com.google.dataconnector.client;
 
-import com.google.dataconnector.registration.v2.RegistrationV2GuiceModule;
 import com.google.dataconnector.registration.v2.ResourceRule;
 import com.google.dataconnector.util.ClientGuiceModule;
 import com.google.dataconnector.util.ConnectionException;
@@ -72,7 +71,7 @@ public class Client {
   }
   
   /**
-   * Starts three components in separate threads.
+   * Starts 2 components in separate threads.
    * 
    * @throws IOException if any socket communication issues occur.
    * @throws ConnectionException if login is incorrect or other Woodstock connection errors.
@@ -100,8 +99,7 @@ public class Client {
   public static void main(String[] args) {
     // Bootstrap logging system
     PropertyConfigurator.configure(getBootstrapLoggingProperties());
-    final Injector injector = Guice.createInjector(new ClientGuiceModule(args), 
-        new RegistrationV2GuiceModule());
+    final Injector injector = Guice.createInjector(new ClientGuiceModule(args));
     
     try {
       // start the healthz service before we do anything else.

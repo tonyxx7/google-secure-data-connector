@@ -35,7 +35,6 @@ public class FakeResourceRuleConfig {
   public static final String HTTP_PATTERN = "http://www.example.com";
   public static final int SOCKET_RULE_NUM = 2;
   public static final String SOCKET_PATTERN = "socket://128.195.131";
-  public static final String HTTP_PROXY_PORT = "10000";
   public static final String SOCKS_SERVER_PORT = "1080";
   public static final String SECRET_KEY = "23423432432";
   public static final int URL_EXACT_RULE_NUM = 3;
@@ -67,7 +66,6 @@ public class FakeResourceRuleConfig {
     runtimeHttpResourceRule.setRuleNum(HTTP_RULE_NUM);
     runtimeHttpResourceRule.setSecretKey(Long.valueOf(SECRET_KEY));
     runtimeHttpResourceRule.setSocksServerPort(Integer.valueOf(SOCKS_SERVER_PORT));
-    runtimeHttpResourceRule.setHttpProxyPort(Integer.valueOf(HTTP_PROXY_PORT));
     runtimeHttpResourceRule.setAppIds(APPID);
     
     runtimeSocketResourceRule = getBaseResourceRule();
@@ -83,7 +81,6 @@ public class FakeResourceRuleConfig {
     runtimeUrlExactResourceRule.setRuleNum(URL_EXACT_RULE_NUM);
     runtimeUrlExactResourceRule.setSecretKey(Long.valueOf(SECRET_KEY));
     runtimeUrlExactResourceRule.setSocksServerPort(Integer.valueOf(SOCKS_SERVER_PORT));
-    runtimeUrlExactResourceRule.setHttpProxyPort(Integer.valueOf(HTTP_PROXY_PORT));
     
     runtimeHttpsResourceRule = getBaseResourceRule();
     runtimeHttpsResourceRule.setPattern(HTTPS_PATTERN);
@@ -229,7 +226,6 @@ public class FakeResourceRuleConfig {
     "  <appIds repeatable='true'>" + APPID[1] + "</appIds>\n" +
     "  <pattern>" + HTTP_PATTERN + "</pattern>\n" +
     "  <patternType>" + ResourceRule.HOSTPORT + "</patternType>\n" +
-    "  <httpProxyPort>" + HTTP_PROXY_PORT + "</httpProxyPort>\n" +
     "  <socksServerPort>" + SOCKS_SERVER_PORT + "</socksServerPort>\n" +
     "  <secretKey>" + SECRET_KEY +"</secretKey>\n" +
     "</entity>\n" +
@@ -254,7 +250,6 @@ public class FakeResourceRuleConfig {
     "  <appIds repeatable='true'>" + APPID[1] + "</appIds>\n" +
     "  <pattern>" + URL_EXACT_PATTERN + "</pattern>\n" +
     "  <patternType>" + ResourceRule.URLEXACT + "</patternType>\n" +
-    "  <httpProxyPort>" + HTTP_PROXY_PORT + "</httpProxyPort>\n" +
     "  <socksServerPort>" + SOCKS_SERVER_PORT + "</socksServerPort>\n" +
     "  <secretKey>" + SECRET_KEY +"</secretKey>\n" +
     "</entity>\n" +
@@ -267,7 +262,6 @@ public class FakeResourceRuleConfig {
     "  <appIds repeatable='true'>" + APPID[1] + "</appIds>\n" +
     "  <pattern>" + HTTPS_PATTERN + "</pattern>\n" +
     "  <patternType>" + ResourceRule.HOSTPORT + "</patternType>\n" +
-    "  <httpProxyPort>" + HTTP_PROXY_PORT + "</httpProxyPort>\n" +
     "  <socksServerPort>" + SOCKS_SERVER_PORT + "</socksServerPort>\n" +
     "  <secretKey>" + SECRET_KEY +"</secretKey>\n" +
     "</entity>\n" +
@@ -282,7 +276,6 @@ public class FakeResourceRuleConfig {
     "  <appIds repeatable='true'>" + APPID[0] + "</appIds>\n" +
     "  <appIds repeatable='true'>" + APPID[1] + "</appIds>\n" +
     "  <pattern>" + HTTP_PATTERN + "</pattern>\n" +
-    "  <httpProxyPort>" + HTTP_PROXY_PORT + "</httpProxyPort>\n" +
     "  <socksServerPort>" + SOCKS_SERVER_PORT + "</socksServerPort>\n" +
     "  <secretKey>" + SECRET_KEY +"</secretKey>\n" +
     "</entity>\n";

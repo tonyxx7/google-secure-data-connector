@@ -62,8 +62,6 @@ public class LocalConf {
   private String clientId;
   @Flag(help = "Location of sshd binary to use for SDC protocol multiplexor")
   private String sshd;
-  @Flag(help = "Default bind host is localhost, One should not have to change this.")
-  private String httpProxyBindHost = DEFAULT_BIND_HOST;
   @Flag(help = "Port to bind socks firewall port to.")
   private Integer socksServerPort;
   @Flag(help = "Turn on debug logging.")
@@ -178,14 +176,6 @@ public class LocalConf {
 
   public void setSshd(String sshd) {
     this.sshd = sshd;
-  }
-
-  public String getHttpProxyBindHost() {
-    return httpProxyBindHost;
-  }
-
-  public void setHttpProxyBindHost(String httpProxyBindHost) {
-    this.httpProxyBindHost = httpProxyBindHost;
   }
 
   public Integer getSocksServerPort() {

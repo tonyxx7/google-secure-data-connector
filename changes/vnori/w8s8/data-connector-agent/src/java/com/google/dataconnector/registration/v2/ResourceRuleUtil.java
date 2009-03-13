@@ -205,9 +205,6 @@ public class ResourceRuleUtil {
    * @return a hostname.
    */
   public String getHostnameFromRule(ResourceRule resourceRule) {
-//    if (!resourceRule.getPattern().startsWith(ResourceRule.HTTPSID)) {
-//      throw new RuntimeException("Can only invoke on HTTPS rules");
-//    }
     try {
       URL url = new URL(resourceRule.getPattern());
       return url.getHost();
@@ -223,9 +220,6 @@ public class ResourceRuleUtil {
    * @return a port.
    */
   public Integer getPortFromRule(ResourceRule resourceRule) {
-//    if (!resourceRule.getPattern().startsWith(ResourceRule.HTTPSID)) {
-//      throw new RuntimeException("Can only invoke on HTTPS rules");
-//    }
     try {
       URL url = new URL(resourceRule.getPattern());
       int port = url.getPort();

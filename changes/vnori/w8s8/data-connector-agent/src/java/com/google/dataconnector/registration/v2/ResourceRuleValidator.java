@@ -189,7 +189,6 @@ public class ResourceRuleValidator {
     }
     
     //  pattern type
-    
     String patternType = resourceRule.getPatternType();
     if (patternType == null) {
       throwResourceException(ruleNum, " 'patternType' missing for " + pattern);

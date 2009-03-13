@@ -161,15 +161,6 @@ public class LocalConfValidator {
       errors.append("'sshd' required\n");
     }
     
-    // httpProxyBindHost
-    if (localConf.getHttpProxyBindHost() != null) {
-      if (localConf.getHttpProxyBindHost().matches("\\s")) {
-        errors.append("'httpProxyBindHost' contains spaces\n");
-      }
-    } else {
-      errors.append("'httpProxyBindHost' required\n");
-    }
-    
     // socksServerPort 
     Integer socksServerPort = localConf.getSocksServerPort();
     if (socksServerPort != null) {

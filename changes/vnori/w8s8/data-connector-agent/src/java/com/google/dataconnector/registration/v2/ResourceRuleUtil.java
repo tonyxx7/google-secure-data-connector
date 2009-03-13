@@ -14,6 +14,7 @@
  */ 
 package com.google.dataconnector.registration.v2;
 
+import com.google.dataconnector.registration.v2.ResourceRule.AppTag;
 import com.google.feedserver.util.BeanUtil;
 import com.google.feedserver.util.XmlUtil;
 import com.google.inject.Inject;
@@ -265,7 +266,12 @@ public class ResourceRuleUtil {
     ResourceRule healthzRule = new ResourceRule();
     healthzRule.setAllowedEntities(allowedEntities);
     healthzRule.setClientId(clientId);
-    healthzRule.setAppIds(new String[] { ".*" });
+    AppTag app = new AppTag();
+    app.setContainer("System");  // Google internal.
+    app.setAppId(".*");
+    AppTag[] array = new AppTag[1];
+    array[0] = app;
+    healthzRule.setApps(array);
     // assign name of Integer.MAX_VALUE
     healthzRule.setRuleNum(nextRuleNum--);
     healthzRule.setPattern(ResourceRule.HTTPID + "localhost:" + port + "/" + clientId + 

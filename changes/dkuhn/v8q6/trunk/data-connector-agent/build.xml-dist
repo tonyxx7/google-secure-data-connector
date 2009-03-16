@@ -64,7 +64,7 @@ Build File for Secure Data Connector client and reference server.
     <delete file="config/openssh/start_sshd.sh"/>
     <delete file="config/openssh/sshd_config"/>
     <delete file="config/openssh/configure_sshdconf.sh"/>
-    <delete dire="${build}"/>
+    <delete dir="${build}"/>
   </target>
 
   <target name="compile" depends="init" >

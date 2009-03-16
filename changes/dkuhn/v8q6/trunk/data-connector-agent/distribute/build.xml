@@ -124,7 +124,6 @@ Build File for Secure Data Connector client and reference server.
         inheritAll="false"/>
    </target>
 
-
   <target name="source-distro" depends="clean,timestamp">
     <mkdir dir="${dist}" />
     <tar 

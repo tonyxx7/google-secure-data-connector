@@ -72,7 +72,7 @@ mv $RPM_BUILD_ROOT/opt/%{name}/build/agent.jar $RPM_BUILD_ROOT/opt/%{name}/lib
 mv $RPM_BUILD_ROOT/opt/%{name}/build/protocol.jar $RPM_BUILD_ROOT/opt/%{name}/lib
 rm -rf $RPM_BUILD_ROOT/opt/%{name}/build
 
-# Cleanup and Relocate third-party path
+# Relocate third-party path
 mv $RPM_BUILD_ROOT/opt/%{name}/third-party $RPM_BUILD_ROOT/opt/%{name}/lib
 
 

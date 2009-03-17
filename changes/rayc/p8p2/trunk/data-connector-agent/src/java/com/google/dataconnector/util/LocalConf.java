@@ -70,9 +70,10 @@ public class LocalConf {
   private Boolean allowUnverifiedCertificates = false;
   @Flag(help = "the users who can access the healthcheck gadget")
   private String healthCheckGadgetUsers;
- 
+  @Flag(help = "log4j properties File")
+  private String log4jPropertiesFile;
+  
   // Config File Only
-  private String logProperties;
   private String socksProperties = 
       "iddleTimeout = 60000\n" + // 10 minutes
       "acceptTimeout = 60000\n" + // 1 minutes
@@ -186,14 +187,6 @@ public class LocalConf {
     this.socksServerPort = socksServerPort;
   }
 
-  public String getLogProperties() {
-    return logProperties;
-  }
-
-  public void setLogProperties(String logProperties) {
-    this.logProperties = logProperties;
-  }
-
   public String getSocksProperties() {
     return socksProperties;
   }
@@ -232,5 +225,13 @@ public class LocalConf {
 
   public void setHealthCheckGadgetUsers(String healthCheckGadgetUsers) {
     this.healthCheckGadgetUsers = healthCheckGadgetUsers;
+  }
+
+  public String getLog4jPropertiesFile() {
+    return log4jPropertiesFile;
+  }
+
+  public void setLog4jPropertiesFile(String log4jPropertiesFile) {
+    this.log4jPropertiesFile = log4jPropertiesFile;
   }
 }

@@ -42,18 +42,18 @@
   <entity repeatable="true">
     <ruleNum>3</ruleNum>
     <clientId>all</clientId>
-    <allDomainViewers>true</allDomainViewers>
+    <allowDomainViewers>true</allowDomainViewers>
     <apps repeatable="true">
       <container>Gadgets</container>
-      <allowAnyAppId>true<allowAnyAppId>
+      <allowAnyAppId>true</allowAnyAppId>
     </apps>
     <apps repeatable="true">
       <container>Spreadsheets</container>
-       <allowAnyAppId>true</ allowAnyAppId>
+       <allowAnyAppId>true</allowAnyAppId>
     </apps>
     <apps repeatable="true">
       <container>appEngine</container>
-      <allowAnyAppId>true</ allowAnyAppId>
+      <allowAnyAppId>true</allowAnyAppId>
     </apps>
     <pattern>socket://0.0.0.0:22</pattern>
     <patternType>HOSTPORT</patternType>

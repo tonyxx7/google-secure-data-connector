@@ -10,7 +10,7 @@
     </apps>
     <apps repeatable="true">
       <container>Spreadsheets</container>
-       <allowAnyAppId>true</ allowAnyAppId>
+       <allowAnyAppId>true</allowAnyAppId>
     </apps>
     <pattern>http://internal.corp.example.com/</pattern>
     <patternType>HOSTPORT</patternType>
@@ -26,7 +26,7 @@
     </apps>
     <apps repeatable="true">
       <container>Spreadsheets</container>
-      <appId>r3HAKrIsC_kWuE3MSmwm1ag/appId>
+      <appId>r3HAKrIsC_kWuE3MSmwm1ag</appId>
     </apps>
     <apps repeatable="true">
       <container>Gadgets</container>

@@ -33,33 +33,43 @@ public class ResourceRule implements Comparable<ResourceRule> {
   @Deprecated
   public static final String REGEX = "REGEX";
   
-  private int ruleNum;
-  // this exists for backward compatibility. clients with ruleNum field will not have this field
+  @Deprecated
   private String name; 
+  private int ruleNum;
   
   @Deprecated
   private String clientId;
   private String agentId;
+  
   @Deprecated
   private String[] allowedEntities;
   private String[] viewerEmail;
+  
   private boolean allowDomainViewers;
+  
   private AppTag[] apps;
+  
   @Deprecated
   private String pattern;
   private String url;
+  
   @Deprecated
   private String patternType;
   private String urlMatch;
+  
   private Integer httpProxyPort;
+  
   private Integer socksServerPort;
+  
   private Long secretKey;
   
   // getters and setters
+  @Deprecated
   public String getName() {
     return name;
   }
 
+  @Deprecated
   public void setName(String name) {
     this.name = name;
   }
@@ -72,14 +82,6 @@ public class ResourceRule implements Comparable<ResourceRule> {
     this.ruleNum = ruleNum;
   }
 
-  public String getAgentId() {
-    return agentId;
-  }
-
-  public void setAgentId(String agentId) {
-    this.agentId = agentId;
-  }
-
   @Deprecated
   public String getClientId() {
     return agentId;
@@ -90,14 +92,14 @@ public class ResourceRule implements Comparable<ResourceRule> {
     this.agentId = clientId;
   }
 
-  public boolean getAllowDomainViewers() {
-    return allowDomainViewers;
+  public String getAgentId() {
+    return agentId;
   }
 
-  public void setAllowDomainViewers(boolean allowDomainViewers) {
-    this.allowDomainViewers = allowDomainViewers;
+  public void setAgentId(String agentId) {
+    this.agentId = agentId;
   }
-  
+
   @Deprecated
   public String[] getAllowedEntities() {
     return viewerEmail;
@@ -116,12 +118,30 @@ public class ResourceRule implements Comparable<ResourceRule> {
     this.viewerEmail = viewerEmail;
   }
 
+  public boolean getAllowDomainViewers() {
+    return allowDomainViewers;
+  }
+
+  public void setAllowDomainViewers(boolean allowDomainViewers) {
+    this.allowDomainViewers = allowDomainViewers;
+  }
+  
   public AppTag[] getApps() {
     return apps;
   }
 
   public void setApps(AppTag[] apps) {
     this.apps = apps;
+  }
+  
+  @Deprecated
+  public String getPattern() {
+    return url;
+  }
+
+  @Deprecated
+  public void setPattern(String pattern) {
+    this.url = pattern;
   }
 
   public String getUrl() {
@@ -133,13 +153,13 @@ public class ResourceRule implements Comparable<ResourceRule> {
   }
 
   @Deprecated
-  public String getPattern() {
-    return url;
+  public String getPatternType() {
+    return urlMatch;
   }
-
+  
   @Deprecated
-  public void setPattern(String pattern) {
-    this.url = pattern;
+  public void setPatternType(String patternType) {
+    this.urlMatch = patternType;
   }
 
   public String getUrlMatch() {
@@ -148,16 +168,6 @@ public class ResourceRule implements Comparable<ResourceRule> {
 
   public void setUrlMatch(String urlMatch) {
     this.urlMatch = urlMatch;
-  }
-
-  @Deprecated
-  public String getPatternType() {
-    return urlMatch;
-  }
-  
-  @Deprecated
-  public void setPatternType(String patternType) {
-    this.urlMatch = patternType;
   }
 
   public Integer getHttpProxyPort() {
@@ -209,6 +219,7 @@ public class ResourceRule implements Comparable<ResourceRule> {
     private boolean allowAnyAppId;
     private boolean allowAnyPrivateGadget;
     
+    @Deprecated
     public String getContainer() {
       return service;
     }

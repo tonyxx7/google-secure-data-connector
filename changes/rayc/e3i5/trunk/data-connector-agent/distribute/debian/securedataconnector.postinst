@@ -1,0 +1,93 @@
+#!/bin/sh
+#
+# Copyright 2008 Google Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#   
+
+set -e
+
+PKG_NAME="google-secure-data-connector"
+WOODSTOCK_HOME="/etc/opt/$PKG_NAME/woodstock-user"
+LOGDIR="/var/opt/$PKG_NAME/log"
+RULES_DIR="/var/opt/$PKG_NAME"
+CLIENT_USER=securedataconnector
+CLIENT_GROUP=securedataconnector
+
+if [ "$1" = "configure" ]; then
+  # Set up the user to access the client
+  adduser --system --quiet --group --home $WOODSTOCK_HOME --no-create-home \
+    woodstock || :
+  adduser --system --quiet --group --home /home/$CLIENT_USER --no-create-home \
+   --shell /bin/bash $CLIENT_USER || :
+
+  # Set up the logfile for $PKG_NAME
+  if [ ! -d $LOGDIR ]; then
+    mkdir -p $LOGDIR
+  fi
+  chown root:$CLIENT_GROUP $LOGDIR
+  chmod 770 $LOGDIR
+  for filename in "$PKG_NAME" "access_log" "error_log"; do
+    logfile="$LOGDIR/$filename"
+    if [ ! -f $logfile ]; then
+      touch $logfile
+    fi
+    chown root:$CLIENT_USER $logfile
+    chmod 660 $logfile
+  done
+
+  chmod 750 /etc/opt/$PKG_NAME
+  chown -R root:$CLIENT_USER /etc/opt/$PKG_NAME
+  chown -R root:$CLIENT_USER /opt/$PKG_NAME
+
+  chown -R root:$CLIENT_GROUP /etc/opt/$PKG_NAME
+  chown -R root:$CLIENT_GROUP /etc/opt/$PKG_NAME/localConfig.xml
+  chown -R root:$CLIENT_GROUP /etc/opt/$PKG_NAME/resourceRules.xml
+  chmod 640 /etc/opt/$PKG_NAME/localConfig.xml
+  chmod 640 /etc/opt/$PKG_NAME/resourceRules.xml 
+
+  chown -R root:root /etc/opt/$PKG_NAME/openssh
+  chmod 600 /etc/opt/$PKG_NAME/openssh/ssh_host_dsa_key
+  chmod 600 /etc/opt/$PKG_NAME/openssh/ssh_host_dsa_key.pub
+  chmod 600 /etc/opt/$PKG_NAME/openssh/ssh_host_rsa_key
+  chmod 600 /etc/opt/$PKG_NAME/openssh/ssh_host_rsa_key.pub
+  chmod 750 /etc/opt/$PKG_NAME/openssh/start_sshd.sh
+  chmod 600 /etc/opt/$PKG_NAME/woodstock-user/.ssh/authorized_keys 
+ 
+  # Configure sshd_config
+  /etc/opt/$PKG_NAME/openssh/configure_sshdconf.sh
+  chmod 600 /etc/opt/$PKG_NAME/openssh/sshd_config
+
+  chown -R $CLIENT_USER:$CLIENT_GROUP /etc/opt/$PKG_NAME/openssh/ssh_host_dsa_key
+  chown -R $CLIENT_USER:$CLIENT_GROUP /etc/opt/$PKG_NAME/openssh/ssh_host_dsa_key.pub
+  chown -R $CLIENT_USER:$CLIENT_GROUP /etc/opt/$PKG_NAME/openssh/ssh_host_rsa_key
+  chown -R $CLIENT_USER:$CLIENT_GROUP /etc/opt/$PKG_NAME/openssh/ssh_host_rsa_key.pub
+  chown -R $CLIENT_USER:$CLIENT_GROUP /etc/opt/$PKG_NAME/openssh/start_sshd.sh 
+  chown -R $CLIENT_USER:$CLIENT_GROUP /etc/opt/$PKG_NAME/openssh/sshd_config
+  chown -R $CLIENT_USER:$CLIENT_GROUP /etc/opt/$PKG_NAME/woodstock-user/.ssh/authorized_keys 
+ 
+
+fi
+
+installinit_error() {
+  exit $?
+}
+
+# if [ -x "/etc/init.d/$PKG_NAME" ]; then
+#  update-rc.d $PKG_NAME defaults 50 15 >/dev/null
+#  if [ -x "`which invoke-rc.d 2>/dev/null`" ]; then
+#    invoke-rc.d $PKG_NAME start || installinit_error
+#  else
+#    /etc/init.d/$PKG_NAME start || installinit_error
+#  fi
+#fi

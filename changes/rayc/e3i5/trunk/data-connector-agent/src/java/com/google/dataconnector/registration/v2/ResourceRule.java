@@ -108,6 +108,14 @@ public class ResourceRule implements Comparable<ResourceRule> {
     this.viewerEmail = allowedEntities;
   }
 
+  public String[] getViewerEmail() {
+    return viewerEmail;
+  }
+
+  public void setViewerEmail(String[] viewerEmail) {
+    this.viewerEmail = viewerEmail;
+  }
+
   public AppTag[] getApps() {
     return apps;
   }
@@ -201,7 +209,6 @@ public class ResourceRule implements Comparable<ResourceRule> {
     private boolean allowAnyAppId;
     private boolean allowAnyPrivateGadget;
     
-    @Deprecated
     public String getContainer() {
       return service;
     }

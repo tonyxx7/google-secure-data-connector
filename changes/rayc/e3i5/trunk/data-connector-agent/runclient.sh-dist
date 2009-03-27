@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Runs client with appropriate class path.
+# Runs agent with appropriate class path.
 
 WOODSTOCK_HOME=_PREFIX_
 WOODSTOCK_LIB=${WOODSTOCK_HOME}/lib
@@ -113,7 +113,7 @@ function migrate {
 
   # Resource Rules
   egrep -q '<feed|<entity|<allowedEntities|<clientId|<pattern|<patternType' \
-      ${local_config_file}
+      ${resource_rules_file}
 
   if [ $? = 0 ]; then
     echo "Migrating ${resource_rules_file}"
@@ -129,7 +129,6 @@ function migrate {
     sed -i ${resource_rules_file} -e 's^patternType>^urlMatch>^g'
   fi
 }
-
 
 if [ ${NOVERIFY} = "false" ]; then 
   # Check current file permissions and refuse to run if they arent correct.

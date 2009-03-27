@@ -149,12 +149,11 @@ public class LocalConfValidator {
     
     // agentId
     if (localConf.getAgentId() != null) {
-      if (!localConf.getAgentId().matches("^[A-z0-9_-]+$")) {
-        errors.append("'clientId' " + localConf.getAgentId() + " not valid.  Only a-z,A-Z,0-9," +
-            "-_ allowed.\n");
+      if (localConf.getAgentId().length() > 200) { 
+        errors.append("'agentId' " + localConf.getAgentId() + " too long.");
       }
     } else {
-      errors.append("'clientId' required\n");
+      errors.append("'agentId' required\n");
     }
     
     // sshd

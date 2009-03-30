@@ -20,8 +20,8 @@
 if [ $UID != 0 ] ; then
  echo You should run this script as root or via sudo
 else
- nohup _PREFIX_/bin/runclient.sh $* >>_VARPREFIX_/log/client 2>&1 &
- echo Please review log _VARPREFIX_/log/client for details
+ nohup _PREFIX_/bin/runclient.sh $* >>_VARPREFIX_/log/agent 2>&1 &
+ echo Please review log _VARPREFIX_/log/agent for details
 fi
 
 

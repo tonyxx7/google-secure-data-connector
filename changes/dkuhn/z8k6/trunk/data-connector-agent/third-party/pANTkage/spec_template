@@ -106,7 +106,7 @@ dd if=/dev/urandom bs=1024 count=1 |passwd --stdin $CLIENT_USER
   fi
   chown root:$CLIENT_GROUP $LOGDIR
   chmod 770 $LOGDIR
-  for filename in "client"; do
+  for filename in "agent"; do
     logfile="$LOGDIR/$filename"
     if [ ! -f $logfile ]; then
       touch $logfile

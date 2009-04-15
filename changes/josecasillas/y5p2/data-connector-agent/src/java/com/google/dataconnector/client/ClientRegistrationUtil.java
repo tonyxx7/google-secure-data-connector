@@ -121,14 +121,11 @@ public class ClientRegistrationUtil {
       AuthResponse.Status status = authResponse.getStatus();
       if(status != AuthResponse.Status.OK) {
         if(status == AuthResponse.Status.ACCESS_DENIED_CAPTCHA_REQUIRED_TO_UNLOCK) {
-          throw new AuthenticationException("Too many retries for " + email + ": " + 
-              authResponse.getStatus() + " - account has been locked. Please " +
-              "unlock it at http://www.google.com/a/" + localConf.getDomain()  + 
-              "/UnlockCaptcha");
+          throw new AuthenticationException(authResponse.getCustomMessage());
         }
         
         throw new AuthenticationException("Authentication Failed for " + email + ": " + 
-            authResponse.getStatus());
+            authResponse.getStatus() + " : " + authResponse.getCustomMessage());
       }
       LOG.info("Login for " + email + " successful");
       return authRequest;

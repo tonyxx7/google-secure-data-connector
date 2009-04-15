@@ -34,8 +34,10 @@ public class AuthResponse {
   }
   
   private static final String STATUS_KEY = "status";
+  private static final String CUSTOM_MESSAGE_KEY = "customMessage";
   
   private Status status;
+  private String customMessage = null;
   
   /**
    * Returns JSON object representing data.
@@ -46,6 +48,9 @@ public class AuthResponse {
   public JSONObject toJson() throws JSONException {
     JSONObject json = new JSONObject();
     json.put(STATUS_KEY, status.toString());
+    if (customMessage != null) {
+      json.put(CUSTOM_MESSAGE_KEY, customMessage);
+    }
     return json;
   }
   
@@ -58,9 +63,11 @@ public class AuthResponse {
   public AuthResponse(final JSONObject json) throws JSONException {
     try {
       this.status = Status.valueOf(json.getString(STATUS_KEY));
+      this.customMessage = json.optString(CUSTOM_MESSAGE_KEY, null);  // Optional.
     } catch (IllegalArgumentException e) {
       throw new JSONException("Invalid status entry: " + json.getString(STATUS_KEY));
     }
+
   }
   
   /**
@@ -79,5 +86,17 @@ public class AuthResponse {
 
   public static String getSTATUS_KEY() {
     return STATUS_KEY;
+  }
+  
+  public void setCustomMessage(String customMessage) {
+    this.customMessage = customMessage;
+  }
+  
+  public String getCustomMessage() {
+    return customMessage;
+  }
+
+  public static String getCUSTOM_MESSAGE_KEY() {
+    return CUSTOM_MESSAGE_KEY;
   }
 }

@@ -94,7 +94,7 @@ public class ClientRegistrationUtilTest extends TestCase {
       clientRegistrationUtil.authorize(getFakeSocket(is, os),
           fakeLocalConfGenerator.getFakeLocalConf());
     } catch (AuthenticationException e) {
-      fail("not supposed to receive exception");
+      fail("not supposed to receive exception " + e);
     }
     
     // Access Denied Case

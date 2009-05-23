@@ -33,7 +33,7 @@ import java.io.InputStream;
  */
 public class InputStreamConnector extends Thread {
   
-  public static Logger LOG = Logger.getLogger(InputStreamConnector.class);
+  private static final Logger LOG = Logger.getLogger(InputStreamConnector.class);
   
   private InputStream inputStream;
   private int connectionId;
@@ -62,7 +62,7 @@ public class InputStreamConnector extends Thread {
                 .setConnectionId(connectionId)
                 .setState(SocketDataInfo.State.CLOSE)
                 .build().toByteString());
-            LOG.debug("Sent closing frame");
+            LOG.trace("Sent closing frame for connection: " + connectionId);
             break;
           }
           frameSender.sendFrame(FrameInfo.Type.SOCKET_DATA, SocketDataInfo.newBuilder()

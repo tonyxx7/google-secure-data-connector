@@ -16,14 +16,12 @@ package com.google.dataconnector.protocol;
 
 import com.google.dataconnector.protocol.InputStreamConnectorTest.MockConnectionRemover;
 import com.google.dataconnector.protocol.proto.SdcFrame.SocketDataInfo;
-import com.google.protobuf.ByteString;
 
 import junit.framework.TestCase;
 
 import org.easymock.classextension.EasyMock;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
@@ -41,17 +39,11 @@ public class OutputStreamConnectorTest extends TestCase {
   private ByteArrayOutputStream bos;
   private byte[] expectedPayload = new byte[] { 1, 2, 3, 4, 5, 6 };  
   
-  private SocketDataInfo expectedContinuingSdi; 
   private SocketDataInfo expectedClosingSdi; 
   
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    expectedContinuingSdi = SocketDataInfo.newBuilder()
-        .setConnectionId(CONNECTION_ID)
-        .setState(SocketDataInfo.State.CONTINUE)
-        .setSegment(ByteString.copyFrom(expectedPayload))
-        .build();
     expectedClosingSdi = SocketDataInfo.newBuilder()
         .setConnectionId(CONNECTION_ID)
         .setState(SocketDataInfo.State.CLOSE)
@@ -95,28 +87,6 @@ public class OutputStreamConnectorTest extends TestCase {
     
     // Warning flakey test ahead.
     sendQueue.put(expectedClosingSdi);
-    // We sleep this much to ensure that the outputstreamconnector has taken
-    // the frame off the queue and written it to the bos.
-    Thread.sleep(50); 
-    assertTrue(mcr.isCallbackFired());
-    EasyMock.verify(mockOutputStream);
-  }
-  
-  public void testOutputThrowsIOException() throws Exception {
-    OutputStream mockOutputStream = EasyMock.createMock(OutputStream.class);
-    mockOutputStream.write(EasyMock.isA(byte[].class));
-    EasyMock.expectLastCall().andThrow(new IOException("Write error"));
-    EasyMock.replay(mockOutputStream);
-    
-    MockConnectionRemover mcr = new MockConnectionRemover();
-    OutputStreamConnector outputStreamConnector = new OutputStreamConnector(sendQueue);
-    outputStreamConnector.setConnectionId(CONNECTION_ID);
-    outputStreamConnector.setOutputStream(mockOutputStream);
-    outputStreamConnector.setConnectorStateCallback(mcr);
-    outputStreamConnector.start(); // LARGE TEST 
-    
-    // Warning flakey test ahead.
-    sendQueue.put(expectedContinuingSdi);
     // We sleep this much to ensure that the outputstreamconnector has taken
     // the frame off the queue and written it to the bos.
     Thread.sleep(50); 

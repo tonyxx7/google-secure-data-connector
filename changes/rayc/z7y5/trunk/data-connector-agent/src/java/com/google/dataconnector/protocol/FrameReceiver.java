@@ -39,7 +39,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class FrameReceiver {
   
-  public static Logger LOG = Logger.getLogger(FrameReceiver.class);
+  private static final Logger LOG = Logger.getLogger(FrameReceiver.class);
 
   static final byte FRAME_START = '*';
   static final byte[] MAGIC = "beefcake".getBytes();

@@ -36,7 +36,7 @@ import java.util.concurrent.BlockingQueue;
  */
 public class OutputStreamConnector extends Thread {
   
-  public static Logger LOG = Logger.getLogger(OutputStreamConnector.class);
+  private static final Logger LOG = Logger.getLogger(OutputStreamConnector.class);
 
   // runtime dependencies
   private OutputStream outputStream;

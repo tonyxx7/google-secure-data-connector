@@ -40,7 +40,7 @@ public class ProtocolGuiceModule extends AbstractModule {
   }
   
   @Provides
-  public BlockingQueue<SocketDataInfo> getSocketDataInfoQueue() {
+  public BlockingQueue<SocketDataInfo> getSocketDataInfoBlockingQueue() {
     return new LinkedBlockingQueue<SocketDataInfo>(SEND_QUEUE_SIZE);
   }
 

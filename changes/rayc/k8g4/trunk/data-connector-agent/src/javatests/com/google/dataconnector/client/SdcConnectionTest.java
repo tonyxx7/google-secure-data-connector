@@ -17,7 +17,6 @@ package com.google.dataconnector.client;
 import com.google.dataconnector.client.testing.FakeLocalConfGenerator;
 import com.google.dataconnector.protocol.FrameReceiver;
 import com.google.dataconnector.protocol.FrameSender;
-import com.google.dataconnector.protocol.FramingException;
 import com.google.dataconnector.protocol.proto.SdcFrame.AuthorizationInfo;
 import com.google.dataconnector.protocol.proto.SdcFrame.FrameInfo;
 import com.google.dataconnector.protocol.proto.SdcFrame.FrameInfo.Type;

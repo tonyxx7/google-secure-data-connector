@@ -41,9 +41,9 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.security.cert.X509Certificate;
 
 /**
- * Implements a Secure Data Connector client.  Connects to Secure Data Connector Server and spawns 
- * opensshd on the established socket.
- *
+ * Implements a Secure Data Connector client.  Connects to Secure Data Connector Server, authorizes,
+ * registers and sets up socket forwarding over the existing channel. 
+ * 
  * @author rayc@google.com (Ray Colline)
  */
 public class SdcConnection {
@@ -153,7 +153,6 @@ public class SdcConnection {
     try {
       // Authenticate 
       AuthorizationInfo authInfoRequest = AuthorizationInfo.newBuilder()
-          //.setAuthType(AuthType.PASSWORD)
           .setEmail(localConf.getUser() + "@" + localConf.getDomain())
           .setPassword(localConf.getPassword())
           .build();

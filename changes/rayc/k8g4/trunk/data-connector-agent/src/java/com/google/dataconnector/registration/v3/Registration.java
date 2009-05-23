@@ -29,6 +29,15 @@ import org.json.JSONException;
 
 import java.util.List;
 
+/**
+ * Handles registration for SDC agent.  Prepares the resource rules into a {@link RegistrationInfo}
+ * protocol buffer and sends it to the server.  It awaits for response.  It is currently written
+ * to be synchronous and happen before dispatching starts.  
+ * 
+ * TODO(rayc) Make this a dispatchable and allow updating of registration info at any point.
+ * 
+ * @author rayc@google.com (Ray Colline)
+ */
 public class Registration {
   
   private static final Logger LOG = Logger.getLogger(Registration.class);
@@ -43,10 +52,19 @@ public class Registration {
     this.resourceRules = resourceRules;
   }
    
+  /**
+   * With the given {@link FrameReceiver} and {@link FrameSender} perform registration
+   * synchronously.
+   * 
+   * @param frameReceiver the frame receiver to use to receive registration response.
+   * @param frameSender the frame sender to use to send the registration response.
+   * @throws RegistrationException if registration fails or there is a communication error.
+   */
   public void register(FrameReceiver frameReceiver, FrameSender frameSender) 
       throws RegistrationException {
     
     try {
+      // TODO(rayc) Remove need for registrationRequest v2 stuff.  Directly use the protobuf.
       // Prepare reg request.
       registrationRequest.populateFromResources(resourceRules);
       RegistrationInfo registrationFrame = RegistrationInfo.newBuilder()

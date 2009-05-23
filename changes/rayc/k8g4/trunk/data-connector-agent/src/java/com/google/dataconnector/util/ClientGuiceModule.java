@@ -60,6 +60,8 @@ import javax.net.ssl.TrustManagerFactory;
 /**
  * Client Guice module.
  * 
+ * TODO(rayc) write unit tests for this module.
+ * 
  * @author rayc@google.com (Ray Colline)
  */
 public class ClientGuiceModule extends AbstractModule {
@@ -68,8 +70,6 @@ public class ClientGuiceModule extends AbstractModule {
 
   private static final int MAX_THREADS = 500;
 
-  private static Injector injector; // Singleton
-  
   private static String[] args; // command line args
   
   public static void setArgs(String[] args) {
@@ -85,6 +85,8 @@ public class ClientGuiceModule extends AbstractModule {
    * @author rayc@google.com (Ray Colline)
    */
   public static class InjectorProvider implements Provider<Injector> {
+    
+    private static Injector injector; // Singleton
     
     public Injector get() {
       // Preconditions

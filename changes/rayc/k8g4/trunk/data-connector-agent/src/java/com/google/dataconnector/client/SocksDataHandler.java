@@ -45,6 +45,12 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.net.SocketFactory;
 
+/**
+ * Handler for all incoming socket connections from the cloud.  Listens for new 
+ * {@link SocketDataInfo} frames and handles plumbing connections to the local socks server.
+ * 
+ * @author rayc@google.com (Ray Colline)
+ */
 public class SocksDataHandler implements Dispatchable {
   
   public static Logger LOG = Logger.getLogger(SocksDataHandler.class);
@@ -60,7 +66,7 @@ public class SocksDataHandler implements Dispatchable {
   private FrameSender frameSender;
   
   // Local fields
-  private ConcurrentMap<Integer, BlockingQueue<SocketDataInfo>> queueMap;
+  private ConcurrentMap<Integer, BlockingQueue<SocketDataInfo>> outputQueueMap;
 
   public interface ConnectionStateUpdatable {
      public void removeConnection(int connectionId);
@@ -71,7 +77,7 @@ public class SocksDataHandler implements Dispatchable {
       @Named("localhost") InetAddress localHostAddress, ThreadPoolExecutor threadPoolExecutor, 
       Injector injector) {
     
-    queueMap = new ConcurrentHashMap<Integer, BlockingQueue<SocketDataInfo>>();
+    outputQueueMap = new ConcurrentHashMap<Integer, BlockingQueue<SocketDataInfo>>();
     this.localConf = localConf;
     this.socketFactory = socketFactory; 
     this.localHostAddress = localHostAddress;
@@ -79,6 +85,14 @@ public class SocksDataHandler implements Dispatchable {
     this.injector = injector;
   }
   
+  /**
+   * Gets called by the frame receiver when a SocketDataInfo frame is received.  Depending
+   * on the frame STATE, it will plumb a new connection to the socks server or send data
+   * to an existing connection.
+   * 
+   * @throws FramingException if any IO errors with plumbing, unparsable frames, or frames in
+   * a bad state.
+   */
   @Override
   public void dispatch(FrameInfo frameInfo) throws FramingException {
     Preconditions.checkNotNull(frameSender, "Must define frameSender before calling dispatch");
@@ -88,12 +102,13 @@ public class SocksDataHandler implements Dispatchable {
       
       // Handle incoming start request.
       if (socketDataInfo.getState() == SocketDataInfo.State.START) {
-        LOG.info("Starting new connection");
+        LOG.info("Starting new connection. ID " + connectionId);
         Socket socket = socketFactory.createSocket();
         socket.connect(new InetSocketAddress(localHostAddress, localConf.getSocksServerPort()));
 
         ConnectionRemover connectionRemoverCallback = new ConnectionRemover();
         
+        // TODO(rayc) Create a pool of connectors instead of making a new instance each time.
         InputStreamConnector inputStreamConnector = 
             injector.getInstance(InputStreamConnector.class);
         inputStreamConnector.setConnectionId(connectionId);
@@ -102,23 +117,29 @@ public class SocksDataHandler implements Dispatchable {
         inputStreamConnector.setConnectorStateCallback(connectionRemoverCallback);
         inputStreamConnector.setName("Inputconnector-" + connectionId);
 
+        // TODO(rayc) Create a pool of connectors instead of making a new instance each time.
         OutputStreamConnector outputStreamConnector = 
             injector.getInstance(OutputStreamConnector.class);
         outputStreamConnector.setConnectionId(connectionId);
         outputStreamConnector.setOutputStream(socket.getOutputStream());
         outputStreamConnector.setConnectorStateCallback(connectionRemoverCallback);
         outputStreamConnector.setName("Outputconnector-" + connectionId);
-        queueMap.put(connectionId, outputStreamConnector.getQueue());
+        outputQueueMap.put(connectionId, outputStreamConnector.getQueue());
 
         // Start threads 
         threadPoolExecutor.execute(inputStreamConnector);
         threadPoolExecutor.execute(outputStreamConnector);
         LOG.debug("active thread count = " + Thread.activeCount());
-      // Deal with continuing connections.
-      } else {
-        if (queueMap.containsKey((int) socketDataInfo.getConnectionId())) {
-          queueMap.get(connectionId).put(socketDataInfo);
+      // Deal with continuing connections or close connections.
+      } else if (socketDataInfo.getState() == SocketDataInfo.State.CONTINUE ||
+          socketDataInfo.getState() == SocketDataInfo.State.CLOSE) {
+        if (outputQueueMap.containsKey((int) socketDataInfo.getConnectionId())) {
+          outputQueueMap.get(connectionId).put(socketDataInfo);
         }
+      // Unknown states.
+      } else {
+        throw new FramingException("Unknown State: " + socketDataInfo.getState() + 
+            " received while dispatching");
       }
     } catch (InvalidProtocolBufferException e) {
       throw new FramingException(e);
@@ -129,19 +150,9 @@ public class SocksDataHandler implements Dispatchable {
     } catch (InterruptedException e) {
       throw new FramingException(e);
     } catch (RejectedExecutionException e){
-      while (true) {
-        LOG.warn("Out of threads, waiting for some to free up.  Total active " + 
-            threadPoolExecutor.getActiveCount());
-        if (threadPoolExecutor.getMaximumPoolSize() - threadPoolExecutor.getActiveCount() > 10) {
-          break;
-        }
-        try {
-          Thread.sleep(1000);
-        } catch (InterruptedException ie) {
-          LOG.warn("Interrupted", e);
-          return;
-        }
-      }
+      LOG.warn("Out of threads, waiting for some to free up.  Total active " + 
+          threadPoolExecutor.getActiveCount() + " queue Map entries" + outputQueueMap.size());
+      throw new FramingException("Out of threads!");
     }
   }
 
@@ -157,17 +168,20 @@ public class SocksDataHandler implements Dispatchable {
    */
   public class ConnectionRemover implements ConnectorStateCallback {
     
+    /**
+     * Removes connection from the queueMap so its no longer tracked.
+     */
     @Override
     public void close(int connectionId) {
       // We never know if the input or output side will detect closure first.
       // We defensively call from both sides.  In the event we are called twice we check to see
       // if we have already cleaned up.
-      if (queueMap.containsKey(connectionId)) {
+      if (outputQueueMap.containsKey(connectionId)) {
         // We tell the output thread to give up by placing a final CLOSE SocketData.
-        queueMap.get(connectionId).add(SocketDataInfo.newBuilder()
+        outputQueueMap.get(connectionId).add(SocketDataInfo.newBuilder()
             .setState(SocketDataInfo.State.CLOSE)
             .setConnectionId(connectionId).build());
-        queueMap.remove(connectionId);
+        outputQueueMap.remove(connectionId);
       }
     }
   }

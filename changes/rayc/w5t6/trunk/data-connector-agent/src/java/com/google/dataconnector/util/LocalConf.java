@@ -14,7 +14,6 @@
  */ 
 package com.google.dataconnector.util;
 
-import com.google.dataconnector.registration.v2.AuthRequest;
 import com.google.feedserver.util.ConfigFile;
 import com.google.feedserver.util.Flag;
 
@@ -71,8 +70,6 @@ public class LocalConf {
   private String healthCheckGadgetUsers;
   @Flag(help = "log4j properties File")
   private String log4jPropertiesFile;
-  @Flag(help = "SDC status file.")
-  private String sdcStatusFile;
   
   // Config File Only
   private String socksProperties = 
@@ -80,8 +77,6 @@ public class LocalConf {
       "acceptTimeout = 60000\n" + // 1 minutes
       "udpTimeout = 600000\n" + // 10 minutes
       "log = -\n"; // stdout.
-  
-  private AuthRequest.AuthType authType = AuthRequest.AuthType.NONE;
   
   // getters and setters
   public String getName() {
@@ -196,14 +191,6 @@ public class LocalConf {
     this.socksProperties = socksProperties;
   }
   
-  public AuthRequest.AuthType getAuthType() {
-    return authType;
-  }
-
-  public void setAuthType(AuthRequest.AuthType authType) {
-    this.authType = authType;
-  }
-
   public Boolean getDebug() {
     return debug;
   }
@@ -234,13 +221,5 @@ public class LocalConf {
 
   public void setLog4jPropertiesFile(String log4jPropertiesFile) {
     this.log4jPropertiesFile = log4jPropertiesFile;
-  }
-
-  public String getSdcStatusFile() {
-    return sdcStatusFile;
-  }
-
-  public void setSdcStatusFile(String sdcStatusFile) {
-    this.sdcStatusFile = sdcStatusFile;
   }
 }

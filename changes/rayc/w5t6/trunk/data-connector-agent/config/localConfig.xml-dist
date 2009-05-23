@@ -39,18 +39,10 @@
 
   <agentId>agent1_example-com</agentId>
 
-  <!-- The element <sshd> is required. This value defines the Secure shell
-      (SSH) network protocol startup script path and file name. This value
-      is predefined based on the installation path. This value should not 
-      require modification. -->
-
-  <sshd>_START_SSHD_</sshd>
-
   <!-- The element <socksServerPort> is required. This value defines the Socket 
        server listner port. If this port conflicts with another service on the 
        machine, you can change the port to another value. If you customize 
-       <socksServerPort> you must also change the permit port details in the 
-       woodstock-user/.ssh/authorized_keys file --> 
+       <socksServerPort>
 
   <socksServerPort>1080</socksServerPort>
 
@@ -59,10 +51,4 @@
        above, can access the healthcheck gadget and the associated feeds. --> 
 
   <healthCheckGadgetUsers></healthCheckGadgetUsers>
-
-  <!-- The following element defines the filename where the SDC Agent writes
-       its status.  Because of the highly threaded nature of the SDC Agent
-       we have a hard time reporting proper status via the unix return code -->
-
-  <sdcStatusFile>_SDC_STATUS_FILE_</sdcStatusFile>
 </entity>

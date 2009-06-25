@@ -95,8 +95,6 @@ public class Client {
       LOG.info("Exiting agent.");
       System.exit(1);
     }
-    
-    
   }
   
   /**

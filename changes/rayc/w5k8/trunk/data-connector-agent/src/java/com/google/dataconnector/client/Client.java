@@ -90,7 +90,6 @@ public class Client {
       jsocksStarter.startJsocksProxy();
       secureDataConnection.connect();
     } catch (ConnectionException e) {
-      e.printStackTrace();
       LOG.info(e);
     } finally {
       LOG.info("Exiting agent.");

@@ -14,7 +14,7 @@
  */ 
 package com.google.dataconnector.client;
 
-import com.google.dataconnector.client.HealthCheckHandler.RemoteFailSwitch;
+import com.google.dataconnector.client.HealthCheckHandler.FailCallback;
 import com.google.dataconnector.protocol.FrameReceiver;
 import com.google.dataconnector.protocol.FrameSender;
 import com.google.dataconnector.protocol.FramingException;
@@ -48,7 +48,7 @@ import javax.security.cert.X509Certificate;
  * 
  * @author rayc@google.com (Ray Colline)
  */
-public class SdcConnection implements RemoteFailSwitch {
+public class SdcConnection implements FailCallback {
 
   // Logging instance
   private static final Logger LOG = Logger.getLogger(SdcConnection.class);
@@ -69,7 +69,7 @@ public class SdcConnection implements RemoteFailSwitch {
   private FrameReceiver frameReceiver;
   private FrameSender frameSender;
   private Registration registration;
-  private SocksDataHandler socketDataHandler;
+  private SocksDataHandler socksDataHandler;
   private HealthCheckHandler healthCheckHandler;
   
   // Fields
@@ -88,14 +88,14 @@ public class SdcConnection implements RemoteFailSwitch {
       FrameReceiver frameReceiver, 
       FrameSender frameSender, 
       Registration registration, 
-      SocksDataHandler socketDataHandler,
+      SocksDataHandler socksDataHandler,
       HealthCheckHandler healthCheckHandler) {
     this.localConf = localConf;
     this.sslSocketFactory = sslSocketFactory;
     this.frameReceiver = frameReceiver;
     this.frameSender = frameSender;
     this.registration = registration;
-    this.socketDataHandler = socketDataHandler;
+    this.socksDataHandler = socksDataHandler;
     this.healthCheckHandler = healthCheckHandler;
   }
 
@@ -144,13 +144,13 @@ public class SdcConnection implements RemoteFailSwitch {
       
       // Setup Healthcheck
       healthCheckHandler.setFrameSender(frameSender);
-      healthCheckHandler.setFailHandler(this);
+      healthCheckHandler.setFailCallback(this);
       frameReceiver.registerDispatcher(FrameInfo.Type.HEALTH_CHECK, healthCheckHandler);
       healthCheckHandler.start();
       
       // Setup Socket Data.
-      socketDataHandler.setFrameSender(frameSender);
-      frameReceiver.registerDispatcher(FrameInfo.Type.SOCKET_DATA, socketDataHandler);
+      socksDataHandler.setFrameSender(frameSender);
+      frameReceiver.registerDispatcher(FrameInfo.Type.SOCKET_DATA, socksDataHandler);
       
       frameReceiver.startDispatching();
     } catch (IOException e) {

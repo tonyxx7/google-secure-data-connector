@@ -31,7 +31,7 @@ import org.apache.log4j.Logger;
  * Handles both sending of health check requests and processing responses.  Health checks are sent
  * as frames to the server.  We implement a {@link Dispatchable} to handle the server responses.
  * if we do not receive a response within the specified timeout we execute the 
- * {@link RemoteFailSwitch} specified at runtime.
+ * {@link FailCallback} specified at runtime.
  * 
  * @author rayc@google.com (Ray Colline)
  */
@@ -42,7 +42,7 @@ public class HealthCheckHandler extends Thread implements Dispatchable {
    * 
    * @author rayc@google.com (Ray Colline)
    */
-  public interface RemoteFailSwitch {
+  public interface FailCallback {
     public void handleFailure();
   }
   
@@ -50,17 +50,19 @@ public class HealthCheckHandler extends Thread implements Dispatchable {
       
   // Injected Dependencies 
   private LocalConf localConf;
+  private Clock clock;
   
   // Runtime Dependencies
   private FrameSender frameSender;
-  private RemoteFailSwitch remoteFailSwitch;
+  private FailCallback failCallback;
   
   // Class fields.
   private long lastHealthCheckReceivedStamp = 0;
   
   @Inject
-  public HealthCheckHandler(LocalConf localConf) {
+  public HealthCheckHandler(LocalConf localConf, Clock clock) {
     this.localConf = localConf;
+    this.clock = clock;
   }
   
   /**
@@ -72,7 +74,7 @@ public class HealthCheckHandler extends Thread implements Dispatchable {
     try {
       HealthCheckInfo healthCheckInfo = HealthCheckInfo.parseFrom(frameInfo.getPayload());
       // Assignment is thread safe.
-      lastHealthCheckReceivedStamp = System.currentTimeMillis();
+      lastHealthCheckReceivedStamp = clock.currentTimeMillis();
     } catch (InvalidProtocolBufferException e) {
       throw new FramingException(e);
     }
@@ -81,13 +83,15 @@ public class HealthCheckHandler extends Thread implements Dispatchable {
   @Override
   public void run() {
       Preconditions.checkNotNull(frameSender, "Must define frameSender before starting.");
-      Preconditions.checkNotNull(remoteFailSwitch, "Must define remoteFailSwitch before starting.");
+      Preconditions.checkNotNull(failCallback, "Must define remoteFailSwitch before starting.");
+      
+      lastHealthCheckReceivedStamp = clock.currentTimeMillis();
       
       // We send a healthcheck request every X seconds (configurable in localconf)
       while (true) {
         HealthCheckInfo hci = HealthCheckInfo.newBuilder()
             .setSource(HealthCheckInfo.Source.CLIENT)
-            .setTimeStamp(System.currentTimeMillis())
+            .setTimeStamp(clock.currentTimeMillis())
             .setType(HealthCheckInfo.Type.REQUEST)
             .build();
         LOG.debug("Sending health check request");
@@ -105,15 +109,15 @@ public class HealthCheckHandler extends Thread implements Dispatchable {
         // thread to verify health check responses.   Java primitives have atomic assignment,
         // and only the dispatcher thread will actually assign the lastHealthCheckReceivedStamp.
         // We call the FailHandler when there is a failure.  
-        if (System.currentTimeMillis() - (localConf.getHealthCheckTimeout() * 1000) > 
+        if (clock.currentTimeMillis() - (localConf.getHealthCheckTimeout() * 1000) > 
             lastHealthCheckReceivedStamp) {
           LOG.warn("Health check response not received in " + 
-              (System.currentTimeMillis() - lastHealthCheckReceivedStamp) + "ms.");
-          remoteFailSwitch.handleFailure(); 
+              (clock.currentTimeMillis() - lastHealthCheckReceivedStamp) + "ms.");
+          failCallback.handleFailure(); 
           break;
         } else {
           LOG.trace("Health check ok, last received " + 
-              (System.currentTimeMillis() - lastHealthCheckReceivedStamp) + "ms ago.");
+              (clock.currentTimeMillis() - lastHealthCheckReceivedStamp) + "ms ago.");
         }
      }
   }
@@ -122,7 +126,19 @@ public class HealthCheckHandler extends Thread implements Dispatchable {
     this.frameSender = frameSender;
   }
 
-  public void setFailHandler(RemoteFailSwitch failHandler) {
-    this.remoteFailSwitch = failHandler;
+  public void setFailCallback(FailCallback failCallback) {
+    this.failCallback = failCallback;
+  }
+  
+  /**
+   * Extendable/Mockable clock class.
+   * 
+   * @author rayc@google.com (Ray Colline)
+   */
+  public static class Clock {
+    
+    public long currentTimeMillis() {
+      return System.currentTimeMillis();
+    }
   }
 }

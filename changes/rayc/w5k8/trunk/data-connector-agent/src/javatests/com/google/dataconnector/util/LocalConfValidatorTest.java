@@ -196,4 +196,34 @@ public class LocalConfValidatorTest extends TestCase {
     }
     fail("did not get LocalConf");
   }
+  
+  // Health Check Interval
+  public void testBadHealthCheckInterval() {
+    // Setup bad data
+    localConf.setHealthCheckInterval(-80);
+    
+    // Test and verify
+    try {
+      localConfValidator.validate(localConf);
+    } catch (LocalConfException e) {
+      assertTrue(e.getMessage().contains("negative"));
+      return;
+    }
+    fail("did not get LocalConf");
+  }
+  
+  // Health Check Timeout
+  public void testBadHealthCheckTimeout() {
+    // Setup bad data
+    localConf.setHealthCheckTimeout(-80);
+    
+    // Test and verify
+    try {
+      localConfValidator.validate(localConf);
+    } catch (LocalConfException e) {
+      assertTrue(e.getMessage().contains("negative"));
+      return;
+    }
+    fail("did not get LocalConf");
+  }
 }

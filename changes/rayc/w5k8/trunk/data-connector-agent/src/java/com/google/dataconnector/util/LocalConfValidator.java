@@ -174,6 +174,17 @@ public class LocalConfValidator {
       errors.append("'socksProperties' required\n");
     }
     
+    // health check settings
+    if (localConf.getHealthCheckInterval() < 0) {
+      errors.append(" cannot specify negative 'healthCheckInterval' " + 
+          localConf.getHealthCheckInterval());
+    }
+    
+    if (localConf.getHealthCheckTimeout() < 0) {
+      errors.append(" cannot specify negative 'healthCheckTimeout' " + 
+          localConf.getHealthCheckTimeout());
+    }
+    
     // Check for errors and throw
     if (errors.length() > 0) {
       throw new LocalConfException(errors.toString());

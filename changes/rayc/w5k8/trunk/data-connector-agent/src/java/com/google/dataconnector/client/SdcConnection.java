@@ -247,7 +247,7 @@ public class SdcConnection implements FailCallback {
   }
 
   /**
-   * Closes underlying socket for this SDC connection.  If socket has not yet been set
+   * Closes underlying socket for this SDC connection.  Which shuts down the SDC agent. 
    */
   @Override
   public void handleFailure() {

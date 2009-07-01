@@ -1495,6 +1495,20 @@ public final class SdcFrame {
     public boolean hasResult() { return hasResult; }
     public com.google.dataconnector.protocol.proto.SdcFrame.RegistrationInfo.ResultCode getResult() { return result_; }
     
+    // optional int32 healthCheckTimeout = 4;
+    public static final int HEALTHCHECKTIMEOUT_FIELD_NUMBER = 4;
+    private boolean hasHealthCheckTimeout;
+    private int healthCheckTimeout_ = 0;
+    public boolean hasHealthCheckTimeout() { return hasHealthCheckTimeout; }
+    public int getHealthCheckTimeout() { return healthCheckTimeout_; }
+    
+    // optional int32 healthCheckWakeUpInterval = 5;
+    public static final int HEALTHCHECKWAKEUPINTERVAL_FIELD_NUMBER = 5;
+    private boolean hasHealthCheckWakeUpInterval;
+    private int healthCheckWakeUpInterval_ = 0;
+    public boolean hasHealthCheckWakeUpInterval() { return hasHealthCheckWakeUpInterval; }
+    public int getHealthCheckWakeUpInterval() { return healthCheckWakeUpInterval_; }
+    
     @Override
     public final boolean isInitialized() {
       return true;
@@ -1511,6 +1525,12 @@ public final class SdcFrame {
       }
       if (hasResult()) {
         output.writeEnum(3, getResult().getNumber());
+      }
+      if (hasHealthCheckTimeout()) {
+        output.writeInt32(4, getHealthCheckTimeout());
+      }
+      if (hasHealthCheckWakeUpInterval()) {
+        output.writeInt32(5, getHealthCheckWakeUpInterval());
       }
       getUnknownFields().writeTo(output);
     }
@@ -1533,6 +1553,14 @@ public final class SdcFrame {
       if (hasResult()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(3, getResult().getNumber());
+      }
+      if (hasHealthCheckTimeout()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(4, getHealthCheckTimeout());
+      }
+      if (hasHealthCheckWakeUpInterval()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(5, getHealthCheckWakeUpInterval());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -1684,6 +1712,12 @@ public final class SdcFrame {
         if (other.hasResult()) {
           setResult(other.getResult());
         }
+        if (other.hasHealthCheckTimeout()) {
+          setHealthCheckTimeout(other.getHealthCheckTimeout());
+        }
+        if (other.hasHealthCheckWakeUpInterval()) {
+          setHealthCheckWakeUpInterval(other.getHealthCheckWakeUpInterval());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
@@ -1734,6 +1768,14 @@ public final class SdcFrame {
               } else {
                 setResult(value);
               }
+              break;
+            }
+            case 32: {
+              setHealthCheckTimeout(input.readInt32());
+              break;
+            }
+            case 40: {
+              setHealthCheckWakeUpInterval(input.readInt32());
               break;
             }
           }
@@ -1801,6 +1843,42 @@ public final class SdcFrame {
       public Builder clearResult() {
         result.hasResult = false;
         result.result_ = com.google.dataconnector.protocol.proto.SdcFrame.RegistrationInfo.ResultCode.OK;
+        return this;
+      }
+      
+      // optional int32 healthCheckTimeout = 4;
+      public boolean hasHealthCheckTimeout() {
+        return result.hasHealthCheckTimeout();
+      }
+      public int getHealthCheckTimeout() {
+        return result.getHealthCheckTimeout();
+      }
+      public Builder setHealthCheckTimeout(int value) {
+        result.hasHealthCheckTimeout = true;
+        result.healthCheckTimeout_ = value;
+        return this;
+      }
+      public Builder clearHealthCheckTimeout() {
+        result.hasHealthCheckTimeout = false;
+        result.healthCheckTimeout_ = 0;
+        return this;
+      }
+      
+      // optional int32 healthCheckWakeUpInterval = 5;
+      public boolean hasHealthCheckWakeUpInterval() {
+        return result.hasHealthCheckWakeUpInterval();
+      }
+      public int getHealthCheckWakeUpInterval() {
+        return result.getHealthCheckWakeUpInterval();
+      }
+      public Builder setHealthCheckWakeUpInterval(int value) {
+        result.hasHealthCheckWakeUpInterval = true;
+        result.healthCheckWakeUpInterval_ = value;
+        return this;
+      }
+      public Builder clearHealthCheckWakeUpInterval() {
+        result.hasHealthCheckWakeUpInterval = false;
+        result.healthCheckWakeUpInterval_ = 0;
         return this;
       }
     }
@@ -2331,17 +2409,19 @@ public final class SdcFrame {
       "e\022\025\n\rstatusMessage\030\006 \001(\t\"g\n\nResultCode\022\006" +
       "\n\002OK\020\001\022\021\n\rACCESS_DENIED\020\002\022,\n(ACCESS_DENI" +
       "ED_CAPTCHA_REQUIRED_TO_UNLOCK\020\003\022\020\n\014SERVE" +
-      "R_ERROR\020\004\"\030\n\010AuthType\022\014\n\010PASSWORD\020\001\"\220\001\n\020" +
+      "R_ERROR\020\004\"\030\n\010AuthType\022\014\n\010PASSWORD\020\001\"\317\001\n\020" +
       "RegistrationInfo\022\013\n\003xml\030\001 \001(\t\022\025\n\rstatusM" +
       "essage\030\002 \001(\t\0226\n\006result\030\003 \001(\0162&.sdc_frame" +
-      ".RegistrationInfo.ResultCode\" \n\nResultCo" +
-      "de\022\006\n\002OK\020\001\022\n\n\006FAILED\020\002\"\313\001\n\017HealthCheckIn" +
-      "fo\022\021\n\ttimeStamp\030\001 \001(\003\0221\n\006source\030\002 \001(\0162!." +
-      "sdc_frame.HealthCheckInfo.Source\022-\n\004type" +
-      "\030\003 \001(\0162\037.sdc_frame.HealthCheckInfo.Type\"" +
-      " \n\006Source\022\n\n\006CLIENT\020\001\022\n\n\006SERVER\020\002\"!\n\004Typ" +
-      "e\022\013\n\007REQUEST\020\001\022\014\n\010RESPONSE\020\002B)\n\'com.goog" +
-      "le.dataconnector.protocol.proto";
+      ".RegistrationInfo.ResultCode\022\032\n\022healthCh" +
+      "eckTimeout\030\004 \001(\005\022!\n\031healthCheckWakeUpInt" +
+      "erval\030\005 \001(\005\" \n\nResultCode\022\006\n\002OK\020\001\022\n\n\006FAI" +
+      "LED\020\002\"\313\001\n\017HealthCheckInfo\022\021\n\ttimeStamp\030\001" +
+      " \001(\003\0221\n\006source\030\002 \001(\0162!.sdc_frame.HealthC" +
+      "heckInfo.Source\022-\n\004type\030\003 \001(\0162\037.sdc_fram" +
+      "e.HealthCheckInfo.Type\" \n\006Source\022\n\n\006CLIE" +
+      "NT\020\001\022\n\n\006SERVER\020\002\"!\n\004Type\022\013\n\007REQUEST\020\001\022\014\n" +
+      "\010RESPONSE\020\002B)\n\'com.google.dataconnector." +
+      "protocol.proto";
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
         public com.google.protobuf.ExtensionRegistry assignDescriptors(
@@ -2376,7 +2456,7 @@ public final class SdcFrame {
           internal_static_sdc_frame_RegistrationInfo_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_sdc_frame_RegistrationInfo_descriptor,
-              new java.lang.String[] { "Xml", "StatusMessage", "Result", },
+              new java.lang.String[] { "Xml", "StatusMessage", "Result", "HealthCheckTimeout", "HealthCheckWakeUpInterval", },
               com.google.dataconnector.protocol.proto.SdcFrame.RegistrationInfo.class,
               com.google.dataconnector.protocol.proto.SdcFrame.RegistrationInfo.Builder.class);
           internal_static_sdc_frame_HealthCheckInfo_descriptor =

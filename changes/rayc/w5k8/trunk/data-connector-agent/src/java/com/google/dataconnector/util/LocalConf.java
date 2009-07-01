@@ -30,8 +30,6 @@ public class LocalConf {
   private static boolean DEBUG = false;
   public static final String HTTPD_CONF_TEMPLATE_FILE = "httpd.conf-template";
   public static final String DEFAULT_SOCKS_BIND_HOST = "127.0.0.1";
-  private static final int DEFAULT_HEALTH_CHECK_INTERVAL = 5;
-  private static final int DEFAULT_HEALTH_CHECK_TIMEOUT = 30;
   
   private String name;
 
@@ -72,10 +70,6 @@ public class LocalConf {
   private String healthCheckGadgetUsers;
   @Flag(help = "log4j properties File")
   private String log4jPropertiesFile;
-  @Flag(help = "health check interval in seconds.")
-  private Integer healthCheckInterval = DEFAULT_HEALTH_CHECK_INTERVAL;
-  @Flag(help = "health check timeout in seconds.")
-  private Integer healthCheckTimeout = DEFAULT_HEALTH_CHECK_TIMEOUT;
   
   // Config File Only
   private String socksProperties = 
@@ -227,21 +221,5 @@ public class LocalConf {
 
   public void setLog4jPropertiesFile(String log4jPropertiesFile) {
     this.log4jPropertiesFile = log4jPropertiesFile;
-  }
-
-  public void setHealthCheckInterval(Integer healthCheckInterval) {
-    this.healthCheckInterval = healthCheckInterval;
-  }
-
-  public Integer getHealthCheckInterval() {
-    return healthCheckInterval;
-  }
-
-  public void setHealthCheckTimeout(Integer healthCheckTimeout) {
-    this.healthCheckTimeout = healthCheckTimeout;
-  }
-
-  public Integer getHealthCheckTimeout() {
-    return healthCheckTimeout;
   }
 }

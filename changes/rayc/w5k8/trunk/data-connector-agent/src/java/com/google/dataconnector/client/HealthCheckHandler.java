@@ -30,12 +30,16 @@ import org.apache.log4j.Logger;
 /**
  * Handles both sending of health check requests and processing responses.  Health checks are sent
  * as frames to the server.  We implement a {@link Dispatchable} to handle the server responses.
- * if we do not receive a response within the specified timeout we execute the 
+ * If we do not receive a response within the specified timeout we execute the 
  * {@link FailCallback} specified at runtime.
  * 
  * @author rayc@google.com (Ray Colline)
  */
 public class HealthCheckHandler extends Thread implements Dispatchable {
+
+  private static final int DEFAULT_HEALTHCHECK_WAKEUP_INTERVAL = 5;
+
+  private static final int DEFAULT_HEALTHCHECK_TIMEOUT = 30;
 
   /**
    * Call back interface for when health check fails.
@@ -49,7 +53,6 @@ public class HealthCheckHandler extends Thread implements Dispatchable {
   private static final Logger LOG = Logger.getLogger(HealthCheckHandler.class);
       
   // Injected Dependencies 
-  private LocalConf localConf;
   private Clock clock;
   
   // Runtime Dependencies
@@ -58,10 +61,11 @@ public class HealthCheckHandler extends Thread implements Dispatchable {
   
   // Class fields.
   private long lastHealthCheckReceivedStamp = 0;
+  private int healthCheckTimeout = DEFAULT_HEALTHCHECK_TIMEOUT;
+  private int healthCheckWakeUpInterval = DEFAULT_HEALTHCHECK_WAKEUP_INTERVAL;
   
   @Inject
   public HealthCheckHandler(LocalConf localConf, Clock clock) {
-    this.localConf = localConf;
     this.clock = clock;
   }
   
@@ -82,44 +86,46 @@ public class HealthCheckHandler extends Thread implements Dispatchable {
 
   @Override
   public void run() {
-      Preconditions.checkNotNull(frameSender, "Must define frameSender before starting.");
-      Preconditions.checkNotNull(failCallback, "Must define remoteFailSwitch before starting.");
-      
-      lastHealthCheckReceivedStamp = clock.currentTimeMillis();
-      
-      // We send a healthcheck request every X seconds (configurable in localconf)
-      while (true) {
-        HealthCheckInfo hci = HealthCheckInfo.newBuilder()
-            .setSource(HealthCheckInfo.Source.CLIENT)
-            .setTimeStamp(clock.currentTimeMillis())
-            .setType(HealthCheckInfo.Type.REQUEST)
-            .build();
-        LOG.debug("Sending health check request");
-        frameSender.sendFrame(SdcFrame.FrameInfo.Type.HEALTH_CHECK, hci.toByteString());
-        
-        try {
-          sleep(localConf.getHealthCheckInterval() * 1000);
-        } catch (InterruptedException e) {
-          LOG.warn("Health check sender interrupted. Exiting.");
-          break;
-        }
-        
-        // Every send interval we check to see if we have timed out.  Sending is reliable as
-        // it uses a large blocking queue to send frames.  Therefore we can re-use the send
-        // thread to verify health check responses.   Java primitives have atomic assignment,
-        // and only the dispatcher thread will actually assign the lastHealthCheckReceivedStamp.
-        // We call the FailHandler when there is a failure.  
-        if (clock.currentTimeMillis() - (localConf.getHealthCheckTimeout() * 1000) > 
-            lastHealthCheckReceivedStamp) {
-          LOG.warn("Health check response not received in " + 
-              (clock.currentTimeMillis() - lastHealthCheckReceivedStamp) + "ms.");
-          failCallback.handleFailure(); 
-          break;
-        } else {
-          LOG.trace("Health check ok, last received " + 
-              (clock.currentTimeMillis() - lastHealthCheckReceivedStamp) + "ms ago.");
-        }
-     }
+    Preconditions.checkNotNull(frameSender, "Must define frameSender before starting.");
+    Preconditions.checkNotNull(failCallback, "Must define remoteFailSwitch before starting.");
+
+    // We start out by setting the health check clock to now giving us 30 seconds to receive our
+    // first health check response.
+    lastHealthCheckReceivedStamp = clock.currentTimeMillis();
+
+    // We send a healthcheck request every X seconds (configurable in localconf)
+    while (true) {
+      HealthCheckInfo hci = HealthCheckInfo.newBuilder()
+          .setSource(HealthCheckInfo.Source.CLIENT)
+          .setTimeStamp(clock.currentTimeMillis())
+          .setType(HealthCheckInfo.Type.REQUEST)
+          .build();
+      LOG.debug("Sending health check request");
+      frameSender.sendFrame(SdcFrame.FrameInfo.Type.HEALTH_CHECK, hci.toByteString());
+
+      try {
+        sleep(healthCheckWakeUpInterval * 1000);
+      } catch (InterruptedException e) {
+        LOG.warn("Health check sender interrupted. Exiting.");
+        break;
+      }
+
+      // Every send interval we check to see if we have timed out.  Sending is reliable as
+      // it uses a large blocking queue to send frames.  Therefore we can re-use the send
+      // thread to verify health check responses.   Java primitives have atomic assignment,
+      // and only the dispatcher thread will actually assign the lastHealthCheckReceivedStamp.
+      // We call the FailHandler when there is a failure.  
+      if (clock.currentTimeMillis() - (healthCheckTimeout * 1000) > 
+          lastHealthCheckReceivedStamp) {
+        LOG.warn("Health check response not received in " + 
+            (clock.currentTimeMillis() - lastHealthCheckReceivedStamp) + "ms.");
+        failCallback.handleFailure(); 
+        break;
+      } else {
+        LOG.trace("Health check ok, last received " + 
+            (clock.currentTimeMillis() - lastHealthCheckReceivedStamp) + "ms ago.");
+      }
+    }
   }
   
   public void setFrameSender(FrameSender frameSender) {

@@ -255,10 +255,10 @@ public class SdcConnection implements FailCallback {
   public void handleFailure() {
     Preconditions.checkNotNull(socket, "Socket should not be null when handleFailure is called.");
     try {
-      LOG.error("Closing SDC connection due to health failure.");
+      LOG.error("Closing SDC connection due to health check failure.");
       socket.close();
     } catch (IOException e) {
-      LOG.fatal("Could not close socket upon healthcheck failure!");
+      LOG.fatal("Could not close socket upon health check failure!");
     }
   }
 }

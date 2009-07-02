@@ -47,12 +47,11 @@ public class FakeLocalConfGenerator {
   public static final String SSL_KEY_STORE_PASSWORD = "woodstock";
   public static final String SSL_KEY_STORE_FILE = "./testSecureLinkClientTrustStore";
   public static final String AGENT_ID = "testAgentId1";
+  public static final String SSHD = "./sshd";
+  public static final String HTTP_PROXY_BIND_HOST = "127.0.0.1";
   public static final Integer SOCKS_SERVER_PORT = 1080;
   public static final String SOCKSD_BIND_HOST = "127.0.0.1";
-  public static final Integer HEALTH_CHECK_INTERVAL = 5;
-  public static final Integer HEALTH_CHECK_TIMEOUT = 30;
   public static final String RULES_FILE = "/tmp/rulesConf.xml";
-  
   
   /**
    * Creates a configuration beans from the fake hardcoded XML files.  
@@ -99,6 +98,8 @@ public class FakeLocalConfGenerator {
     "<sslKeyStorePassword>" + SSL_KEY_STORE_PASSWORD + "</sslKeyStorePassword>\n" +
     "<sslKeyStoreFile>" + SSL_KEY_STORE_FILE +"</sslKeyStoreFile>\n" +
     "<agentId>" + AGENT_ID + "</agentId>\n" +
+    "<sshd>\n" + SSHD + "</sshd>\n" +
+    "<httpProxyBindHost>" + HTTP_PROXY_BIND_HOST + "</httpProxyBindHost>\n" +
     "<socksServerPort>" + SOCKS_SERVER_PORT + "</socksServerPort>\n" +
     "<socksdBindHost>" + SOCKSD_BIND_HOST + "</socksdBindHost>\n" +
     // We hard code socks properties and log properties because they are not used in our tests.
@@ -108,7 +109,5 @@ public class FakeLocalConfGenerator {
     "udpTimeout      = 600000   # 10 minutes\n" +
     "log = -\n" +
     "</socksProperties>\n" +
-    "<healthCheckInterval>" + HEALTH_CHECK_INTERVAL + "</healthCheckInterval>\n" +
-    "<healthCheckTimeout>" + HEALTH_CHECK_TIMEOUT + "</healthCheckTimeout>\n" +
     "</entity>\n";
 }

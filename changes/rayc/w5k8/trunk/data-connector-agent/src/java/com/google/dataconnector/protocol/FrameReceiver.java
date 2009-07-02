@@ -102,7 +102,7 @@ public class FrameReceiver {
     try {
       // Read start byte.
       int startIndicator = inputStream.read();
-      LOG.trace("Start byte: " + startIndicator);
+      LOG.debug("Start byte: " + startIndicator);
       if ((byte) startIndicator != FRAME_START) {
         throw new FramingException("Unexpected frame start read"); 
       }
@@ -111,7 +111,7 @@ public class FrameReceiver {
       byte[] magic = new byte[MAGIC.length];
       readBytes(magic, MAGIC.length);
       String magicString = new String(magic);
-      LOG.trace("Magic: " + magicString);
+      LOG.debug("Magic: " + magicString);
       if (!new String(magic).equals(new String(MAGIC))) {
         throw new FramingException("Unexpected frame magic read"); 
       }
@@ -119,7 +119,7 @@ public class FrameReceiver {
 
       // Read sequence, verify and increment.
       long readSequence = dataInputStream.readLong();
-      LOG.trace("sequence: " + readSequence);
+      LOG.debug("sequence: " + readSequence);
       if (readSequence == sequence) {
         sequence++;
       } else {
@@ -129,7 +129,7 @@ public class FrameReceiver {
 
       // Read and verify payload length.
       int payloadLength = dataInputStream.readInt();
-      LOG.trace("payload length: " + payloadLength);
+      LOG.debug("payload length: " + payloadLength);
       if (payloadLength < 0 || payloadLength > MAX_FRAME_SIZE) {
         throw new FramingException("Payload length invalid.");
       }
@@ -145,10 +145,12 @@ public class FrameReceiver {
         byteCounter.addAndGet(HEADER_SIZE + payloadLength);
       }
       
-      LOG.trace("payload: " + payload);
+      LOG.debug("payload: " + payload);
       // Parse the payload into a FrameInfo and return it.
       try {
-        return  FrameInfo.parseFrom(payload);
+        FrameInfo frameInfo = FrameInfo.parseFrom(payload);
+        LOG.debug("frame: " + frameInfo.toString());
+        return  frameInfo;
       } catch (InvalidProtocolBufferException e) {
         throw new FramingException(e);
       }

@@ -149,7 +149,7 @@ public class FrameReceiver {
       // Parse the payload into a FrameInfo and return it.
       try {
         FrameInfo frameInfo = FrameInfo.parseFrom(payload);
-        LOG.debug("frame: " + frameInfo.toString());
+        LOG.debug("frame:\n" + frameInfo.toString());
         return  frameInfo;
       } catch (InvalidProtocolBufferException e) {
         throw new FramingException(e);

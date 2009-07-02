@@ -119,7 +119,7 @@ public class HealthCheckHandler extends Thread implements Dispatchable {
         failCallback.handleFailure(); 
         break;
       } else {
-        LOG.trace("Health check ok, last received " + 
+        LOG.debug("Health check ok, last received " + 
             (clock.currentTimeMillis() - lastHealthCheckReceivedStamp) + "ms ago.");
       }
     }

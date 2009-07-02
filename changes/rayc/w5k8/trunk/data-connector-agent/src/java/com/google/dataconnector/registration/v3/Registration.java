@@ -85,7 +85,7 @@ public class Registration {
       }
       
       LOG.info("registration successful");
-      return registrationFrame.getServerSuppliedConf();
+      return responseRegistrationFrame.getServerSuppliedConf();
     } catch (JSONException e) {
       throw new RegistrationException(e);
     } catch (ResourceException e) {

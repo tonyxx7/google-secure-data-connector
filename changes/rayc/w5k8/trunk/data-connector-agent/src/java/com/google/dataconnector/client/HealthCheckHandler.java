@@ -20,6 +20,7 @@ import com.google.dataconnector.protocol.FramingException;
 import com.google.dataconnector.protocol.proto.SdcFrame;
 import com.google.dataconnector.protocol.proto.SdcFrame.FrameInfo;
 import com.google.dataconnector.protocol.proto.SdcFrame.HealthCheckInfo;
+import com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf;
 import com.google.dataconnector.util.LocalConf;
 import com.google.gdata.util.common.base.Preconditions;
 import com.google.inject.Inject;
@@ -37,9 +38,7 @@ import org.apache.log4j.Logger;
  */
 public class HealthCheckHandler extends Thread implements Dispatchable {
 
-  private static final int DEFAULT_HEALTHCHECK_WAKEUP_INTERVAL = 5;
 
-  private static final int DEFAULT_HEALTHCHECK_TIMEOUT = 30;
 
   /**
    * Call back interface for when health check fails.
@@ -58,11 +57,10 @@ public class HealthCheckHandler extends Thread implements Dispatchable {
   // Runtime Dependencies
   private FrameSender frameSender;
   private FailCallback failCallback;
+  private ServerSuppliedConf serverSuppliedConf;
   
   // Class fields.
   private long lastHealthCheckReceivedStamp = 0;
-  private int healthCheckTimeout = DEFAULT_HEALTHCHECK_TIMEOUT;
-  private int healthCheckWakeUpInterval = DEFAULT_HEALTHCHECK_WAKEUP_INTERVAL;
   
   @Inject
   public HealthCheckHandler(LocalConf localConf, Clock clock) {
@@ -104,7 +102,7 @@ public class HealthCheckHandler extends Thread implements Dispatchable {
       frameSender.sendFrame(SdcFrame.FrameInfo.Type.HEALTH_CHECK, hci.toByteString());
 
       try {
-        sleep(healthCheckWakeUpInterval * 1000);
+        sleep(serverSuppliedConf.getHealthCheckWakeUpInterval() * 1000);
       } catch (InterruptedException e) {
         LOG.warn("Health check sender interrupted. Exiting.");
         break;
@@ -115,7 +113,7 @@ public class HealthCheckHandler extends Thread implements Dispatchable {
       // thread to verify health check responses.   Java primitives have atomic assignment,
       // and only the dispatcher thread will actually assign the lastHealthCheckReceivedStamp.
       // We call the FailHandler when there is a failure.  
-      if (clock.currentTimeMillis() - (healthCheckTimeout * 1000) > 
+      if (clock.currentTimeMillis() - (serverSuppliedConf.getHealthCheckTimeout() * 1000) > 
           lastHealthCheckReceivedStamp) {
         LOG.warn("Health check response not received in " + 
             (clock.currentTimeMillis() - lastHealthCheckReceivedStamp) + "ms.");
@@ -136,6 +134,10 @@ public class HealthCheckHandler extends Thread implements Dispatchable {
     this.failCallback = failCallback;
   }
   
+  public void setServerSuppliedConf(ServerSuppliedConf serverSuppliedConf) {
+    this.serverSuppliedConf = serverSuppliedConf;
+  }
+
   /**
    * Extendable/Mockable clock class.
    * 

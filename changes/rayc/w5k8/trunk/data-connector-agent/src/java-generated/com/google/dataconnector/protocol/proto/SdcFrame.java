@@ -1495,19 +1495,12 @@ public final class SdcFrame {
     public boolean hasResult() { return hasResult; }
     public com.google.dataconnector.protocol.proto.SdcFrame.RegistrationInfo.ResultCode getResult() { return result_; }
     
-    // optional int32 healthCheckTimeout = 4;
-    public static final int HEALTHCHECKTIMEOUT_FIELD_NUMBER = 4;
-    private boolean hasHealthCheckTimeout;
-    private int healthCheckTimeout_ = 0;
-    public boolean hasHealthCheckTimeout() { return hasHealthCheckTimeout; }
-    public int getHealthCheckTimeout() { return healthCheckTimeout_; }
-    
-    // optional int32 healthCheckWakeUpInterval = 5;
-    public static final int HEALTHCHECKWAKEUPINTERVAL_FIELD_NUMBER = 5;
-    private boolean hasHealthCheckWakeUpInterval;
-    private int healthCheckWakeUpInterval_ = 0;
-    public boolean hasHealthCheckWakeUpInterval() { return hasHealthCheckWakeUpInterval; }
-    public int getHealthCheckWakeUpInterval() { return healthCheckWakeUpInterval_; }
+    // optional .sdc_frame.ServerSuppliedConf serverSuppliedConf = 4;
+    public static final int SERVERSUPPLIEDCONF_FIELD_NUMBER = 4;
+    private boolean hasServerSuppliedConf;
+    private com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf serverSuppliedConf_ = com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf.getDefaultInstance();
+    public boolean hasServerSuppliedConf() { return hasServerSuppliedConf; }
+    public com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf getServerSuppliedConf() { return serverSuppliedConf_; }
     
     @Override
     public final boolean isInitialized() {
@@ -1526,11 +1519,8 @@ public final class SdcFrame {
       if (hasResult()) {
         output.writeEnum(3, getResult().getNumber());
       }
-      if (hasHealthCheckTimeout()) {
-        output.writeInt32(4, getHealthCheckTimeout());
-      }
-      if (hasHealthCheckWakeUpInterval()) {
-        output.writeInt32(5, getHealthCheckWakeUpInterval());
+      if (hasServerSuppliedConf()) {
+        output.writeMessage(4, getServerSuppliedConf());
       }
       getUnknownFields().writeTo(output);
     }
@@ -1554,13 +1544,9 @@ public final class SdcFrame {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(3, getResult().getNumber());
       }
-      if (hasHealthCheckTimeout()) {
+      if (hasServerSuppliedConf()) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(4, getHealthCheckTimeout());
-      }
-      if (hasHealthCheckWakeUpInterval()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(5, getHealthCheckWakeUpInterval());
+          .computeMessageSize(4, getServerSuppliedConf());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -1712,11 +1698,8 @@ public final class SdcFrame {
         if (other.hasResult()) {
           setResult(other.getResult());
         }
-        if (other.hasHealthCheckTimeout()) {
-          setHealthCheckTimeout(other.getHealthCheckTimeout());
-        }
-        if (other.hasHealthCheckWakeUpInterval()) {
-          setHealthCheckWakeUpInterval(other.getHealthCheckWakeUpInterval());
+        if (other.hasServerSuppliedConf()) {
+          mergeServerSuppliedConf(other.getServerSuppliedConf());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -1770,12 +1753,13 @@ public final class SdcFrame {
               }
               break;
             }
-            case 32: {
-              setHealthCheckTimeout(input.readInt32());
-              break;
-            }
-            case 40: {
-              setHealthCheckWakeUpInterval(input.readInt32());
+            case 34: {
+              com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf.Builder subBuilder = com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf.newBuilder();
+              if (hasServerSuppliedConf()) {
+                subBuilder.mergeFrom(getServerSuppliedConf());
+              }
+              input.readMessage(subBuilder, extensionRegistry);
+              setServerSuppliedConf(subBuilder.buildPartial());
               break;
             }
           }
@@ -1845,6 +1829,314 @@ public final class SdcFrame {
         result.result_ = com.google.dataconnector.protocol.proto.SdcFrame.RegistrationInfo.ResultCode.OK;
         return this;
       }
+      
+      // optional .sdc_frame.ServerSuppliedConf serverSuppliedConf = 4;
+      public boolean hasServerSuppliedConf() {
+        return result.hasServerSuppliedConf();
+      }
+      public com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf getServerSuppliedConf() {
+        return result.getServerSuppliedConf();
+      }
+      public Builder setServerSuppliedConf(com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        result.hasServerSuppliedConf = true;
+        result.serverSuppliedConf_ = value;
+        return this;
+      }
+      public Builder setServerSuppliedConf(com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf.Builder builderForValue) {
+        result.hasServerSuppliedConf = true;
+        result.serverSuppliedConf_ = builderForValue.build();
+        return this;
+      }
+      public Builder mergeServerSuppliedConf(com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf value) {
+        if (result.hasServerSuppliedConf() &&
+            result.serverSuppliedConf_ != com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf.getDefaultInstance()) {
+          result.serverSuppliedConf_ =
+            com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf.newBuilder(result.serverSuppliedConf_).mergeFrom(value).buildPartial();
+        } else {
+          result.serverSuppliedConf_ = value;
+        }
+        result.hasServerSuppliedConf = true;
+        return this;
+      }
+      public Builder clearServerSuppliedConf() {
+        result.hasServerSuppliedConf = false;
+        result.serverSuppliedConf_ = com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf.getDefaultInstance();
+        return this;
+      }
+    }
+    
+    static {
+      com.google.dataconnector.protocol.proto.SdcFrame.getDescriptor();
+    }
+  }
+  
+  public static final class ServerSuppliedConf extends
+      com.google.protobuf.GeneratedMessage {
+    // Use ServerSuppliedConf.newBuilder() to construct.
+    private ServerSuppliedConf() {}
+    
+    private static final ServerSuppliedConf defaultInstance = new ServerSuppliedConf();
+    public static ServerSuppliedConf getDefaultInstance() {
+      return defaultInstance;
+    }
+    
+    public ServerSuppliedConf getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+    
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.google.dataconnector.protocol.proto.SdcFrame.internal_static_sdc_frame_ServerSuppliedConf_descriptor;
+    }
+    
+    @Override
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.google.dataconnector.protocol.proto.SdcFrame.internal_static_sdc_frame_ServerSuppliedConf_fieldAccessorTable;
+    }
+    
+    // optional int32 healthCheckTimeout = 4;
+    public static final int HEALTHCHECKTIMEOUT_FIELD_NUMBER = 4;
+    private boolean hasHealthCheckTimeout;
+    private int healthCheckTimeout_ = 0;
+    public boolean hasHealthCheckTimeout() { return hasHealthCheckTimeout; }
+    public int getHealthCheckTimeout() { return healthCheckTimeout_; }
+    
+    // optional int32 healthCheckWakeUpInterval = 5;
+    public static final int HEALTHCHECKWAKEUPINTERVAL_FIELD_NUMBER = 5;
+    private boolean hasHealthCheckWakeUpInterval;
+    private int healthCheckWakeUpInterval_ = 0;
+    public boolean hasHealthCheckWakeUpInterval() { return hasHealthCheckWakeUpInterval; }
+    public int getHealthCheckWakeUpInterval() { return healthCheckWakeUpInterval_; }
+    
+    @Override
+    public final boolean isInitialized() {
+      return true;
+    }
+    
+    @Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (hasHealthCheckTimeout()) {
+        output.writeInt32(4, getHealthCheckTimeout());
+      }
+      if (hasHealthCheckWakeUpInterval()) {
+        output.writeInt32(5, getHealthCheckWakeUpInterval());
+      }
+      getUnknownFields().writeTo(output);
+    }
+    
+    private int memoizedSerializedSize = -1;
+    @Override
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+    
+      size = 0;
+      if (hasHealthCheckTimeout()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(4, getHealthCheckTimeout());
+      }
+      if (hasHealthCheckWakeUpInterval()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(5, getHealthCheckWakeUpInterval());
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+    
+    public static com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistry extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistry extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistry extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    public static com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeDelimitedFrom(input).buildParsed();
+    }
+    public static com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistry extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeDelimitedFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    public static com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistry extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    
+    public static Builder newBuilder() { return new Builder(); }
+    public Builder newBuilderForType() { return new Builder(); }
+    public static Builder newBuilder(com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf prototype) {
+      return new Builder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+    
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> {
+      // Construct using com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf.newBuilder()
+      private Builder() {}
+      
+      com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf result = new com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf();
+      
+      @Override
+      protected com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf internalGetResult() {
+        return result;
+      }
+      
+      @Override
+      public Builder clear() {
+        result = new com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf();
+        return this;
+      }
+      
+      @Override
+      public Builder clone() {
+        return new Builder().mergeFrom(result);
+      }
+      
+      @Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf.getDescriptor();
+      }
+      
+      public com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf getDefaultInstanceForType() {
+        return com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf.getDefaultInstance();
+      }
+      
+      public com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf build() {
+        if (result != null && !isInitialized()) {
+          throw new com.google.protobuf.UninitializedMessageException(
+            result);
+        }
+        return buildPartial();
+      }
+      
+      private com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf buildParsed()
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        if (!isInitialized()) {
+          throw new com.google.protobuf.UninitializedMessageException(
+            result).asInvalidProtocolBufferException();
+        }
+        return buildPartial();
+      }
+      
+      public com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf buildPartial() {
+        if (result == null) {
+          throw new IllegalStateException(
+            "build() has already been called on this Builder.");  }
+        com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf returnMe = result;
+        result = null;
+        return returnMe;
+      }
+      
+      @Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf) {
+          return mergeFrom((com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+      
+      public Builder mergeFrom(com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf other) {
+        if (other == com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf.getDefaultInstance()) return this;
+        if (other.hasHealthCheckTimeout()) {
+          setHealthCheckTimeout(other.getHealthCheckTimeout());
+        }
+        if (other.hasHealthCheckWakeUpInterval()) {
+          setHealthCheckWakeUpInterval(other.getHealthCheckWakeUpInterval());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+      
+      @Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return mergeFrom(input,
+          com.google.protobuf.ExtensionRegistry.getEmptyRegistry());
+      }
+      
+      @Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistry extensionRegistry)
+          throws java.io.IOException {
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder(
+            this.getUnknownFields());
+        while (true) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              this.setUnknownFields(unknownFields.build());
+              return this;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                this.setUnknownFields(unknownFields.build());
+                return this;
+              }
+              break;
+            }
+            case 32: {
+              setHealthCheckTimeout(input.readInt32());
+              break;
+            }
+            case 40: {
+              setHealthCheckWakeUpInterval(input.readInt32());
+              break;
+            }
+          }
+        }
+      }
+      
       
       // optional int32 healthCheckTimeout = 4;
       public boolean hasHealthCheckTimeout() {
@@ -2379,6 +2671,11 @@ public final class SdcFrame {
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_sdc_frame_RegistrationInfo_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_sdc_frame_ServerSuppliedConf_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_sdc_frame_ServerSuppliedConf_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
     internal_static_sdc_frame_HealthCheckInfo_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
@@ -2409,19 +2706,21 @@ public final class SdcFrame {
       "e\022\025\n\rstatusMessage\030\006 \001(\t\"g\n\nResultCode\022\006" +
       "\n\002OK\020\001\022\021\n\rACCESS_DENIED\020\002\022,\n(ACCESS_DENI" +
       "ED_CAPTCHA_REQUIRED_TO_UNLOCK\020\003\022\020\n\014SERVE" +
-      "R_ERROR\020\004\"\030\n\010AuthType\022\014\n\010PASSWORD\020\001\"\317\001\n\020" +
+      "R_ERROR\020\004\"\030\n\010AuthType\022\014\n\010PASSWORD\020\001\"\313\001\n\020" +
       "RegistrationInfo\022\013\n\003xml\030\001 \001(\t\022\025\n\rstatusM" +
       "essage\030\002 \001(\t\0226\n\006result\030\003 \001(\0162&.sdc_frame" +
-      ".RegistrationInfo.ResultCode\022\032\n\022healthCh" +
-      "eckTimeout\030\004 \001(\005\022!\n\031healthCheckWakeUpInt" +
-      "erval\030\005 \001(\005\" \n\nResultCode\022\006\n\002OK\020\001\022\n\n\006FAI" +
-      "LED\020\002\"\313\001\n\017HealthCheckInfo\022\021\n\ttimeStamp\030\001" +
-      " \001(\003\0221\n\006source\030\002 \001(\0162!.sdc_frame.HealthC" +
-      "heckInfo.Source\022-\n\004type\030\003 \001(\0162\037.sdc_fram" +
-      "e.HealthCheckInfo.Type\" \n\006Source\022\n\n\006CLIE" +
-      "NT\020\001\022\n\n\006SERVER\020\002\"!\n\004Type\022\013\n\007REQUEST\020\001\022\014\n" +
-      "\010RESPONSE\020\002B)\n\'com.google.dataconnector." +
-      "protocol.proto";
+      ".RegistrationInfo.ResultCode\0229\n\022serverSu" +
+      "ppliedConf\030\004 \001(\0132\035.sdc_frame.ServerSuppl" +
+      "iedConf\" \n\nResultCode\022\006\n\002OK\020\001\022\n\n\006FAILED\020" +
+      "\002\"S\n\022ServerSuppliedConf\022\032\n\022healthCheckTi" +
+      "meout\030\004 \001(\005\022!\n\031healthCheckWakeUpInterval" +
+      "\030\005 \001(\005\"\313\001\n\017HealthCheckInfo\022\021\n\ttimeStamp\030" +
+      "\001 \001(\003\0221\n\006source\030\002 \001(\0162!.sdc_frame.Health" +
+      "CheckInfo.Source\022-\n\004type\030\003 \001(\0162\037.sdc_fra" +
+      "me.HealthCheckInfo.Type\" \n\006Source\022\n\n\006CLI" +
+      "ENT\020\001\022\n\n\006SERVER\020\002\"!\n\004Type\022\013\n\007REQUEST\020\001\022\014" +
+      "\n\010RESPONSE\020\002B)\n\'com.google.dataconnector" +
+      ".protocol.proto";
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
         public com.google.protobuf.ExtensionRegistry assignDescriptors(
@@ -2456,11 +2755,19 @@ public final class SdcFrame {
           internal_static_sdc_frame_RegistrationInfo_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_sdc_frame_RegistrationInfo_descriptor,
-              new java.lang.String[] { "Xml", "StatusMessage", "Result", "HealthCheckTimeout", "HealthCheckWakeUpInterval", },
+              new java.lang.String[] { "Xml", "StatusMessage", "Result", "ServerSuppliedConf", },
               com.google.dataconnector.protocol.proto.SdcFrame.RegistrationInfo.class,
               com.google.dataconnector.protocol.proto.SdcFrame.RegistrationInfo.Builder.class);
-          internal_static_sdc_frame_HealthCheckInfo_descriptor =
+          internal_static_sdc_frame_ServerSuppliedConf_descriptor =
             getDescriptor().getMessageTypes().get(4);
+          internal_static_sdc_frame_ServerSuppliedConf_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_sdc_frame_ServerSuppliedConf_descriptor,
+              new java.lang.String[] { "HealthCheckTimeout", "HealthCheckWakeUpInterval", },
+              com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf.class,
+              com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf.Builder.class);
+          internal_static_sdc_frame_HealthCheckInfo_descriptor =
+            getDescriptor().getMessageTypes().get(5);
           internal_static_sdc_frame_HealthCheckInfo_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_sdc_frame_HealthCheckInfo_descriptor,

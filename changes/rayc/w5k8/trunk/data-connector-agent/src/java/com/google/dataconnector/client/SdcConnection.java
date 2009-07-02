@@ -20,6 +20,7 @@ import com.google.dataconnector.protocol.FrameSender;
 import com.google.dataconnector.protocol.FramingException;
 import com.google.dataconnector.protocol.proto.SdcFrame.AuthorizationInfo;
 import com.google.dataconnector.protocol.proto.SdcFrame.FrameInfo;
+import com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf;
 import com.google.dataconnector.registration.v3.Registration;
 import com.google.dataconnector.util.ConnectionException;
 import com.google.dataconnector.util.LocalConf;
@@ -140,11 +141,12 @@ public class SdcConnection implements FailCallback {
       LOG.info("Successful login");
       
       // Register 
-      registration.register(frameReceiver, frameSender);
+      ServerSuppliedConf serverSuppliedConf = registration.register(frameReceiver, frameSender);
       
       // Setup Healthcheck
       healthCheckHandler.setFrameSender(frameSender);
       healthCheckHandler.setFailCallback(this);
+      healthCheckHandler.setServerSuppliedConf(serverSuppliedConf);
       frameReceiver.registerDispatcher(FrameInfo.Type.HEALTH_CHECK, healthCheckHandler);
       healthCheckHandler.start();
       

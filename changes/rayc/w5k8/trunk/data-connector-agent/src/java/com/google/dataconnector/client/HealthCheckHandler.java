@@ -21,7 +21,6 @@ import com.google.dataconnector.protocol.proto.SdcFrame;
 import com.google.dataconnector.protocol.proto.SdcFrame.FrameInfo;
 import com.google.dataconnector.protocol.proto.SdcFrame.HealthCheckInfo;
 import com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf;
-import com.google.dataconnector.util.LocalConf;
 import com.google.gdata.util.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -63,7 +62,7 @@ public class HealthCheckHandler extends Thread implements Dispatchable {
   private long lastHealthCheckReceivedStamp = 0;
   
   @Inject
-  public HealthCheckHandler(LocalConf localConf, Clock clock) {
+  public HealthCheckHandler(Clock clock) {
     this.clock = clock;
   }
   

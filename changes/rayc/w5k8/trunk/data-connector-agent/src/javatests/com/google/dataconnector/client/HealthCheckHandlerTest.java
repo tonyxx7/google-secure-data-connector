@@ -16,11 +16,10 @@ package com.google.dataconnector.client;
 
 import com.google.dataconnector.client.HealthCheckHandler.Clock;
 import com.google.dataconnector.client.HealthCheckHandler.FailCallback;
-import com.google.dataconnector.client.testing.FakeLocalConfGenerator;
 import com.google.dataconnector.protocol.FrameSender;
 import com.google.dataconnector.protocol.proto.SdcFrame.FrameInfo;
 import com.google.dataconnector.protocol.proto.SdcFrame.HealthCheckInfo;
-import com.google.dataconnector.util.LocalConf;
+import com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 
@@ -39,10 +38,10 @@ public class HealthCheckHandlerTest extends TestCase {
   public static long FAKE_TIME_STAMP = 1246405970961L;
   public static String BREAK_MESSAGE = "break out";
   
-  private LocalConf localConf;
   private FrameSender frameSender;
   private HealthCheckInfo expectedHci;
   private FrameInfo frameInfo;
+  private ServerSuppliedConf serverSuppliedConf;
   
   @Override
   protected void setUp() throws Exception {
@@ -62,9 +61,10 @@ public class HealthCheckHandlerTest extends TestCase {
     EasyMock.expectLastCall();
     EasyMock.replay(frameSender);
     
-    FakeLocalConfGenerator fakeLocalConfGenerator = new FakeLocalConfGenerator();
-    localConf = fakeLocalConfGenerator.getFakeLocalConf();
-    localConf.setHealthCheckInterval(1);
+    serverSuppliedConf = ServerSuppliedConf.newBuilder()
+        .setHealthCheckWakeUpInterval(1)
+        .setHealthCheckTimeout(30)
+        .build();
   }
   
   public void testDispatchAndNormalCheck() throws Exception {
@@ -83,9 +83,10 @@ public class HealthCheckHandlerTest extends TestCase {
     FailCallback failCallback = EasyMock.createMock(FailCallback.class);
     EasyMock.replay(failCallback);
     
-    HealthCheckHandler healthCheckHandler = new HealthCheckHandler(localConf, clock);
+    HealthCheckHandler healthCheckHandler = new HealthCheckHandler(clock);
     healthCheckHandler.setFrameSender(frameSender);
     healthCheckHandler.setFailCallback(failCallback);
+    healthCheckHandler.setServerSuppliedConf(serverSuppliedConf);
     
     healthCheckHandler.dispatch(frameInfo); // should set the time.
     try {
@@ -115,9 +116,10 @@ public class HealthCheckHandlerTest extends TestCase {
     EasyMock.expectLastCall();
     EasyMock.replay(failCallback);
     
-    HealthCheckHandler healthCheckHandler = new HealthCheckHandler(localConf, clock);
+    HealthCheckHandler healthCheckHandler = new HealthCheckHandler(clock);
     healthCheckHandler.setFrameSender(frameSender);
     healthCheckHandler.setFailCallback(failCallback);
+    healthCheckHandler.setServerSuppliedConf(serverSuppliedConf);
     
     healthCheckHandler.dispatch(frameInfo); // should set the time.
     healthCheckHandler.run();

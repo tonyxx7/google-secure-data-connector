@@ -88,11 +88,14 @@ public class FrameSender extends Thread {
    * Used by the queue watching loop to write a a single frame to the output stream.   We leave
    * this package-private to support testing.
    * 
+   * This method is public also because it can be used to send a frame without starting a thread
+   * to process sendQueue.
+   * 
    * @param frameInfo the frame to send.
    * @throws IOException if any IOerrors while writing.
    */
   // visible for testing.
-  void writeOneFrame(FrameInfo frameInfo) throws IOException {
+  public void writeOneFrame(FrameInfo frameInfo) throws IOException {
     Preconditions.checkNotNull(outputStream, "Must specify outputStream before writing frames.");
 
     byte[] frameInfoBytes = frameInfo.toByteArray();

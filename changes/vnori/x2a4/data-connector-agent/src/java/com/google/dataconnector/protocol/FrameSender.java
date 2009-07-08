@@ -49,6 +49,7 @@ public class FrameSender extends Thread {
   // Local fields.
   private DataOutputStream dataOutputStream;
   private long sequence = 0;
+  private boolean thread_started = false;
 
   @Inject
   public FrameSender(BlockingQueue<FrameInfo> sendQueue) {
@@ -85,16 +86,25 @@ public class FrameSender extends Thread {
   }
   
   /**
-   * Used by the queue watching loop to write a a single frame to the output stream.   We leave
-   * this package-private to support testing.
+   * This method used to send a frame when frameSender thread hasn't started
+   * and there is no contention on the socket.
    * 
-   * This method is public also because it can be used to send a frame without starting a thread
-   * to process sendQueue.
-   *
    * @param frameInfo the frame to send.
    * @throws IOException if any IOerrors while writing.
    */
-  public void writeOneFrame(FrameInfo frameInfo) throws IOException {
+  public void writeSingleFrameIfThereIsNoThread(FrameInfo frameInfo) throws IOException {
+    Preconditions.checkArgument(!thread_started);
+  }
+  
+  /**
+   * Used by the queue watching loop to write a a single frame to the output stream.   We leave
+   * this package-private to support testing.
+   * 
+   * @param frameInfo the frame to send.
+   * @throws IOException if any IOerrors while writing.
+   */
+  // visible for testing.
+  void writeOneFrame(FrameInfo frameInfo) throws IOException {
     Preconditions.checkNotNull(outputStream, "Must specify outputStream before writing frames.");
 
     byte[] frameInfoBytes = frameInfo.toByteArray();
@@ -128,7 +138,7 @@ public class FrameSender extends Thread {
    */
   @Override
   public void run() {
-    
+    thread_started = true;
     try {
       while (true) {
         // Wait for a frame to become available.

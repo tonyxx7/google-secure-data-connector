@@ -94,6 +94,7 @@ public class FrameSender extends Thread {
    */
   public void writeSingleFrameIfThereIsNoThread(FrameInfo frameInfo) throws IOException {
     Preconditions.checkArgument(!thread_started);
+    writeOneFrame(frameInfo);
   }
   
   /**

@@ -93,12 +93,12 @@ public class Client {
      * because the following method - incorrectly named validate() -
      * does more than validation of resource rules. 
      * 
-     * thats terrible - but don't worry. the entire class ProcessResourceRules is going to 
+     * thats terrible - but don't worry. the entire class ResourceRuleProcessor is going to 
      * be gone when config-in-cloud is done. so I left this ugly code in there, for now.
      * 
-     * since this code will go away soon, I didn't inject ProcessResourceRules into this class
+     * since this code will go away soon, I didn't inject ResourceRuleProcessor into this class
      */
-    ClientGuiceModule.getInjector().getInstance(ProcessResourceRules.class).validate();
+    ClientGuiceModule.getInjector().getInstance(ResourceRuleProcessor.class).validate();
     jsocksStarter.startJsocksProxy();
     secureDataConnection.connect();
   }

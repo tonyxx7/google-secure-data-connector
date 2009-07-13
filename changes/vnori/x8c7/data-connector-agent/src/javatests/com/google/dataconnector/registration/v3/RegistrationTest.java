@@ -14,7 +14,7 @@
  */ 
 package com.google.dataconnector.registration.v3;
 
-import com.google.dataconnector.client.ProcessResourceRules;
+import com.google.dataconnector.client.ResourceRuleProcessor;
 import com.google.dataconnector.protocol.FrameReceiver;
 import com.google.dataconnector.protocol.FrameSender;
 import com.google.dataconnector.protocol.FramingException;
@@ -50,7 +50,7 @@ public class RegistrationTest extends TestCase {
   private FrameReceiver frameReceiver;
   private List<ResourceRule> resourceRules;
   private RegistrationRequest registrationRequest;
-  private ProcessResourceRules mockProcessResourceRules;
+  private ResourceRuleProcessor mockProcessResourceRules;
   
   private RegistrationInfo expectedRegistrationInfo;
   private RegistrationInfo expectedRegistrationResponseInfo;
@@ -87,7 +87,7 @@ public class RegistrationTest extends TestCase {
         .build());
     EasyMock.replay(frameReceiver);
 
-    mockProcessResourceRules = EasyMock.createMock(ProcessResourceRules.class);
+    mockProcessResourceRules = EasyMock.createMock(ResourceRuleProcessor.class);
     EasyMock.expect(mockProcessResourceRules.getResourceRules()).andReturn(resourceRules);
     EasyMock.replay(mockProcessResourceRules);
   }

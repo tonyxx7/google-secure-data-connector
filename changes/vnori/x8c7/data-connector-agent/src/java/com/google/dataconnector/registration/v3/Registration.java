@@ -14,7 +14,7 @@
  */ 
 package com.google.dataconnector.registration.v3;
 
-import com.google.dataconnector.client.ProcessResourceRules;
+import com.google.dataconnector.client.ResourceRuleProcessor;
 import com.google.dataconnector.protocol.FrameReceiver;
 import com.google.dataconnector.protocol.FrameSender;
 import com.google.dataconnector.protocol.FramingException;
@@ -42,13 +42,13 @@ public class Registration {
   private static final Logger LOG = Logger.getLogger(Registration.class);
   
   private RegistrationRequest registrationRequest;
-  private ProcessResourceRules processResourceRules;
+  private ResourceRuleProcessor resourceRuleProcessor;
 
   @Inject
   public Registration(RegistrationRequest registrationRequest, 
-      ProcessResourceRules processResourceRules) {
+      ResourceRuleProcessor resourceRuleProcessor) {
     this.registrationRequest = registrationRequest;
-    this.processResourceRules = processResourceRules;
+    this.resourceRuleProcessor = resourceRuleProcessor;
   }
    
   /**
@@ -66,7 +66,7 @@ public class Registration {
     try {
       // TODO(rayc) Remove need for registrationRequest v2 stuff.  Directly use the protobuf.
       // Prepare reg request.
-      registrationRequest.populateFromResources(processResourceRules.getResourceRules());
+      registrationRequest.populateFromResources(resourceRuleProcessor.getResourceRules());
       RegistrationInfo registrationFrame = RegistrationInfo.newBuilder()
           .setXml(registrationRequest.toJson().toString()).build();
       

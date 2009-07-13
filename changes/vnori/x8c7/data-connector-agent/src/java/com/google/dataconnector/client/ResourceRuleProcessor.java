@@ -40,9 +40,9 @@ import java.util.List;
  * @author vnori@google.com (Your Name Here)
  */
 @Singleton
-public class ProcessResourceRules {
+public class ResourceRuleProcessor {
 
-  private static final Logger LOG = Logger.getLogger(ProcessResourceRules.class);
+  private static final Logger LOG = Logger.getLogger(ResourceRuleProcessor.class);
   
   private LocalConf localConf;
   private ResourceRuleUtil resourceRuleUtil;
@@ -53,7 +53,7 @@ public class ProcessResourceRules {
   private List<ResourceRule> resourceRules = null;
   
   @Inject
-  public ProcessResourceRules(LocalConf localConf,
+  public ResourceRuleProcessor(LocalConf localConf,
       ResourceRuleUtil resourceRuleUtil, 
       HealthCheckRequestHandler healthCheckRequestHandler,
       SdcKeysManager sdcKeysManager) {

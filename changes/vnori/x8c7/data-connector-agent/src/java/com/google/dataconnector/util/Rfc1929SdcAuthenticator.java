@@ -15,7 +15,6 @@
 
 package com.google.dataconnector.util;
 
-import com.google.gdata.util.common.base.Preconditions;
 import com.google.inject.Inject;
 
 import net.sourceforge.jsocks.socks.ProxyMessage;
@@ -37,6 +36,9 @@ import java.net.Socket;
  * log vehicle, while the password is used a key that only allows access to the specified rule 
  * sets in the configuration.
  * 
+ * this extends {@link ServerAuthenticatorNone} because all we really want from the superclass
+ * is one single method {@link ServerAuthenticatorNone#selectSocks5Authentication}.
+ * 
  * @author rayc@google.com (Ray Colline)
  */
 public class Rfc1929SdcAuthenticator extends ServerAuthenticatorNone {
@@ -48,7 +50,14 @@ public class Rfc1929SdcAuthenticator extends ServerAuthenticatorNone {
   
    private String passKey; // RFC1929 password used to lookup rule set in the map.
    private String serverMetaData; // Raw JSON string from server
-
+   
+   /** the following are defined in the superclass {@link ServerAuthenticatorNone}
+    * but there are declared with new names because this class doesn't have access to 
+    * in, out members of the superclass.
+    */
+   private InputStream inStream;
+   private OutputStream outStream;
+   
    /** injected dependency */
    private SdcKeysManager keyManager;
    
@@ -58,22 +67,6 @@ public class Rfc1929SdcAuthenticator extends ServerAuthenticatorNone {
     */
    @Inject
    public Rfc1929SdcAuthenticator(SdcKeysManager keyManager) {
-     this.keyManager = keyManager;
-   }
-   
-   /**
-    * Used to create instances returned from startSession in JSOCKS server..
-    * 
-    * @param in InputStream of socks connection.
-    * @param out OutputStream of socks connection.
-    * @param passKey the password provided by the client for this connection
-    */
-   public Rfc1929SdcAuthenticator(InputStream in, OutputStream out, String passKey, 
-       String userLogLine, SdcKeysManager keyManager) {
-     super(in,out);
-     Preconditions.checkNotNull(keyManager);
-     this.passKey = passKey;
-     this.serverMetaData = userLogLine;
      this.keyManager = keyManager;
    }
 
@@ -125,30 +118,19 @@ public class Rfc1929SdcAuthenticator extends ServerAuthenticatorNone {
    */
   @Override
   public ServerAuthenticator startSession(Socket s) throws IOException {
-    InputStream in = s.getInputStream();
-    OutputStream out = s.getOutputStream();
+    this.inStream = s.getInputStream();
+    this.outStream = s.getOutputStream();
 
-    if(in.read() != 5) {
+    if(this.inStream.read() != 5) {
       LOG.debug("received non-version 5 Socks msg. ignoring it.");
       return null;
     }
 
-    if(!selectSocks5Authentication(in,out,METHOD_ID) ||  
-       !doUserPasswordAuthentication(s,in,out)) {
+    if(!selectSocks5Authentication(this.inStream, this.outStream, METHOD_ID) ||  
+       !doUserPasswordAuthentication(s, this.inStream, this.outStream)) {
       return null;
     }
-
-    /* 
-     * allocate a new instance of Rfc1929SdcAuthenticator.
-     * why couldn't we reuse the one already created?
-     * because this class extends {@link ServerAuthenticatorNone}
-     * and it doesn't make its in, out members public/protected.
-     * 
-     * instead this class could have implemented the interface ServerAuthenticator.
-     * that would mean copying some code from {@link ServerAuthenticatorNone}.
-     * should probably do that.
-     */
-    return new Rfc1929SdcAuthenticator(in, out, passKey, serverMetaData, keyManager);
+    return this;
   }
 
   /**
@@ -198,4 +180,13 @@ public class Rfc1929SdcAuthenticator extends ServerAuthenticatorNone {
     return true;
   }
 
+  @Override
+  public InputStream getInputStream() {
+    return inStream;
+  }
+
+  @Override
+  public OutputStream getOutputStream() {
+    return outStream;
+  }
 }

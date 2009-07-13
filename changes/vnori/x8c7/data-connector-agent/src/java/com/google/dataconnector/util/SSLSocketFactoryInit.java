@@ -72,9 +72,13 @@ public class SSLSocketFactoryInit {
     // does not map to the default Java CAs. In practice, this will only happen, most
     // likely, when connecting with testing/staging servers with test certificates.
     
-    char[] password = (localConf.getSslKeyStorePassword() != null) ?
-        localConf.getSslKeyStorePassword().toCharArray() : null;
     String keystorePath = localConf.getSslKeyStoreFile();
+    char[] password = null;
+    if (keystorePath != null) {
+      // if KeyStoreFile is specified, we know that password must be specified too.
+      // {@link LocalConfValidator} makes sure of that.
+      password = localConf.getSslKeyStorePassword().toCharArray();
+    }
     
     try {
       SSLContext context = SSLContext.getInstance("TLSv1");
@@ -111,10 +115,9 @@ public class SSLSocketFactoryInit {
       String keystorePath, SSLContext context) throws KeyStoreException, IOException,
       NoSuchAlgorithmException, CertificateException, FileNotFoundException, 
       KeyManagementException {
-    // Get a new "Java Key Store"
-    KeyStore keyStore = KeyStore.getInstance("JKS");
     // Load with our trusted certs and setup the trust manager.
     if (!localConf.getAllowUnverifiedCertificates()) {
+      KeyStore keyStore = KeyStore.getInstance("JKS");
       keyStore.load(fileUtil.getFileInputStream(keystorePath), password);
       TrustManagerFactory tmf = TrustManagerFactory.getInstance("PKIX");
       tmf.init(keyStore);

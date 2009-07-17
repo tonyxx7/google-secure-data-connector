@@ -112,7 +112,7 @@ Build File for Secure Data Connector client and reference server.
     </javac>
 
     <javac 
-        srcdir="src/java" 
+        srcdir="${src}" 
         destdir="${classes}"
         debug="${COMPILE_DEBUG_FLAG}"
         debuglevel="${COMPILE_DEBUG_LEVEL}"
@@ -140,6 +140,7 @@ Build File for Secure Data Connector client and reference server.
     <jar jarfile="${agent.jarfile}">
       <fileset dir="${classes}">
         <include name="**"/>
+        <exclude name="com/google/dataconnector/protocol/proto/**"/>
       </fileset>
       <manifest>
         <attribute name="Implementation-Title" value="Secure Data Connector"/>
@@ -191,6 +192,7 @@ Build File for Secure Data Connector client and reference server.
   <path id="classpath.test">
     <pathelement location="${testClasses.home}" />
     <pathelement location="${agent.jarfile}" />
+    <pathelement location="${generated.protocol.jarfile}" />
     <fileset dir="third-party">
       <include name="**/*.jar"/>
     </fileset>

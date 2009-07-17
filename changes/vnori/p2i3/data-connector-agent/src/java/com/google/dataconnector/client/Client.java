@@ -30,7 +30,6 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
-import java.io.IOException;
 import java.util.Properties;
 
 /**
@@ -51,36 +50,54 @@ public class Client {
   private static final Logger log = Logger.getLogger(Client.class);
 
   /* Dependencies */
-  private LocalConf localConfiguration;
+  private LocalConf localConf;
   private SdcConnection secureDataConnection;
   private JsocksStarter jsocksStarter;
   private HealthCheckRequestHandler healthCheckRequestHandler;
+  private ResourceRuleProcessor resourceRuleProcessor;
   
+ 
   /**
    * Creates a new client from the populated client configuration object.
-   * 
-   * @param localConfiguration the local configuration object.
+   * @param localConf
    * @param secureDataConnection
+   * @param jsocksStarter
+   * @param healthCheckRequestHandler
+   * @param resourceRuleProcessor
    */
   @Inject
-  public Client(LocalConf localConfiguration, SdcConnection secureDataConnection,
-      JsocksStarter jsocksStarter, HealthCheckRequestHandler healthCheckRequestHandler) {
-    this.localConfiguration = localConfiguration;
+  public Client(LocalConf localConf, SdcConnection secureDataConnection,
+      JsocksStarter jsocksStarter, HealthCheckRequestHandler healthCheckRequestHandler,
+      ResourceRuleProcessor resourceRuleProcessor) {
+    this.localConf = localConf;
     this.secureDataConnection = secureDataConnection;
     this.jsocksStarter = jsocksStarter;
     this.healthCheckRequestHandler = healthCheckRequestHandler;
+    this.resourceRuleProcessor = resourceRuleProcessor;
   }
   
+
   /**
-   * Starts 2 components in separate threads.
-   * @throws IOException 
-   * @throws ConnectionException 
-   * @throws ResourceException 
+   * 
+   * @param args
+   * @param injector
    */
-  public void startUp() throws IOException, ConnectionException, ResourceException {
-    // Set log4j properties and watch for changes every min (default)
-    PropertyConfigurator.configureAndWatch(localConfiguration.getLog4jPropertiesFile());
-    if (localConfiguration.getDebug()) {
+  public void startup(String[] args, Injector injector) {
+    
+    // validate the localConf.xml file and the input args
+    try {
+      validateLocalConf(args);
+    } catch (LocalConfException e) {
+      log.fatal("Configuration error", e);
+      return;
+    } catch (ConfigurationBeanException e) {
+      log.fatal("Configuration error", e);
+      return;
+    }
+    
+    // Set log4j properties and watch for changes every minute (default)
+    PropertyConfigurator.configureAndWatch(localConf.getLog4jPropertiesFile());
+    if (localConf.getDebug()) {
       Logger.getRootLogger().setLevel(Level.DEBUG);
     }
     
@@ -92,15 +109,34 @@ public class Client {
      * but why did we start healthcheck handler before validating the resources?
      * because the following method - incorrectly named validate() -
      * does more than validation of resource rules. 
+     * it creates system resource rules - such as healthcheck resource rule - which needs
+     * the healthCheckHandler port. thats why it is started before calling validate().
      * 
      * thats terrible - but don't worry. the entire class ResourceRuleProcessor is going to 
      * be gone when config-in-cloud is done. so I left this ugly code in there, for now.
      * 
      * since this code will go away soon, I didn't inject ResourceRuleProcessor into this class
      */
-    ClientGuiceModule.getInjector().getInstance(ResourceRuleProcessor.class).validate();
+    try {
+      resourceRuleProcessor.validate();
+    } catch (ResourceException e) {
+      log.fatal("Configuration error", e);
+      return;
+    }
+    
+    // start jsocks thread
     jsocksStarter.startJsocksProxy();
-    secureDataConnection.connect();
+    
+    // start main processing thread - to initiate connection/registration with the SDC server
+    try {
+      secureDataConnection.connect();
+    } catch (ConnectionException e) {
+      log.fatal("Startup error", e);
+      // the following is necessary because frameSender thread seems to be hanging around
+      // don't want to make that a daemon because it is shared by the server.
+      // TODO(vnori):fix this before releasing the agent.
+      System.exit(-1);
+    }
   }
 
   /**
@@ -108,10 +144,9 @@ public class Client {
    * @throws ConfigurationBeanException 
    * @throws LocalConfException 
    */
-  private static void validateLocalConf(Injector injector, String[] args) 
+  private void validateLocalConf(String[] args) 
       throws ConfigurationBeanException, LocalConfException {        
     // Load configuration file and command line flags into beans
-    LocalConf localConf = injector.getInstance(LocalConf.class);
     BeanCliHelper beanCliHelper = new BeanCliHelper();
     beanCliHelper.register(localConf);
     beanCliHelper.parse(args);
@@ -144,22 +179,7 @@ public class Client {
     // Bootstrap logging system
     PropertyConfigurator.configure(getBootstrapLoggingProperties());
     
-    // validate the localConf.xml file and the input args
-    try {
-      validateLocalConf(ClientGuiceModule.getInjector(), args);
-            
-      // Create the client instance and start services
-      ClientGuiceModule.getInjector().getInstance(Client.class).startUp();
-    } catch (LocalConfException e) {
-      log.fatal("Configuration error", e);
-    } catch (ConfigurationBeanException e) {
-      log.fatal("Configuration error", e);
-    } catch (IOException e) {
-      log.fatal("Startup error", e);
-    } catch (ConnectionException e) {
-      log.fatal("Startup error", e);
-    } catch (ResourceException e) {
-      log.fatal("Error while parsing resource rules", e);
-    }
+    Injector injector = ClientGuiceModule.getInjector();
+    injector.getInstance(Client.class).startup(args, injector);
   }
 }

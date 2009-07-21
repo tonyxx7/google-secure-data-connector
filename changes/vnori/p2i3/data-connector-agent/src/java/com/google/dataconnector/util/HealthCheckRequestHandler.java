@@ -29,7 +29,7 @@ public class HealthCheckRequestHandler extends Thread {
   
   public static Logger LOG = Logger.getLogger(HealthCheckRequestHandler.class.getName());
   
-  private ServerSocket serverSocket;
+  private final ServerSocket serverSocket;
   private boolean quit = false;
 
   @Inject

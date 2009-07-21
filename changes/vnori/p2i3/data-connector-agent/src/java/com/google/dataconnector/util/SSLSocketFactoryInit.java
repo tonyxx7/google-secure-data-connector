@@ -38,14 +38,14 @@ import javax.net.ssl.TrustManagerFactory;
 /**
  * A helper class to set up own local SSL context.
  * 
- * @author vnori@google.com (Your Name Here)
+ * @author vnori@google.com (Vasu Nori)
  */
 @Singleton
 public class SSLSocketFactoryInit {
   private static final Logger LOG = Logger.getLogger(SSLSocketFactoryInit.class);
   
   /** injected dependencies */
-  private FileUtil fileUtil;
+  private final FileUtil fileUtil;
   
   @Inject
   public SSLSocketFactoryInit(FileUtil fileUtil) {

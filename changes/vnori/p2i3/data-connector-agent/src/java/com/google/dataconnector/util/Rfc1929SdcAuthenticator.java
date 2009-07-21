@@ -15,6 +15,7 @@
 
 package com.google.dataconnector.util;
 
+import com.google.gdata.util.common.base.Preconditions;
 import com.google.inject.Inject;
 
 import net.sourceforge.jsocks.socks.ProxyMessage;
@@ -59,7 +60,7 @@ public class Rfc1929SdcAuthenticator extends ServerAuthenticatorNone {
    private OutputStream outStream;
    
    /** injected dependency */
-   private SdcKeysManager keyManager;
+   private final SdcKeysManager keyManager;
    
    /** 
     * a constructor solely for Guice injection use and to get {@link SdcKeysManager}
@@ -80,6 +81,7 @@ public class Rfc1929SdcAuthenticator extends ServerAuthenticatorNone {
    */
   @Override
   public boolean checkRequest(ProxyMessage msg) {
+    Preconditions.checkNotNull(keyManager);
 
     // This shouldn't happen but we should check anyways.
     if (msg.version != 5) {
@@ -99,10 +101,6 @@ public class Rfc1929SdcAuthenticator extends ServerAuthenticatorNone {
     }
 
     // Is this a valid "secret key"
-    if (keyManager == null) {
-      LOG.warn("SDC server never sent me keys during registration. reject the request.");
-      return false;
-    }
     boolean rslt = keyManager.checkKeyIpPort(passKey, msg.host, msg.port);
     if (!rslt) {
       LOG.info("No key found. Rejecting access to " + msg.host + ":" + msg.port);

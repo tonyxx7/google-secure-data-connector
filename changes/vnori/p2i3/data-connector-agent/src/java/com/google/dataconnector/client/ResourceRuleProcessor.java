@@ -44,10 +44,10 @@ public class ResourceRuleProcessor {
 
   private static final Logger LOG = Logger.getLogger(ResourceRuleProcessor.class);
   
-  private LocalConf localConf;
-  private ResourceRuleUtil resourceRuleUtil;
-  private HealthCheckRequestHandler healthCheckRequestHandler;
-  private SdcKeysManager sdcKeysManager;
+  private final LocalConf localConf;
+  private final ResourceRuleUtil resourceRuleUtil;
+  private final HealthCheckRequestHandler healthCheckRequestHandler;
+  private final SdcKeysManager sdcKeysManager;
   
   // processed resource rules stored here
   private List<ResourceRule> resourceRules = null;
@@ -80,7 +80,7 @@ public class ResourceRuleProcessor {
   /**
    * returns true if the resourcesfiles is parsed without any errors. false otherwise.
    */
-  void validate() throws ResourceException {
+  void process() throws ResourceException {
     // process rules
     try {
       resourceRules = resourceRuleUtil.getResourceRules(

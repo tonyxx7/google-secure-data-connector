@@ -66,13 +66,13 @@ public class SdcConnection implements FailCallback {
      SdcConnection.class.getPackage().getImplementationVersion() + "\n";
 
   // Dependencies.
-  private LocalConf localConf;
-  private SSLSocketFactoryInit sslSocketFactoryInit;
-  private FrameReceiver frameReceiver;
-  private FrameSender frameSender;
-  private Registration registration;
-  private SocksDataHandler socksDataHandler;
-  private HealthCheckHandler healthCheckHandler;
+  private final LocalConf localConf;
+  private final SSLSocketFactoryInit sslSocketFactoryInit;
+  private final FrameReceiver frameReceiver;
+  private final FrameSender frameSender;
+  private final Registration registration;
+  private final SocksDataHandler socksDataHandler;
+  private final HealthCheckHandler healthCheckHandler;
   
   // Fields
   private SSLSocket socket;

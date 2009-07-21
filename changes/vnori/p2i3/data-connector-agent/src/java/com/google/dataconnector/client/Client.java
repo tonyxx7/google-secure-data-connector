@@ -49,21 +49,18 @@ public class Client {
   // Logging instance
   private static final Logger log = Logger.getLogger(Client.class);
 
+  private static final int ABNORMAL_EXIT = -1;
+
   /* Dependencies */
-  private LocalConf localConf;
-  private SdcConnection secureDataConnection;
-  private JsocksStarter jsocksStarter;
-  private HealthCheckRequestHandler healthCheckRequestHandler;
-  private ResourceRuleProcessor resourceRuleProcessor;
+  private final LocalConf localConf;
+  private final SdcConnection secureDataConnection;
+  private final JsocksStarter jsocksStarter;
+  private final HealthCheckRequestHandler healthCheckRequestHandler;
+  private final ResourceRuleProcessor resourceRuleProcessor;
   
  
   /**
    * Creates a new client from the populated client configuration object.
-   * @param localConf
-   * @param secureDataConnection
-   * @param jsocksStarter
-   * @param healthCheckRequestHandler
-   * @param resourceRuleProcessor
    */
   @Inject
   public Client(LocalConf localConf, SdcConnection secureDataConnection,
@@ -78,9 +75,7 @@ public class Client {
   
 
   /**
-   * 
-   * @param args
-   * @param injector
+   * This method starts the Client initialization.
    */
   public void startup(String[] args, Injector injector) {
     
@@ -106,19 +101,9 @@ public class Client {
     
     /* 
      * process resource rules to make sure they are good.
-     * but why did we start healthcheck handler before validating the resources?
-     * because the following method - incorrectly named validate() -
-     * does more than validation of resource rules. 
-     * it creates system resource rules - such as healthcheck resource rule - which needs
-     * the healthCheckHandler port. thats why it is started before calling validate().
-     * 
-     * thats terrible - but don't worry. the entire class ResourceRuleProcessor is going to 
-     * be gone when config-in-cloud is done. so I left this ugly code in there, for now.
-     * 
-     * since this code will go away soon, I didn't inject ResourceRuleProcessor into this class
      */
     try {
-      resourceRuleProcessor.validate();
+      resourceRuleProcessor.process();
     } catch (ResourceException e) {
       log.fatal("Configuration error", e);
       return;
@@ -134,8 +119,7 @@ public class Client {
       log.fatal("Startup error", e);
       // the following is necessary because frameSender thread seems to be hanging around
       // don't want to make that a daemon because it is shared by the server.
-      // TODO(vnori):fix this before releasing the agent.
-      System.exit(-1);
+      System.exit(ABNORMAL_EXIT);
     }
   }
 

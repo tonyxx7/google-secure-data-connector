@@ -119,29 +119,19 @@ Build File for Secure Data Connector client and reference server.
         includes="**"
         >
       <classpath>
-        <pathelement path="third-party/jsocks/jsocks.jar"/>
-        <pathelement path="third-party/beepcore/lib/beepcore.jar"/>
-        <pathelement path="third-party/beepcore/lib/xerces.jar"/>
-        <pathelement path="third-party/beepcore/lib/concurrent.jar"/>
+        <pathelement path="third-party/apache-log4j/log4j-1.2.15.jar"/>
         <pathelement path="third-party/commons-cli/commons-cli-1.1.jar"/>
         <pathelement path="third-party/commons-logging/commons-logging-1.1.jar"/>
-        <pathelement path="third-party/apache-log4j/log4j-1.2.15.jar"/>
         <pathelement path="third-party/easymock/easymock.jar"/>
-        <pathelement path="third-party/easymock/easymockclassextension.jar"/>
-        <pathelement path="third-party/guice-snapshot20081016/guice-assistedinject-snapshot20081016.jar"/>
-        <pathelement path="third-party/guice-snapshot20081016/guice-snapshot20081016.jar"/>
+        <pathelement path="third-party/google-collect-1.0-rc2/google-collect-1.0-rc2.jar"/>
         <pathelement path="third-party/google-feedserver/commons-beanutils-core-1.8.0.jar"/>
         <pathelement path="third-party/google-feedserver/gdata-client-1.0.jar"/>
         <pathelement path="third-party/google-feedserver/gdata-core-1.0.jar"/>
         <pathelement path="third-party/google-feedserver/google-feedserver-java-client-2.0.jar"/>
-        <pathelement path="third-party/jsch/jsch-20071024.jar"/>
-        <pathelement path="third-party/jline/jline-0.9.91.jar"/>
+        <pathelement path="third-party/guice/guice-2.0.jar"/>
+        <pathelement path="third-party/jsocks/jsocks.jar"/>
         <pathelement path="third-party/json/json.jar"/>
-        <pathelement path="third-party/junit/junit-4.4.jar"/>
-        <pathelement path="third-party/oauth/core.jar"/>
-        <pathelement path="third-party/oauth/commons-codec-1.3.jar"/>
         <pathelement path="third-party/protobuf/protobuf-java-2.1.0.jar"/>
-        <pathelement path="third-party/sdc-shared/shared.jar"/>
       </classpath>
     </javac>
 

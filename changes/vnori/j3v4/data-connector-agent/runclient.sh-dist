@@ -98,6 +98,38 @@ if [ ${NOVERIFY} = "false" ]; then
 fi
 }
 
+function migrate {
+
+  local_config_file=$1
+  resource_rules_file=$2
+
+  # Local Config
+  egrep -q '<clientId' ${local_config_file}
+
+  if [ $? = 0 ]; then
+    echo "Migrating ${local_config_file}"
+    sed -i ${local_config_file} -e 's^clientId>^agentId>^g'
+  fi
+
+  # Resource Rules
+  egrep -q '<feed|<entity|<allowedEntities|<clientId|<pattern|<patternType' \
+      ${resource_rules_file}
+
+  if [ $? = 0 ]; then
+    echo "Migrating ${resource_rules_file}"
+    sed -i ${resource_rules_file} -e 's^feed>^resourceRules>^g'
+    # repeatable
+    sed -i ${resource_rules_file} -e 's^<entity^<rule^g'
+    sed -i ${resource_rules_file} -e 's^entity>^rule>^g'
+    # repeatable
+    sed -i ${resource_rules_file} -e 's^<allowedEntities^<viewerEmail^g'
+    sed -i ${resource_rules_file} -e 's^allowedEntities>^viewerEmail>^g'
+    sed -i ${resource_rules_file} -e 's^clientId>^agentId>^g'
+    sed -i ${resource_rules_file} -e 's^pattern>^url>^g'
+    sed -i ${resource_rules_file} -e 's^patternType>^urlMatch>^g'
+  fi
+}
+
 if [ ${NOVERIFY} = "false" ]; then 
   # Check current file permissions and refuse to run if they arent correct.
   checkfile ${CONFIGFILE} root ${GROUP} 640
@@ -105,6 +137,8 @@ if [ ${NOVERIFY} = "false" ]; then
   checkfile ${ETCPREFIX}/localConfig.xml root ${GROUP} 640
   checkfile ${ETCPREFIX}/resourceRules.xml root ${GROUP} 640
 fi
+
+migrate ${CONFIGFILE} ${RULESFILE}
 
 while /bin/true; do
   su ${USER} -c "_JAVABIN_ ${JVM_ARGS} com.google.dataconnector.client.Client \

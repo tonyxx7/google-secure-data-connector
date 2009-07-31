@@ -33,8 +33,6 @@ public class ResourceRule implements Comparable<ResourceRule> {
   @Deprecated
   public static final String REGEX = "REGEX";
   
-  @Deprecated
-  private String name;
   private int ruleNum;
   private String agentId;
   private String[] viewerEmail;
@@ -45,17 +43,6 @@ public class ResourceRule implements Comparable<ResourceRule> {
   private Integer httpProxyPort;
   private Integer socksServerPort;
   private Long secretKey;
-  
-  // getters and setters
-  @Deprecated
-  public String getName() {
-    return name;
-  }
-
-  @Deprecated
-  public void setName(String name) {
-    this.name = name;
-  }
 
   public int getRuleNum() {
     return ruleNum;

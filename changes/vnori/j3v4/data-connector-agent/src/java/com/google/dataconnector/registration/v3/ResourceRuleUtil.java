@@ -44,9 +44,9 @@ public class ResourceRuleUtil {
   private static final String TOP_LEVEL_ELEMENT = "resourceRules";
   private static final String RULE = "rule";
   private static final String ALL = "all";
-  @Deprecated
+  
+  // for old style resourceRules.xml, the following are used while parsing resourceRules.xml.
   private static final String TOP_LEVEL_ELEMENT_FEED = "feed";
-  @Deprecated
   private static final String ENTITY = "entity";
 
   // Dependencies
@@ -179,6 +179,7 @@ public class ResourceRuleUtil {
     return resourceRules;
   }
   
+  // suppress type-safety warnings due to XmlUtil returning Objects when XML is parsed
   @SuppressWarnings("unchecked")
   public List<ResourceRule> parseRules(String xmlFeedText, String rootElement) 
       throws ResourceException {
@@ -310,22 +311,5 @@ public class ResourceRuleUtil {
     healthCheckRule.setPatternType(ResourceRule.URLEXACT);
     systemRules.add(healthCheckRule);
     return systemRules;
-  }
-  
-  /**
-   * For legacy clients, sets rule number from deprecated name. 
-   * TODO(rayc) remove when we deprecate TT2 and older clients.
-   */
-  @Deprecated
-  public void setRuleNumFromName(List<ResourceRule> resourceRules) throws ResourceException {
-    for (ResourceRule resourceRule : resourceRules) {
-      if (resourceRule.getName() != null) {
-        try {
-          resourceRule.setRuleNum(Integer.valueOf(resourceRule.getName()));
-        } catch (NumberFormatException e) {
-          throw new ResourceException(e);
-        }
-      }
-    }
   }
 }

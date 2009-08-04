@@ -1,0 +1,13 @@
+BINDIR=/opt/google/secure-data-connector/1.1/bin
+FULLNAME=google-secure-data-connector-1.1
+GROUP=securedataconnector
+INITSCRIPT=/etc/init.d/google-secure-data-connector-1.1
+LIBDIR=/opt/google/secure-data-connector/1.1/lib
+LOCALSTATEDIR=/var/lib/google/secure-data-connector/1.1
+LOGDIR=/var/log/google/secure-data-connector/1.1
+PREFIX=/opt/google/secure-data-connector/1.1
+PROTOC=/usr/local/google/google-secure-data-connector/data-connector-agent/src/no-op-protoc.sh
+SYSCONFDIR=/etc/google/secure-data-connector/1.1
+SYSV_INIT_SCRIPT_DIRECTORY=/etc/init.d
+USER=securedataconnector
+VERSION=1.1

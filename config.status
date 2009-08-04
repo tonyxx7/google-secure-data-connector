@@ -1,1 +1,0 @@
-/usr/local/google/google-secure-data-connector/data-connector-agent/configure.sh --noverify --user=securedataconnector --group=securedataconnector --javahome=/usr

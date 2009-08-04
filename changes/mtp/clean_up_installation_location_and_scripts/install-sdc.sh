@@ -16,6 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+# $Id$
 
 set -e  # bail out on any errors
 set -x
@@ -76,15 +77,15 @@ if [ -e ${SYSCONFDIR}/resourceRules.xml ]; then
 fi
 
 # localConfig.xml
-install -g ${GROUP} -o root -m 640 -t ${SYSCONFDIR} ./config/localConfig.xml
+install -g ${GROUP} -o ${USER} -m 640 -t ${SYSCONFDIR} ./config/localConfig.xml
 
 # resourceRules.xml-dist
-install -g ${GROUP} -o root -m 640 -t ${SYSCONFDIR} \
+install -g ${GROUP} -o ${USER} -m 640 -t ${SYSCONFDIR} \
   ./config/resourceRules.xml-dist
 
 # log4j.properties
 file="${SYSCONFDIR}/log4j.properties"
 echo installing ${file}
-install -g ${GROUP} -o root -m 640 -t ${SYSCONFDIR} ./config/log4j.properties
+install -g ${GROUP} -o ${USER} -m 640 -t ${SYSCONFDIR} ./config/log4j.properties
 
 install -o root -m 0755 distribute/initscript "${INITSCRIPT}"

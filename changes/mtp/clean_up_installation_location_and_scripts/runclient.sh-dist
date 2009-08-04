@@ -28,12 +28,16 @@ GROUP=__GROUP__
 USER=__USER__
 DEBUG=""
 NOVERIFY="false"
+ENTRYPOINT=com.google.dataconnector.client.Client
 # Dynamically generate classpath from lib directory.
-jarfiles=$(find ${WOODSTOCK_LIB} -type f -a -name \*.jar)
-for jar in ${jarfiles}; do
-  CLASSPATH=${CLASSPATH}:${jar}
-done
+CLASSPATH=${CLASSPATH}:$(find ${WOODSTOCK_LIB} -type f -a -iname '*.jar' | tr '\n' ':')
 export CLASSPATH
+
+on_sighup() {
+  echo "Caught SIGHUP; ignored. $(date)" >&2
+}
+
+trap on_sighup SIGHUP
 
 # Create flags for local config file.
 OPTS=$(getopt -o dnf:r:j: --long debug,noverify,localConfigFile::,rulesFile::,jvm_args:: -n 'runagent' -- "$@")
@@ -114,7 +118,7 @@ function migrate {
 
   # Resource Rules
   egrep -q '<feed|<entity|<allowedEntities|<clientId|<pattern|<patternType' \
-      ${resource_rules_file}
+    ${resource_rules_file}
 
   if [ $? = 0 ]; then
     echo "Migrating ${resource_rules_file}"
@@ -133,16 +137,16 @@ function migrate {
 
 if [ ${NOVERIFY} = "false" ]; then
   # Check current file permissions and refuse to run if they arent correct.
-  checkfile ${CONFIGFILE} root ${GROUP} 640
-  checkfile ${RULESFILE} root ${GROUP} 640
-  checkfile ${ETCPREFIX}/localConfig.xml root ${GROUP} 640
-  checkfile ${ETCPREFIX}/resourceRules.xml root ${GROUP} 640
+  checkfile ${CONFIGFILE} ${USER} ${GROUP} 640
+  checkfile ${RULESFILE} ${USER} ${GROUP} 640
+  checkfile ${CONFIGFILE} ${USER} ${GROUP} 640
+  checkfile ${RULESFILE} ${USER} ${GROUP} 640
 fi
 
 migrate ${CONFIGFILE} ${RULESFILE}
 
 while /bin/true; do
-  su ${USER} -c "__JAVABIN__ ${JVM_ARGS} com.google.dataconnector.client.Client \
+  su ${USER} -c "__JAVABIN__ ${JVM_ARGS} ${ENTRYPOINT} \
     ${DEBUG} \
     -localConfigFile \"${CONFIGFILE}\" \
     -rulesFile \"${RULESFILE}\" \

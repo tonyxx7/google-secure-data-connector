@@ -1,7 +1,5 @@
 #! /bin/bash
 #
-# $Id$
-#
 # Copyright 2008 Google Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+# $Id$
 
 ### BEGIN INIT INFO
 # Provides:          dataconnector
@@ -34,54 +33,44 @@
 
 # Do NOT "set -e"
 
-VERSION=__VERSION__
-SYSCONFDIR=__SYSCONFDIR__
+FULLNAME=__FULLNAME__
+INITSCRIPT=__INITSCRIPT__
+BINDIR=__BINDIR__
 LIBDIR=__LIBDIR__
 LOCALSTATEDIR=__LOCALSTATEDIR__
 LOGDIR=__LOGDIR__
-INITSCRIPT=__INITSCRIPT__
+RUNDIR=__RUNDIR__
+SYSCONFDIR=__SYSCONFDIR__
+VERSION=__VERSION__
+
+RULES_FILE="${LOCALSTATEDIR}/rules"
+LOGFILE="${LOGDIR}/dataconnector"
+PID_FILE="${RUNDIR}/${FULLNAME}"
+START_TIMEOUT=15
 
 # PATH should only include /usr/* if it runs after the mountnfs.sh script
 PATH=/usr/sbin:/usr/bin:/sbin:/bin
 DESC="Securelink client for Google Apps"
 NAME="dataconnector"
 
-JVM_ARGS="-Djava.net.preferIPv4Stack=true"
-CLIENT="com.google.dataconnector.client.Client"
-CLASSPATH=$(find "${LIBDIR}/" -iname '*.jar' | tr '\n' ':')
-
-CONFIG="${SYSCONFDIR}/localConfig.xml"
-RULES="${SYSCONFDIR}/resourceRules.xml"
-LOGGING="${SYSCONFDIR}/logging.properties"
-KEY="${SYSCONFDIR}/secureLinkClientTrustStore"
-
-KEY_PASS="woodstock"
-SERVER="apps-secure-data-connector.google.com"
-PORT="443"
-LOGFILE="${LOGDIR}/dataconnector"
-
-OPTIONS="-localConfigFile ${CONFIG} -rulesFile ${RULES}"
-
 DAEMON=$(which java)
 
 [ -x "${DAEMON}" ] || { echo "No Java interpreter found!" >&2 ; exit 1 ; }
 
-USER=daemon
-DAEMON_ARGS="${JVM_ARGS} -classpath ${CLASSPATH} ${CLIENT} ${OPTIONS}"
-RULES_FILE=${LOCALSTATEDIR}/rules
-
 START_MARKER="-- Starting dataconnector --"
 STOP_MARKER="-- Stopped dataconnector --"
 
-START_TIMEOUT=15
+create_directory_if_absent() {
+  directory="${!1}"
 
+  if [ ! -d "${directory}" ]; then
+    mkdir -p "${directory}"
+  fi
+}
 
-if [ ! -d "${LOGDIR}" ]; then
-  mkdir -p "${LOGDIR}"
-fi
-
-# Read configuration variable file if it is present
-[ -r "/etc/default/${NAME}" ] && . "/etc/default/${NAME}"
+create_directory_if_absent LOGDIR
+create_directory_if_absent LOCALSTATEDIR
+create_directory_if_absent RUNDIR
 
 # Load the VERBOSE setting and other rcS variables
 [ -f /etc/default/rcS ] && . /etc/default/rcS
@@ -91,12 +80,24 @@ fi
 . /lib/lsb/init-functions
 
 
+# Returns 0 if the agent is running.
+# Returns 1 if the agent is not running.
 is_running()
 {
-  # Returns 0 if the agent is running.
-  # Returns 1 if the agent is not running.
-  pgrep -f 'su securedataconnector' > /dev/null 2>&1
-  return $?
+  # There is a chance that multiple agents of different releases are running.
+
+  # If no PID file is present, do not consider it running.
+  [ -f "${PID_FILE}" ] || return 1
+
+  # Make sure that the provided PID looks to be the agent.
+  pid=$(< "${PID_FILE}")
+  if ps -p ${pid} -o comm,args | tail -1 | grep -q runclient.sh; then
+    return 0
+  else
+    echo "Google Secure Data Connector is not running according to ${PID_FILE}" >&2
+    rm -f "${PID_FILE}"
+    return 1
+  fi
 }
 
 
@@ -186,8 +187,6 @@ check_startup()
 #
 do_start()
 {
-  #start_cmd="nohup ${DAEMON} ${DAEMON_ARGS} >> \"${LOGFILE}\" 2>&1"
-  start_cmd="${DAEMON} ${DAEMON_ARGS}"
   # Return
   #   0 if daemon has been started
   #   1 if daemon was already running
@@ -199,8 +198,12 @@ do_start()
       ;;
     1)# Is not running. Start it.
       echo ${START_MARKER} >> "${LOGFILE}"
-      # Starts the dataconnector client backgrounded and returns its PID
-      sudo -u ${USER} /bin/bash -c "${start_cmd} & echo \$! "
+
+      # start.sh emits the PID of the runner agent script.
+      last_pid=$( "${BINDIR}"/start.sh )
+
+      echo "${last_pid}" > "${PID_FILE}"
+
       # Make sure the client started
       if [[ is_running ]]; then
         # Monitor the startup logs to confirm the agent connected OK.
@@ -229,18 +232,17 @@ do_stop()
   #   2 if daemon could not be stopped
   is_running
   case "$?" in
-    0) pid=$(pgrep -f "su securedataconnector")
+    0) pid=$(< "${PID_FILE}")
        kill ${pid}
-       case "$?" in
-         0) echo ${STOP_MARKER} >> "${LOGFILE}"
-            # Sterilise the rules file
-            echo '' > "${RULES_FILE}"
-            return 0
-            ;;
-         *) echo "Stopping ${pid} failed" >> "${LOGFILE}"
-            return 2
-            ;;
-       esac
+       if (( ${?} == 0 )); then
+         echo ${STOP_MARKER} >> "${LOGFILE}"
+         # Sterilise the rules file
+         echo '' > "${RULES_FILE}"
+         return 0
+       else
+         echo "Stopping ${pid} failed" >> "${LOGFILE}"
+         return 2
+       fi
        ;;
     1) echo ${STOP_MARKER} >> "${LOGFILE}"
        return 1

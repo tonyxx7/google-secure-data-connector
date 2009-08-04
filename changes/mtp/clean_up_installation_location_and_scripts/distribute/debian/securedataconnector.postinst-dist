@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Copyright 2008 Google Inc.
 #
@@ -24,8 +24,8 @@ set -e
 LOGDIR=__LOGDIR__
 RULES_DIR=__LOCALSTATEDIR__
 SYSCONFDIR=__SYSCONFDIR__
-CLIENT_USER=securedataconnector
-CLIENT_GROUP=securedataconnector
+CLIENT_USER=__USER__
+CLIENT_GROUP=__GROUP__
 
 if [ "$1" = "configure" ]; then
   # Set up the user to access the client
@@ -35,26 +35,29 @@ if [ "$1" = "configure" ]; then
   if [ ! -d ${LOGDIR} ]; then
     mkdir -p ${LOGDIR}
   fi
-  chown root:${CLIENT_GROUP} ${LOGDIR}
-  chmod 770 ${LOGDIR}
+  chown ${CLIENT_USER}:${CLIENT_GROUP} ${LOGDIR}
+  chmod 770 "${LOGDIR}"
   for filename in "agent"; do
     logfile="${LOGDIR}/$filename"
-    if [ ! -f ${logfile} ]; then
-      touch ${logfile}
+    if [ ! -f "${logfile}" ]; then
+      touch "${logfile}"
     fi
-    chown root:${CLIENT_USER} ${logfile}
-    chmod 660 ${logfile}
+    chown ${CLIENT_USER}:${CLIENT_USER} "${logfile}"
+    chmod 660 "${logfile}"
   done
 
   if [ ! -d "${SYSCONFDIR}" ]; then
     mkdir -vp "${SYSCONFDIR}"
   fi
+
+  chown ${CLIENT_USER}:${CLIENT_GROUP} "${SYSCONFDIR}"
+
   chmod 750 "${SYSCONFDIR}"
 
-  chown -R root:${CLIENT_GROUP} ${SYSCONFDIR}/localConfig.xml
-  chown -R root:${CLIENT_GROUP} ${SYSCONFDIR}/resourceRules.xml
-  chmod 640 ${SYSCONFDIR}/localConfig.xml
-  chmod 640 ${SYSCONFDIR}/resourceRules.xml
+  chown ${CLIENT_USER}:${CLIENT_GROUP} ${SYSCONFDIR}/localConfig.xml
+  chown ${CLIENT_USER}:${CLIENT_GROUP} ${SYSCONFDIR}/resourceRules.xml
+  chmod 0640 ${SYSCONFDIR}/localConfig.xml
+  chmod 0640 ${SYSCONFDIR}/resourceRules.xml
 
   # Check for java
   echo "Checking for Java..."

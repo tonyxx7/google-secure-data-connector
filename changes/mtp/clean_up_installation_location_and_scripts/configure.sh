@@ -16,17 +16,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+# $Id$
 
 VENDOR="google"
 PACKAGE="secure-data-connector"
 VERSION=1.1
 FULLNAME="${VENDOR}-${PACKAGE}-${VERSION}"
 
+# Install into locations ascertained by ${PREFIX} only.
+BY_PREFIX_ONLY="false"
+
+# The pace where the runtime binaries for the package are to be installed.
 BINDIR=
 
 # Used to hardcode the initscript path into a few targets.
 INITSCRIPT=
-JAVAHOME=${JAVAHOME}  # Get it from the environment
+# Get it from the environment
+JAVAHOME=${JAVAHOME}
 # The place where vendor and third-party JARs are to be installed.
 LIBDIR=
 # The place where local state information---e.g., data spools or generated
@@ -37,11 +43,16 @@ LOCALSTATEDIR="/var/opt/${VENDOR}/${PACKAGE}/${VERSION}/lib"
 # See definition for ${LOCALSTATEDIR}.
 LOGDIR="/var/opt/${VENDOR}/${PACKAGE}/${VERSION}/log"
 MODULESDIR=
-# No prefix is assumed by default.
-PREFIX=
+PREFIX="/opt/${VENDOR}/${PACKAGE}/${VERSION}"
 PROTOC=$(which protoc)
+RUNDIR="/var/opt/${VENDOR}/${PACKAGE}/${VERSION}/run"
 SYSCONFDIR="/etc/opt/${VENDOR}/${PACKAGE}/${VERSION}"
-SYSV_INIT_SCRIPT_DIRECTORY=
+if [ -d "/etc/rc.d" ]; then
+  # Who uses rc.d anymore?
+  SYSV_INIT_SCRIPT_DIRECTORY=/etc/rc.d
+else
+  SYSV_INIT_SCRIPT_DIRECTORY=/etc/init.d
+fi
 
 USER=daemon
 GROUP=daemon
@@ -58,10 +69,11 @@ chmod 755 config.status
 [ -x "$(which getopt)" ] || { echo "gnu getopt binary not found." ; exit 1; }
 
 # Command line arguments
-OPTS=$(getopt -o h --long noverify,prefix:,sysconfdir::,localstatedir::,bindir::,protoc::,javahome::,user::,group::,libdir::,bindir:: -n 'configure' -- "$@")
+OPTS=$(getopt -o h --long noverify,by_prefix_only,prefix:,sysconfdir::,localstatedir::,bindir::,protoc::,javahome::,user::,group::,libdir::,bindir:: -n 'configure' -- "$@")
 if [ $? != 0 ]; then
   echo -e "\nUsage:
-    --prefix) installation prefix.  Suggestion: Leave unset.
+    --prefix) installation prefix.
+    --by_prefix_only) Use for all paths to be derived from --prefix.
     --sysconfdir) etc prefix.  defaults to ${SYSCONFDIR}
     --localstatedir) var prefix. defaults to ${LOCALSTATEDIR}
     --protoc) location of protocol buffer compiler.
@@ -77,6 +89,7 @@ eval set -- "${OPTS}"
 
 while true; do
   case "${1}" in
+    --by_prefix_only) BY_PREFIX_ONLY="true" ; shift 1 ;;
     --noverify) NOVERIFY="true" ; shift 1 ;;
     --prefix) PREFIX=$2 ; shift 2 ;;
     --sysconfdir) SYSCONFDIR=$2; shift 2 ;;
@@ -91,40 +104,37 @@ while true; do
     *) echo "Error!" ; exit 1 ;;
   esac
 done
+
 #
 ### Argument logic - set other prefixes
 #
 
 if [ -z "${PREFIX}" ]; then
-  PREFIX="/opt/${VENDOR}/${PACKAGE}/${VERSION}"
+  PREFIX=/
 fi
 
-if [ -z "${SYSV_INIT_SCRIPT_DIRECTORY}" ]; then
-  if [ -d "/etc/rc.d" ]; then
-    SYSV_INIT_SCRIPT_DIRECTORY="/etc/rc.d"
-  else
-    SYSV_INIT_SCRIPT_DIRECTORY="/etc/init.d"
+# If instructed, use the ${PREFIX} if the desired variable is undefined
+# or if instructed to forcibly use ${PREFIX}.
+#
+# Arguments:
+# - $1 --- Variable name.
+# - $2 --- Default suffix.
+set_by_prefix_if_undefined() {
+  if [ "${BY_PREFIX_ONLY}" = "true" ] || [ -z "${!1}" ]; then
+    eval "${1}=${PREFIX}/${2}"
   fi
-fi
+}
+
+# Override if the user wants the PREFIX to govern.
+set_by_prefix_if_undefined "SYSV_INIT_SCRIPT_DIRECTORY" "etc/init.d"
 
 INITSCRIPT="${SYSV_INIT_SCRIPT_DIRECTORY}/${FULLNAME}"
 
-if [ -z $"{SYSCONFDIR}" ]; then
-  SYSCONFDIR="${PREFIX}/etc"
-fi
-
-if [ -z "${LOCALSTATEDIR}" ]; then
-  LOCALSTATEDIR="${PREFIX}/var"
-fi
-
-if [ -z "${LIBDIR}" ]; then
-  LIBDIR="${PREFIX}/lib"
-fi
-
-if [ -z "${BINDIR}" ]; then
-  BINDIR="${PREFIX}/bin"
-fi
-
+set_by_prefix_if_undefined "SYSCONFDIR" "etc"
+set_by_prefix_if_undefined "LOCALSTATEDIR" "var"
+set_by_prefix_if_undefined "LIBDIR" "lib"
+set_by_prefix_if_undefined "BINDIR" "bin"
+set_by_prefix_if_undefined "RUNDIR" "run"
 
 # Infer java binary location from JAVA_HOME env, JAVAHOME env
 # or --javabin setting.
@@ -210,6 +220,9 @@ if [ -f "${CONFIGURATION_SHLIB}" ]; then
   rm "${CONFIGURATION_SHLIB}"
 fi
 
+echo "# This file is auto-generated and will be deleted when " >> "${CONFIGURATION_SHLIB}"
+echo "# configure.sh is invoked."  >> "${CONFIGURATION_SHLIB}"
+
 # Arguments:
 # $1 --- The variable name to dump.
 dump_variable_to_shlib() {
@@ -225,11 +238,13 @@ dump_variable_to_shlib BINDIR
 dump_variable_to_shlib FULLNAME
 dump_variable_to_shlib GROUP
 dump_variable_to_shlib INITSCRIPT
+dump_variable_to_shlib JAVABIN
 dump_variable_to_shlib LIBDIR
 dump_variable_to_shlib LOCALSTATEDIR
 dump_variable_to_shlib LOGDIR
 dump_variable_to_shlib PREFIX
 dump_variable_to_shlib PROTOC
+dump_variable_to_shlib RUNDIR
 dump_variable_to_shlib SYSCONFDIR
 dump_variable_to_shlib SYSV_INIT_SCRIPT_DIRECTORY
 dump_variable_to_shlib USER
@@ -251,11 +266,13 @@ rewrite_template() {
   substitute_macro "${1}" FULLNAME
   substitute_macro "${1}" GROUP
   substitute_macro "${1}" INITSCRIPT
+  substitute_macro "${1}" JAVABIN
   substitute_macro "${1}" LIBDIR
   substitute_macro "${1}" LOCALSTATEDIR
   substitute_macro "${1}" LOGDIR
   substitute_macro "${1}" PREFIX
   substitute_macro "${1}" PROTOC
+  substitute_macro "${1}" RUNDIR
   substitute_macro "${1}" SYSCONFDIR
   substitute_macro "${1}" SYSV_INIT_SCRIPT_DIRECTORY
   substitute_macro "${1}" USER

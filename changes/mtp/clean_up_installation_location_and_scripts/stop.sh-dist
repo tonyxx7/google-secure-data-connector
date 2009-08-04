@@ -16,10 +16,11 @@
 #
 #
 # Stops secure-data-connector running in the background.
+#
+# $Id$
 
-
-if [ $UID != 0 ] ; then
- echo You should run this script as root or via sudo
+if (( ${UID} != 0 )); then
+ echo You should run this script as root or via sudo. >&2
 else
  # Kill the wrapper runclient.sh before stopping java process so it is not restarted
  ps -ef |grep runclient.sh |grep -v grep | awk '{ print $2 }' | xargs kill

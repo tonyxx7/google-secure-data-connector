@@ -1,3 +1,5 @@
+$Id$
+
 Secure Data Connector Install Instructions (brief).
 
 Prerequisites:
@@ -8,12 +10,12 @@ downloaded here:
   - follow the README to install.
   - We include the generated protocol buffer classes should protoc not be available.
 
-1) sh configure.sh.
+1) bash configure.sh.
 
 Options:
     --prefix) binary prefix
-    --sysconfdir) etc prefix.  defaults to /usr/local/etc
-    --localstatedir) var prefix. defaults to /usr/local/var
+    --sysconfdir) etc prefix.  defaults to /etc/opt/google/secure-data-connector/${version}
+    --localstatedir) var prefix. defaults to /var/opt/google/secure-data-connector/${version}
     --javahome) system java location. Will look in the default path too.
 
 Generally only --prefix, The rest is for tuning to your platform.

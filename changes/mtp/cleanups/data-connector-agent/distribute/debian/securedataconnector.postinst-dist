@@ -24,25 +24,25 @@ set -e
 LOGDIR=__LOGDIR__
 RULES_DIR=__LOCALSTATEDIR__
 SYSCONFDIR=__SYSCONFDIR__
-CLIENT_USER=__USER__
-CLIENT_GROUP=__GROUP__
+USER=__USER__
+GROUP=__GROUP__
 
 if [ "$1" = "configure" ]; then
   # Set up the user to access the client
-  adduser --system --quiet --group --home /home/${CLIENT_USER} --no-create-home \
-   --shell /bin/bash ${CLIENT_USER} || :
+  adduser --system --quiet --group --home "/home/${USER}" --no-create-home \
+   --shell /bin/bash "${USER}" || :
 
   if [ ! -d ${LOGDIR} ]; then
     mkdir -p ${LOGDIR}
   fi
-  chown ${CLIENT_USER}:${CLIENT_GROUP} ${LOGDIR}
+  chown ${USER}:${GROUP} ${LOGDIR}
   chmod 770 "${LOGDIR}"
   for filename in "agent"; do
     logfile="${LOGDIR}/$filename"
     if [ ! -f "${logfile}" ]; then
       touch "${logfile}"
     fi
-    chown ${CLIENT_USER}:${CLIENT_USER} "${logfile}"
+    chown ${USER}:${USER} "${logfile}"
     chmod 660 "${logfile}"
   done
 
@@ -50,12 +50,12 @@ if [ "$1" = "configure" ]; then
     mkdir -vp "${SYSCONFDIR}"
   fi
 
-  chown ${CLIENT_USER}:${CLIENT_GROUP} "${SYSCONFDIR}"
+  chown ${USER}:${GROUP} "${SYSCONFDIR}"
 
   chmod 750 "${SYSCONFDIR}"
 
-  chown ${CLIENT_USER}:${CLIENT_GROUP} ${SYSCONFDIR}/localConfig.xml
-  chown ${CLIENT_USER}:${CLIENT_GROUP} ${SYSCONFDIR}/resourceRules.xml
+  chown ${USER}:${GROUP} ${SYSCONFDIR}/localConfig.xml
+  chown ${USER}:${GROUP} ${SYSCONFDIR}/resourceRules.xml
   chmod 0640 ${SYSCONFDIR}/localConfig.xml
   chmod 0640 ${SYSCONFDIR}/resourceRules.xml
 

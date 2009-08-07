@@ -23,8 +23,15 @@ PACKAGE="secure-data-connector"
 VERSION=1.1
 FULLNAME="${VENDOR}-${PACKAGE}-${VERSION}"
 
+# Instructions for managing ${RELEASE}:
+# - If ${VERSION} changes, reset this to zero.
+# - If something in the packaging or build infrastructure changes, please
+#   increment this value.
+RELEASE=2
+
 # Install into locations ascertained by ${PREFIX} only.
 BY_PREFIX_ONLY="false"
+
 
 # The pace where the runtime binaries for the package are to be installed.
 BINDIR=
@@ -81,6 +88,8 @@ if [ $? != 0 ]; then
     --group) group to run SDC as. Default is 'daemon'
     --javahome) system java location.
     --noverify) do not perform configure validation steps.
+
+    See README for more information.
   " >&2
   exit 1
 fi
@@ -110,7 +119,11 @@ done
 #
 
 if [ -z "${PREFIX}" ]; then
-  PREFIX=/
+  echo '${PREFIX} is undefined; you probably do not want this!' >&2
+  echo "This may be useful for rootless installs that run from a local" >&2
+  echo "directory.  It shall be set to './'" >&2
+
+  sleep 5
 fi
 
 # If instructed, use the ${PREFIX} if the desired variable is undefined
@@ -121,7 +134,11 @@ fi
 # - $2 --- Default suffix.
 set_by_prefix_if_undefined() {
   if [ "${BY_PREFIX_ONLY}" = "true" ] || [ -z "${!1}" ]; then
-    eval "${1}=${PREFIX}/${2}"
+    if [ -n "${PREFIX}" ]; then
+      eval "${1}=${PREFIX}/${2}"
+    else
+      eval "${1}=./${2}"
+    fi
   fi
 }
 
@@ -134,7 +151,8 @@ set_by_prefix_if_undefined "SYSCONFDIR" "etc"
 set_by_prefix_if_undefined "LOCALSTATEDIR" "var"
 set_by_prefix_if_undefined "LIBDIR" "lib"
 set_by_prefix_if_undefined "BINDIR" "bin"
-set_by_prefix_if_undefined "RUNDIR" "run"
+set_by_prefix_if_undefined "RUNDIR" "var/run"
+set_by_prefix_if_undefined "LOGDIR" "var/log"
 
 # Infer java binary location from JAVA_HOME env, JAVAHOME env
 # or --javabin setting.
@@ -190,7 +208,6 @@ if [ ${NOVERIFY} = "false" ]; then
       echo "User ${USER} is not enabled. Either enable the user or specify a different user account."
       exit 1
     fi
-
   fi
 
   # verify java binary.
@@ -207,7 +224,6 @@ if [ ${NOVERIFY} = "false" ]; then
     echo "Java could not be found at $JAVABIN"
     exit 1
   fi
-
 fi
 
 #
@@ -244,6 +260,7 @@ dump_variable_to_shlib LOCALSTATEDIR
 dump_variable_to_shlib LOGDIR
 dump_variable_to_shlib PREFIX
 dump_variable_to_shlib PROTOC
+dump_variable_to_shlib RELEASE
 dump_variable_to_shlib RUNDIR
 dump_variable_to_shlib SYSCONFDIR
 dump_variable_to_shlib SYSV_INIT_SCRIPT_DIRECTORY
@@ -272,6 +289,7 @@ rewrite_template() {
   substitute_macro "${1}" LOGDIR
   substitute_macro "${1}" PREFIX
   substitute_macro "${1}" PROTOC
+  substitute_macro "${1}" RELEASE
   substitute_macro "${1}" RUNDIR
   substitute_macro "${1}" SYSCONFDIR
   substitute_macro "${1}" SYSV_INIT_SCRIPT_DIRECTORY
@@ -284,12 +302,12 @@ rewrite_template "build.xml"
 rewrite_template "distribute/build.xml"
 rewrite_template "distribute/debian/securedataconnector.postinst"
 rewrite_template "distribute/debian/securedataconnector.postrm"
-rewrite_template "distribute/initscript"
+rewrite_template "initscript"
 rewrite_template "runclient.sh"
 rewrite_template "start.sh"
 rewrite_template "stop.sh"
 
-cp "distribute/initscript" "distribute/${FULLNAME}"
+cp "initscript" "distribute/debian/${FULLNAME}"
 
 # Create resourceRules.xml since we don't need to edit this file.
 cp config/resourceRules.xml{-dist,}

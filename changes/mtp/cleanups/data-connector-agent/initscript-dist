@@ -33,15 +33,15 @@
 
 # Do NOT "set -e"
 
-FULLNAME=__FULLNAME__
-INITSCRIPT=__INITSCRIPT__
-BINDIR=__BINDIR__
-LIBDIR=__LIBDIR__
-LOCALSTATEDIR=__LOCALSTATEDIR__
-LOGDIR=__LOGDIR__
-RUNDIR=__RUNDIR__
-SYSCONFDIR=__SYSCONFDIR__
-VERSION=__VERSION__
+FULLNAME=google-secure-data-connector-1.1
+INITSCRIPT=/etc/init.d/google-secure-data-connector-1.1
+BINDIR=/opt/google/secure-data-connector/1.1/bin
+LIBDIR=/opt/google/secure-data-connector/1.1/lib
+LOCALSTATEDIR=/var/opt/google/secure-data-connector/1.1/lib
+LOGDIR=/var/opt/google/secure-data-connector/1.1/log
+RUNDIR=/var/opt/google/secure-data-connector/1.1/run
+SYSCONFDIR=/etc/opt/google/secure-data-connector/1.1
+VERSION=1.1
 
 RULES_FILE="${LOCALSTATEDIR}/rules"
 LOGFILE="${LOGDIR}/dataconnector"
@@ -95,7 +95,6 @@ is_running()
     return 0
   else
     echo "Google Secure Data Connector is not running according to ${PID_FILE}" >&2
-    rm -f "${PID_FILE}"
     return 1
   fi
 }
@@ -202,8 +201,6 @@ do_start()
       # start.sh emits the PID of the runner agent script.
       last_pid=$( "${BINDIR}"/start.sh )
 
-      echo "${last_pid}" > "${PID_FILE}"
-
       # Make sure the client started
       if [[ is_running ]]; then
         # Monitor the startup logs to confirm the agent connected OK.
@@ -232,15 +229,14 @@ do_stop()
   #   2 if daemon could not be stopped
   is_running
   case "$?" in
-    0) pid=$(< "${PID_FILE}")
-       kill ${pid}
+    0) "${BINDIR}/stop.sh"
        if (( ${?} == 0 )); then
          echo ${STOP_MARKER} >> "${LOGFILE}"
          # Sterilise the rules file
          echo '' > "${RULES_FILE}"
          return 0
        else
-         echo "Stopping ${pid} failed" >> "${LOGFILE}"
+         echo "Stopping runner failed." >> "${LOGFILE}"
          return 2
        fi
        ;;

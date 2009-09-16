@@ -3709,20 +3709,8 @@ public final class SdcFrame {
     public boolean hasResult() { return hasResult; }
     public com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse.ResultCode getResult() { return result_; }
     
-    // repeated .sdc_frame.ResourceKey resourceKey = 3;
-    public static final int RESOURCEKEY_FIELD_NUMBER = 3;
-    private java.util.List<com.google.dataconnector.protocol.proto.SdcFrame.ResourceKey> resourceKey_ =
-      java.util.Collections.emptyList();
-    public java.util.List<com.google.dataconnector.protocol.proto.SdcFrame.ResourceKey> getResourceKeyList() {
-      return resourceKey_;
-    }
-    public int getResourceKeyCount() { return resourceKey_.size(); }
-    public com.google.dataconnector.protocol.proto.SdcFrame.ResourceKey getResourceKey(int index) {
-      return resourceKey_.get(index);
-    }
-    
-    // optional .sdc_frame.ServerSuppliedConf serverSuppliedConf = 4;
-    public static final int SERVERSUPPLIEDCONF_FIELD_NUMBER = 4;
+    // optional .sdc_frame.ServerSuppliedConf serverSuppliedConf = 3;
+    public static final int SERVERSUPPLIEDCONF_FIELD_NUMBER = 3;
     private boolean hasServerSuppliedConf;
     private com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf serverSuppliedConf_ = com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf.getDefaultInstance();
     public boolean hasServerSuppliedConf() { return hasServerSuppliedConf; }
@@ -3730,9 +3718,6 @@ public final class SdcFrame {
     
     public final boolean isInitialized() {
       if (!hasResult) return false;
-      for (com.google.dataconnector.protocol.proto.SdcFrame.ResourceKey element : getResourceKeyList()) {
-        if (!element.isInitialized()) return false;
-      }
       return true;
     }
     
@@ -3744,11 +3729,8 @@ public final class SdcFrame {
       if (hasResult()) {
         output.writeEnum(2, getResult().getNumber());
       }
-      for (com.google.dataconnector.protocol.proto.SdcFrame.ResourceKey element : getResourceKeyList()) {
-        output.writeMessage(3, element);
-      }
       if (hasServerSuppliedConf()) {
-        output.writeMessage(4, getServerSuppliedConf());
+        output.writeMessage(3, getServerSuppliedConf());
       }
       getUnknownFields().writeTo(output);
     }
@@ -3767,13 +3749,9 @@ public final class SdcFrame {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(2, getResult().getNumber());
       }
-      for (com.google.dataconnector.protocol.proto.SdcFrame.ResourceKey element : getResourceKeyList()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(3, element);
-      }
       if (hasServerSuppliedConf()) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(4, getServerSuppliedConf());
+          .computeMessageSize(3, getServerSuppliedConf());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -3908,10 +3886,6 @@ public final class SdcFrame {
           throw new IllegalStateException(
             "build() has already been called on this Builder.");
         }
-        if (result.resourceKey_ != java.util.Collections.EMPTY_LIST) {
-          result.resourceKey_ =
-            java.util.Collections.unmodifiableList(result.resourceKey_);
-        }
         com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse returnMe = result;
         result = null;
         return returnMe;
@@ -3933,12 +3907,6 @@ public final class SdcFrame {
         }
         if (other.hasResult()) {
           setResult(other.getResult());
-        }
-        if (!other.resourceKey_.isEmpty()) {
-          if (result.resourceKey_.isEmpty()) {
-            result.resourceKey_ = new java.util.ArrayList<com.google.dataconnector.protocol.proto.SdcFrame.ResourceKey>();
-          }
-          result.resourceKey_.addAll(other.resourceKey_);
         }
         if (other.hasServerSuppliedConf()) {
           mergeServerSuppliedConf(other.getServerSuppliedConf());
@@ -3983,12 +3951,6 @@ public final class SdcFrame {
               break;
             }
             case 26: {
-              com.google.dataconnector.protocol.proto.SdcFrame.ResourceKey.Builder subBuilder = com.google.dataconnector.protocol.proto.SdcFrame.ResourceKey.newBuilder();
-              input.readMessage(subBuilder, extensionRegistry);
-              addResourceKey(subBuilder.buildPartial());
-              break;
-            }
-            case 34: {
               com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf.Builder subBuilder = com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf.newBuilder();
               if (hasServerSuppliedConf()) {
                 subBuilder.mergeFrom(getServerSuppliedConf());
@@ -4044,58 +4006,7 @@ public final class SdcFrame {
         return this;
       }
       
-      // repeated .sdc_frame.ResourceKey resourceKey = 3;
-      public java.util.List<com.google.dataconnector.protocol.proto.SdcFrame.ResourceKey> getResourceKeyList() {
-        return java.util.Collections.unmodifiableList(result.resourceKey_);
-      }
-      public int getResourceKeyCount() {
-        return result.getResourceKeyCount();
-      }
-      public com.google.dataconnector.protocol.proto.SdcFrame.ResourceKey getResourceKey(int index) {
-        return result.getResourceKey(index);
-      }
-      public Builder setResourceKey(int index, com.google.dataconnector.protocol.proto.SdcFrame.ResourceKey value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        result.resourceKey_.set(index, value);
-        return this;
-      }
-      public Builder setResourceKey(int index, com.google.dataconnector.protocol.proto.SdcFrame.ResourceKey.Builder builderForValue) {
-        result.resourceKey_.set(index, builderForValue.build());
-        return this;
-      }
-      public Builder addResourceKey(com.google.dataconnector.protocol.proto.SdcFrame.ResourceKey value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        if (result.resourceKey_.isEmpty()) {
-          result.resourceKey_ = new java.util.ArrayList<com.google.dataconnector.protocol.proto.SdcFrame.ResourceKey>();
-        }
-        result.resourceKey_.add(value);
-        return this;
-      }
-      public Builder addResourceKey(com.google.dataconnector.protocol.proto.SdcFrame.ResourceKey.Builder builderForValue) {
-        if (result.resourceKey_.isEmpty()) {
-          result.resourceKey_ = new java.util.ArrayList<com.google.dataconnector.protocol.proto.SdcFrame.ResourceKey>();
-        }
-        result.resourceKey_.add(builderForValue.build());
-        return this;
-      }
-      public Builder addAllResourceKey(
-          java.lang.Iterable<? extends com.google.dataconnector.protocol.proto.SdcFrame.ResourceKey> values) {
-        if (result.resourceKey_.isEmpty()) {
-          result.resourceKey_ = new java.util.ArrayList<com.google.dataconnector.protocol.proto.SdcFrame.ResourceKey>();
-        }
-        super.addAll(values, result.resourceKey_);
-        return this;
-      }
-      public Builder clearResourceKey() {
-        result.resourceKey_ = java.util.Collections.emptyList();
-        return this;
-      }
-      
-      // optional .sdc_frame.ServerSuppliedConf serverSuppliedConf = 4;
+      // optional .sdc_frame.ServerSuppliedConf serverSuppliedConf = 3;
       public boolean hasServerSuppliedConf() {
         return result.hasServerSuppliedConf();
       }
@@ -4232,15 +4143,14 @@ public final class SdcFrame {
       "erPort\030\002 \002(\005\022\027\n\017healthCheckPort\030\003 \002(\005\022\036\n" +
       "\026healthCheckGadgetUsers\030\004 \001(\t\022+\n\013resourc" +
       "eKey\030\005 \003(\0132\026.sdc_frame.ResourceKey\022\024\n\014re" +
-      "sourcesXml\030\006 \002(\t\"\220\002\n\024RegistrationRespons" +
+      "sourcesXml\030\006 \002(\t\"\343\001\n\024RegistrationRespons" +
       "e\022\025\n\rstatusMessage\030\001 \001(\t\022:\n\006result\030\002 \002(\016" +
       "2*.sdc_frame.RegistrationResponse.Result" +
-      "Code\022+\n\013resourceKey\030\003 \003(\0132\026.sdc_frame.Re",
-      "sourceKey\0229\n\022serverSuppliedConf\030\004 \001(\0132\035." +
-      "sdc_frame.ServerSuppliedConf\"=\n\nResultCo" +
-      "de\022\006\n\002OK\020\001\022\020\n\014SERVER_ERROR\020\002\022\025\n\021ERRORS_I" +
-      "N_REQUEST\020\003B)\n\'com.google.dataconnector." +
-      "protocol.proto"
+      "Code\0229\n\022serverSuppliedConf\030\003 \001(\0132\035.sdc_f",
+      "rame.ServerSuppliedConf\"=\n\nResultCode\022\006\n" +
+      "\002OK\020\001\022\020\n\014SERVER_ERROR\020\002\022\025\n\021ERRORS_IN_REQ" +
+      "UEST\020\003B)\n\'com.google.dataconnector.proto" +
+      "col.proto"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -4316,7 +4226,7 @@ public final class SdcFrame {
           internal_static_sdc_frame_RegistrationResponse_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_sdc_frame_RegistrationResponse_descriptor,
-              new java.lang.String[] { "StatusMessage", "Result", "ResourceKey", "ServerSuppliedConf", },
+              new java.lang.String[] { "StatusMessage", "Result", "ServerSuppliedConf", },
               com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse.class,
               com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse.Builder.class);
           return null;

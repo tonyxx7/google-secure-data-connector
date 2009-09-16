@@ -118,7 +118,7 @@ $Id$
         includes="**"
         >
       <classpath>
-        <pathelement path="third-party/protobuf/protobuf-java-2.1.0.jar"/>
+        <pathelement path="third-party/protobuf/protobuf-java-2.2.0.jar"/>
       </classpath>
     </javac>
 
@@ -142,7 +142,7 @@ $Id$
         <pathelement path="third-party/guice/guice-2.0.jar"/>
         <pathelement path="third-party/jsocks/jsocks.jar"/>
         <pathelement path="third-party/json/json.jar"/>
-        <pathelement path="third-party/protobuf/protobuf-java-2.1.0.jar"/>
+        <pathelement path="third-party/protobuf/protobuf-java-2.2.0.jar"/>
       </classpath>
     </javac>
 

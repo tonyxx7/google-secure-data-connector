@@ -120,6 +120,5 @@ message RegistrationResponse {
 
   optional string statusMessage = 1;
   required ResultCode result = 2;
-  repeated ResourceKey resourceKey = 3;
-  optional ServerSuppliedConf serverSuppliedConf = 4;
+  optional ServerSuppliedConf serverSuppliedConf = 3;
 }

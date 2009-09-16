@@ -3124,12 +3124,17 @@ public final class SdcFrame {
     public boolean hasHealthCheckPort() { return hasHealthCheckPort; }
     public int getHealthCheckPort() { return healthCheckPort_; }
     
-    // optional string healthCheckGadgetUsers = 4;
-    public static final int HEALTHCHECKGADGETUSERS_FIELD_NUMBER = 4;
-    private boolean hasHealthCheckGadgetUsers;
-    private java.lang.String healthCheckGadgetUsers_ = "";
-    public boolean hasHealthCheckGadgetUsers() { return hasHealthCheckGadgetUsers; }
-    public java.lang.String getHealthCheckGadgetUsers() { return healthCheckGadgetUsers_; }
+    // repeated string healthCheckGadgetUser = 4;
+    public static final int HEALTHCHECKGADGETUSER_FIELD_NUMBER = 4;
+    private java.util.List<java.lang.String> healthCheckGadgetUser_ =
+      java.util.Collections.emptyList();
+    public java.util.List<java.lang.String> getHealthCheckGadgetUserList() {
+      return healthCheckGadgetUser_;
+    }
+    public int getHealthCheckGadgetUserCount() { return healthCheckGadgetUser_.size(); }
+    public java.lang.String getHealthCheckGadgetUser(int index) {
+      return healthCheckGadgetUser_.get(index);
+    }
     
     // repeated .sdc_frame.ResourceKey resourceKey = 5;
     public static final int RESOURCEKEY_FIELD_NUMBER = 5;
@@ -3172,8 +3177,8 @@ public final class SdcFrame {
       if (hasHealthCheckPort()) {
         output.writeInt32(3, getHealthCheckPort());
       }
-      if (hasHealthCheckGadgetUsers()) {
-        output.writeString(4, getHealthCheckGadgetUsers());
+      for (java.lang.String element : getHealthCheckGadgetUserList()) {
+        output.writeString(4, element);
       }
       for (com.google.dataconnector.protocol.proto.SdcFrame.ResourceKey element : getResourceKeyList()) {
         output.writeMessage(5, element);
@@ -3202,9 +3207,14 @@ public final class SdcFrame {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(3, getHealthCheckPort());
       }
-      if (hasHealthCheckGadgetUsers()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeStringSize(4, getHealthCheckGadgetUsers());
+      {
+        int dataSize = 0;
+        for (java.lang.String element : getHealthCheckGadgetUserList()) {
+          dataSize += com.google.protobuf.CodedOutputStream
+            .computeStringSizeNoTag(element);
+        }
+        size += dataSize;
+        size += 1 * getHealthCheckGadgetUserList().size();
       }
       for (com.google.dataconnector.protocol.proto.SdcFrame.ResourceKey element : getResourceKeyList()) {
         size += com.google.protobuf.CodedOutputStream
@@ -3347,6 +3357,10 @@ public final class SdcFrame {
           throw new IllegalStateException(
             "build() has already been called on this Builder.");
         }
+        if (result.healthCheckGadgetUser_ != java.util.Collections.EMPTY_LIST) {
+          result.healthCheckGadgetUser_ =
+            java.util.Collections.unmodifiableList(result.healthCheckGadgetUser_);
+        }
         if (result.resourceKey_ != java.util.Collections.EMPTY_LIST) {
           result.resourceKey_ =
             java.util.Collections.unmodifiableList(result.resourceKey_);
@@ -3376,8 +3390,11 @@ public final class SdcFrame {
         if (other.hasHealthCheckPort()) {
           setHealthCheckPort(other.getHealthCheckPort());
         }
-        if (other.hasHealthCheckGadgetUsers()) {
-          setHealthCheckGadgetUsers(other.getHealthCheckGadgetUsers());
+        if (!other.healthCheckGadgetUser_.isEmpty()) {
+          if (result.healthCheckGadgetUser_.isEmpty()) {
+            result.healthCheckGadgetUser_ = new java.util.ArrayList<java.lang.String>();
+          }
+          result.healthCheckGadgetUser_.addAll(other.healthCheckGadgetUser_);
         }
         if (!other.resourceKey_.isEmpty()) {
           if (result.resourceKey_.isEmpty()) {
@@ -3426,7 +3443,7 @@ public final class SdcFrame {
               break;
             }
             case 34: {
-              setHealthCheckGadgetUsers(input.readString());
+              addHealthCheckGadgetUser(input.readString());
               break;
             }
             case 42: {
@@ -3501,24 +3518,43 @@ public final class SdcFrame {
         return this;
       }
       
-      // optional string healthCheckGadgetUsers = 4;
-      public boolean hasHealthCheckGadgetUsers() {
-        return result.hasHealthCheckGadgetUsers();
+      // repeated string healthCheckGadgetUser = 4;
+      public java.util.List<java.lang.String> getHealthCheckGadgetUserList() {
+        return java.util.Collections.unmodifiableList(result.healthCheckGadgetUser_);
       }
-      public java.lang.String getHealthCheckGadgetUsers() {
-        return result.getHealthCheckGadgetUsers();
+      public int getHealthCheckGadgetUserCount() {
+        return result.getHealthCheckGadgetUserCount();
       }
-      public Builder setHealthCheckGadgetUsers(java.lang.String value) {
+      public java.lang.String getHealthCheckGadgetUser(int index) {
+        return result.getHealthCheckGadgetUser(index);
+      }
+      public Builder setHealthCheckGadgetUser(int index, java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  result.hasHealthCheckGadgetUsers = true;
-        result.healthCheckGadgetUsers_ = value;
+  result.healthCheckGadgetUser_.set(index, value);
         return this;
       }
-      public Builder clearHealthCheckGadgetUsers() {
-        result.hasHealthCheckGadgetUsers = false;
-        result.healthCheckGadgetUsers_ = getDefaultInstance().getHealthCheckGadgetUsers();
+      public Builder addHealthCheckGadgetUser(java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  if (result.healthCheckGadgetUser_.isEmpty()) {
+          result.healthCheckGadgetUser_ = new java.util.ArrayList<java.lang.String>();
+        }
+        result.healthCheckGadgetUser_.add(value);
+        return this;
+      }
+      public Builder addAllHealthCheckGadgetUser(
+          java.lang.Iterable<? extends java.lang.String> values) {
+        if (result.healthCheckGadgetUser_.isEmpty()) {
+          result.healthCheckGadgetUser_ = new java.util.ArrayList<java.lang.String>();
+        }
+        super.addAll(values, result.healthCheckGadgetUser_);
+        return this;
+      }
+      public Builder clearHealthCheckGadgetUser() {
+        result.healthCheckGadgetUser_ = java.util.Collections.emptyList();
         return this;
       }
       
@@ -3631,8 +3667,8 @@ public final class SdcFrame {
     public enum ResultCode
         implements com.google.protobuf.ProtocolMessageEnum {
       OK(0, 1),
-      SERVER_ERROR(1, 2),
-      ERRORS_IN_REQUEST(2, 3),
+      ERRORS_IN_REQUEST(1, 2),
+      SERVER_ERROR(2, 3),
       ;
       
       
@@ -3641,8 +3677,8 @@ public final class SdcFrame {
       public static ResultCode valueOf(int value) {
         switch (value) {
           case 1: return OK;
-          case 2: return SERVER_ERROR;
-          case 3: return ERRORS_IN_REQUEST;
+          case 2: return ERRORS_IN_REQUEST;
+          case 3: return SERVER_ERROR;
           default: return null;
         }
       }
@@ -3673,7 +3709,7 @@ public final class SdcFrame {
       }
       
       private static final ResultCode[] VALUES = {
-        OK, SERVER_ERROR, ERRORS_IN_REQUEST, 
+        OK, ERRORS_IN_REQUEST, SERVER_ERROR, 
       };
       public static ResultCode valueOf(
           com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
@@ -4138,19 +4174,19 @@ public final class SdcFrame {
       "c_frame.HealthCheckInfo.Source\022-\n\004type\030\003" +
       " \001(\0162\037.sdc_frame.HealthCheckInfo.Type\" \n",
       "\006Source\022\n\n\006CLIENT\020\001\022\n\n\006SERVER\020\002\"!\n\004Type\022" +
-      "\013\n\007REQUEST\020\001\022\014\n\010RESPONSE\020\002\"\273\001\n\023Registrat" +
+      "\013\n\007REQUEST\020\001\022\014\n\010RESPONSE\020\002\"\272\001\n\023Registrat" +
       "ionRequest\022\017\n\007agentId\030\001 \002(\t\022\027\n\017socksServ" +
-      "erPort\030\002 \002(\005\022\027\n\017healthCheckPort\030\003 \002(\005\022\036\n" +
-      "\026healthCheckGadgetUsers\030\004 \001(\t\022+\n\013resourc" +
-      "eKey\030\005 \003(\0132\026.sdc_frame.ResourceKey\022\024\n\014re" +
-      "sourcesXml\030\006 \002(\t\"\343\001\n\024RegistrationRespons" +
-      "e\022\025\n\rstatusMessage\030\001 \001(\t\022:\n\006result\030\002 \002(\016" +
-      "2*.sdc_frame.RegistrationResponse.Result" +
-      "Code\0229\n\022serverSuppliedConf\030\003 \001(\0132\035.sdc_f",
-      "rame.ServerSuppliedConf\"=\n\nResultCode\022\006\n" +
-      "\002OK\020\001\022\020\n\014SERVER_ERROR\020\002\022\025\n\021ERRORS_IN_REQ" +
-      "UEST\020\003B)\n\'com.google.dataconnector.proto" +
-      "col.proto"
+      "erPort\030\002 \002(\005\022\027\n\017healthCheckPort\030\003 \002(\005\022\035\n" +
+      "\025healthCheckGadgetUser\030\004 \003(\t\022+\n\013resource" +
+      "Key\030\005 \003(\0132\026.sdc_frame.ResourceKey\022\024\n\014res" +
+      "ourcesXml\030\006 \002(\t\"\343\001\n\024RegistrationResponse" +
+      "\022\025\n\rstatusMessage\030\001 \001(\t\022:\n\006result\030\002 \002(\0162" +
+      "*.sdc_frame.RegistrationResponse.ResultC" +
+      "ode\0229\n\022serverSuppliedConf\030\003 \001(\0132\035.sdc_fr",
+      "ame.ServerSuppliedConf\"=\n\nResultCode\022\006\n\002" +
+      "OK\020\001\022\025\n\021ERRORS_IN_REQUEST\020\002\022\020\n\014SERVER_ER" +
+      "ROR\020\003B)\n\'com.google.dataconnector.protoc" +
+      "ol.proto"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -4218,7 +4254,7 @@ public final class SdcFrame {
           internal_static_sdc_frame_RegistrationRequest_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_sdc_frame_RegistrationRequest_descriptor,
-              new java.lang.String[] { "AgentId", "SocksServerPort", "HealthCheckPort", "HealthCheckGadgetUsers", "ResourceKey", "ResourcesXml", },
+              new java.lang.String[] { "AgentId", "SocksServerPort", "HealthCheckPort", "HealthCheckGadgetUser", "ResourceKey", "ResourcesXml", },
               com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest.class,
               com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest.Builder.class);
           internal_static_sdc_frame_RegistrationResponse_descriptor =

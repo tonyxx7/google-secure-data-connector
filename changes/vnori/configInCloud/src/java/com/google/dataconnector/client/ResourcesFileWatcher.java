@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 
 package com.google.dataconnector.client;
 
@@ -30,7 +30,7 @@ import java.io.File;
 /**
  * starts a thread to watch the resources files
  * and if any changes, re-registers the changed resources with SDC Server
- * 
+ *
  * @author vnori@google.com (Vasu Nori)
  */
 @Singleton
@@ -41,17 +41,17 @@ public class ResourcesFileWatcher extends Thread {
   private final LocalConf localConf;
   private final Registration registration;
   private FrameSender frameSender;
-  
+
   @Inject
   public ResourcesFileWatcher(LocalConf localConf, Registration registration) {
     this.localConf = localConf;
     this.registration = registration;
   }
-  
+
   public void setFrameSender(FrameSender frameSender) {
     this.frameSender = frameSender;
   }
-  
+
   @Override
   public void run() {
     Preconditions.checkNotNull(frameSender);
@@ -62,12 +62,12 @@ public class ResourcesFileWatcher extends Thread {
         long modified = rulesFileHandle.lastModified();
         if (modified != lastModified) {
           // file changed. re-register the resources.
-          LOG.info("Detected change in modification date of Resources file: " + 
+          LOG.info("Detected change in modification date of Resources file: " +
               localConf.getRulesFile() + ". Re-registering resources..");
           registration.sendRegistrationInfo(frameSender);
           lastModified = modified;
         }
-        
+
         // sleep for a FileWatcherThreadSleepTimer min and check again
         Thread.sleep(localConf.getFileWatcherThreadSleepTimer() * 60 * 1000L);
       } catch (InterruptedException e) {
@@ -75,12 +75,13 @@ public class ResourcesFileWatcher extends Thread {
         break;
       } catch (RegistrationException e) {
         LOG.fatal("re-registration of resources failed.", e);
-        
+
         // exit the thread.
         break;
+      } finally {
+        LOG.info("FileWatcher thread exiting.." +
+        "Any changes in Resources file will need Agent restart");
       }
     }
-    LOG.info("FileWatcher thread exiting.." +
-        "Any changes in Resources file will need Agent restart");
   }
 }

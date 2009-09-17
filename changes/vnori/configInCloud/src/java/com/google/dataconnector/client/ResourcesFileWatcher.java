@@ -21,6 +21,7 @@ import com.google.dataconnector.registration.v4.Registration;
 import com.google.dataconnector.util.FileUtil;
 import com.google.dataconnector.util.LocalConf;
 import com.google.dataconnector.util.RegistrationException;
+import com.google.dataconnector.util.SystemUtil;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -43,13 +44,15 @@ public class ResourcesFileWatcher extends Thread {
   private final Registration registration;
   private FrameSender frameSender;
   private FileUtil fileUtil;
+  private SystemUtil systemUtil;
 
   @Inject
   public ResourcesFileWatcher(LocalConf localConf, Registration registration,
-      FileUtil fileUtil) {
+      FileUtil fileUtil, SystemUtil systemUtil) {
     this.localConf = localConf;
     this.registration = registration;
     this.fileUtil = fileUtil;
+    this.systemUtil = systemUtil;
   }
 
   public void setFrameSender(FrameSender frameSender) {
@@ -73,7 +76,7 @@ public class ResourcesFileWatcher extends Thread {
         }
 
         // sleep for a FileWatcherThreadSleepTimer min and check again
-        Thread.sleep(localConf.getFileWatcherThreadSleepTimer() * 60 * 1000L);
+        systemUtil.sleep(localConf.getFileWatcherThreadSleepTimer() * 60 * 1000L);
       } catch (InterruptedException e) {
         // exit
         break;

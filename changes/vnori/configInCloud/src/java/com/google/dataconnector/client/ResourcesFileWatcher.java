@@ -18,6 +18,7 @@ package com.google.dataconnector.client;
 import com.google.common.base.Preconditions;
 import com.google.dataconnector.protocol.FrameSender;
 import com.google.dataconnector.registration.v4.Registration;
+import com.google.dataconnector.util.FileUtil;
 import com.google.dataconnector.util.LocalConf;
 import com.google.dataconnector.util.RegistrationException;
 import com.google.inject.Inject;
@@ -41,11 +42,14 @@ public class ResourcesFileWatcher extends Thread {
   private final LocalConf localConf;
   private final Registration registration;
   private FrameSender frameSender;
+  private FileUtil fileUtil;
 
   @Inject
-  public ResourcesFileWatcher(LocalConf localConf, Registration registration) {
+  public ResourcesFileWatcher(LocalConf localConf, Registration registration,
+      FileUtil fileUtil) {
     this.localConf = localConf;
     this.registration = registration;
+    this.fileUtil = fileUtil;
   }
 
   public void setFrameSender(FrameSender frameSender) {
@@ -55,7 +59,7 @@ public class ResourcesFileWatcher extends Thread {
   @Override
   public void run() {
     Preconditions.checkNotNull(frameSender);
-    File rulesFileHandle = new File(localConf.getRulesFile());
+    File rulesFileHandle = fileUtil.openFile(localConf.getRulesFile());
     long lastModified = rulesFileHandle.lastModified();
     while (true) {
       try {

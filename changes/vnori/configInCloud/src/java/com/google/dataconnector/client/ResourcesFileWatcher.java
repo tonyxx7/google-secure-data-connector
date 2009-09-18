@@ -73,8 +73,8 @@ public class ResourcesFileWatcher extends Thread {
     Preconditions.checkNotNull(frameSender);
     File rulesFileHandle = fileUtil.openFile(localConf.getRulesFile());
     long lastModified = rulesFileHandle.lastModified();
-    while (true) {
-      try {
+    try {
+      while (true) {
         long modified = rulesFileHandle.lastModified();
         if (modified != lastModified) {
           // file changed. re-register the resources.
@@ -86,18 +86,16 @@ public class ResourcesFileWatcher extends Thread {
 
         // sleep for a FileWatcherThreadSleepTimer min and check again
         systemUtil.sleep(localConf.getFileWatcherThreadSleepTimer() * 60 * 1000L);
-      } catch (InterruptedException e) {
-        // exit
-        break;
-      } catch (RegistrationException e) {
-        LOG.fatal("re-registration of resources failed. exiting..", e);
-        //TODO(mtp): maybe this should be retried
-        System.exit(-1);
-        break;
-      } finally {
-        LOG.info("FileWatcher thread exiting.." +
-        "Any changes in Resources file will need Agent restart");
       }
+    } catch (InterruptedException e) {
+      // exit
+    } catch (RegistrationException e) {
+      LOG.fatal("re-registration of resources failed. exiting..", e);
+      //TODO(mtp): maybe this should be retried
+      System.exit(-1);
+    } finally {
+      LOG.info("FileWatcher thread exiting.." +
+      "Any changes in Resources file will need Agent restart");
     }
   }
 }

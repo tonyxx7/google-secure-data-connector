@@ -39,7 +39,13 @@ public class ResourceUrlException extends Exception {
     super(cause);
   }
 
-  public ResourceUrlException(String message, Throwable cause) {
-    super(message, cause);
+  /**
+   * Creates the exception with the specified error message and cause.
+   *
+   * @param msg the error message.
+   * @param cause the underlying cause.
+   */
+  public ResourceUrlException(String msg, Throwable cause) {
+    super(msg, cause);
   }
 }

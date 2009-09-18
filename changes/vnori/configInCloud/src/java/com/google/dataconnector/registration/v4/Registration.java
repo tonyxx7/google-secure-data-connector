@@ -204,8 +204,8 @@ public class Registration implements Dispatchable {
     try {
       RegistrationResponseV4 regResponse = RegistrationResponseV4.parseFrom(frameInfo.getPayload());
       if (regResponse.getResult() != RegistrationResponseV4.ResultCode.OK) {
-        throw new RegistrationException("Registration failed: " +
-            regResponse.getStatusMessage());
+        LOG.fatal("Registration failed: " + regResponse.getStatusMessage());
+        throw new RegistrationException("Registration failed");
       }
       LOG.debug("Received response to resource registration request\n" + regResponse.toString());
 

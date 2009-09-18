@@ -11,29 +11,34 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 package com.google.dataconnector.registration.v4;
 
 /**
  * Exception for errors during parsing of Resource Url
- * 
+ *
  * @author vnori@google.com (Vasu Nori)
  */
 public class ResourceUrlException extends Exception {
 
   /**
    * Creates the exception with the specified error message.
-   * 
+   *
    * @param msg the error message.
    */
   public ResourceUrlException(String msg) {
     super(msg);
   }
-  
+
+  /**
+   * Creates the exception with the specified throwable
+   *
+   * @param cause the throwable object to be wrapped this exception obj
+   */
   public ResourceUrlException(Throwable cause) {
     super(cause);
   }
-  
+
   public ResourceUrlException(String message, Throwable cause) {
     super(message, cause);
   }

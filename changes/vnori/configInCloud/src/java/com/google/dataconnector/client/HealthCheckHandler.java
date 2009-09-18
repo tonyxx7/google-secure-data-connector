@@ -108,7 +108,7 @@ public class HealthCheckHandler extends Thread implements Dispatchable {
             .build();
         LOG.debug("Sending health check request");
         frameSender.sendFrame(SdcFrame.FrameInfo.Type.HEALTH_CHECK, hci.toByteString());
-        sleep(getServerSuppliedConf().getHealthCheckWakeUpInterval() * 1000);
+        sleep(serverSuppliedConf.getHealthCheckWakeUpInterval() * 1000);
 
 
         // Every send interval we check to see if we have timed out.  Sending is reliable as
@@ -150,10 +150,6 @@ public class HealthCheckHandler extends Thread implements Dispatchable {
 
   public synchronized void setServerSuppliedConf(ServerSuppliedConf serverSuppliedConf) {
     this.serverSuppliedConf = serverSuppliedConf;
-  }
-
-  private synchronized ServerSuppliedConf getServerSuppliedConf() {
-    return serverSuppliedConf;
   }
 
   /**

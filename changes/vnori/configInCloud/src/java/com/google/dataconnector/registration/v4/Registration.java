@@ -19,8 +19,8 @@ import com.google.dataconnector.protocol.Dispatchable;
 import com.google.dataconnector.protocol.FrameSender;
 import com.google.dataconnector.protocol.FramingException;
 import com.google.dataconnector.protocol.proto.SdcFrame.FrameInfo;
-import com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest;
-import com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse;
+import com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequestV4;
+import com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4;
 import com.google.dataconnector.protocol.proto.SdcFrame.ResourceKey;
 import com.google.dataconnector.protocol.proto.SdcFrame.ServerSuppliedConf;
 import com.google.dataconnector.registration.v4.Registration;
@@ -48,7 +48,7 @@ import javax.xml.stream.XMLStreamException;
 /**
  * Handles registration for SDC agent.  contains 2 methods
  * 1. method to prepares the resource rules into a
- * {@link RegistrationRequest} protobuf and send it to the SDC server.
+ * {@link RegistrationRequestV4} protobuf and send it to the SDC server.
  *
  * 2. method to parse the response from the SDC server.
  *
@@ -84,7 +84,7 @@ public class Registration implements Dispatchable {
 
   /**
    * Gets called by the frame receiver when a Registration frame is received.
-   * SDC server must have sent {@link RegistrationResponse} data.
+   * SDC server must have sent {@link RegistrationResponseV4} data.
    * process the response recvd.
    *
    * @throws FramingException if any IO errors with plumbing, unparsable frames, or frames in
@@ -97,7 +97,7 @@ public class Registration implements Dispatchable {
     } catch (RegistrationException e) {
       // this re-throws a registration exception - but caller of this method catches it and
       // throws it as ConnectionException - which is what RegistrationException is.
-      // fix this convoluted exception chaining.
+      // TODO(mtp): fix this convoluted exception chaining.
       throw new FramingException(e);
     }
   }
@@ -112,7 +112,7 @@ public class Registration implements Dispatchable {
   public void sendRegistrationInfo(FrameSender frameSender) throws RegistrationException {
     try {
       // prepare registration request
-      RegistrationRequest.Builder regRequestBuilder = RegistrationRequest.newBuilder()
+      RegistrationRequestV4.Builder regRequestBuilder = RegistrationRequestV4.newBuilder()
           .setHealthCheckPort(healthCheckRequestHandler.getPort())
           .setAgentId(localConf.getAgentId())
           .setSocksServerPort(localConf.getSocksServerPort());
@@ -131,7 +131,7 @@ public class Registration implements Dispatchable {
       regRequestBuilder.addAllResourceKey(resourceKeyList);
 
       // finalize the building of the RegRequest
-      RegistrationRequest regRequest = regRequestBuilder.build();
+      RegistrationRequestV4 regRequest = regRequestBuilder.build();
 
       // Send frame.
       LOG.info("Sending resources info\n" + regRequest.toString());
@@ -165,7 +165,7 @@ public class Registration implements Dispatchable {
   /**
    * create resource secretkeys for all URLs and return the list
    */
-  private List<ResourceKey> createResourceKeys(RegistrationRequest.Builder regRequestBuilder)
+  private List<ResourceKey> createResourceKeys(RegistrationRequestV4.Builder regRequestBuilder)
       throws RegistrationException {
     List<ResourceKey> resourceKeyList = new ArrayList<ResourceKey>();
     try {
@@ -202,8 +202,8 @@ public class Registration implements Dispatchable {
    */
   private void processRegistrationResponse(FrameInfo frameInfo) throws RegistrationException {
     try {
-      RegistrationResponse regResponse = RegistrationResponse.parseFrom(frameInfo.getPayload());
-      if (regResponse.getResult() != RegistrationResponse.ResultCode.OK) {
+      RegistrationResponseV4 regResponse = RegistrationResponseV4.parseFrom(frameInfo.getPayload());
+      if (regResponse.getResult() != RegistrationResponseV4.ResultCode.OK) {
         throw new RegistrationException("Registration failed: " +
             regResponse.getStatusMessage());
       }

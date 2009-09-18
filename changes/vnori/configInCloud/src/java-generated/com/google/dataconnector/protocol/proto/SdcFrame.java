@@ -3079,28 +3079,28 @@ public final class SdcFrame {
     }
   }
   
-  public static final class RegistrationRequest extends
+  public static final class RegistrationRequestV4 extends
       com.google.protobuf.GeneratedMessage {
-    // Use RegistrationRequest.newBuilder() to construct.
-    private RegistrationRequest() {}
+    // Use RegistrationRequestV4.newBuilder() to construct.
+    private RegistrationRequestV4() {}
     
-    private static final RegistrationRequest defaultInstance = new RegistrationRequest();
-    public static RegistrationRequest getDefaultInstance() {
+    private static final RegistrationRequestV4 defaultInstance = new RegistrationRequestV4();
+    public static RegistrationRequestV4 getDefaultInstance() {
       return defaultInstance;
     }
     
-    public RegistrationRequest getDefaultInstanceForType() {
+    public RegistrationRequestV4 getDefaultInstanceForType() {
       return defaultInstance;
     }
     
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return com.google.dataconnector.protocol.proto.SdcFrame.internal_static_sdc_frame_RegistrationRequest_descriptor;
+      return com.google.dataconnector.protocol.proto.SdcFrame.internal_static_sdc_frame_RegistrationRequestV4_descriptor;
     }
     
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return com.google.dataconnector.protocol.proto.SdcFrame.internal_static_sdc_frame_RegistrationRequest_fieldAccessorTable;
+      return com.google.dataconnector.protocol.proto.SdcFrame.internal_static_sdc_frame_RegistrationRequestV4_fieldAccessorTable;
     }
     
     // required string agentId = 1;
@@ -3229,57 +3229,57 @@ public final class SdcFrame {
       return size;
     }
     
-    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest parseFrom(
+    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequestV4 parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest parseFrom(
+    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequestV4 parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest parseFrom(byte[] data)
+    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequestV4 parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest parseFrom(
+    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequestV4 parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest parseFrom(java.io.InputStream input)
+    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequestV4 parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest parseFrom(
+    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequestV4 parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input, extensionRegistry)
                .buildParsed();
     }
-    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest parseDelimitedFrom(java.io.InputStream input)
+    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequestV4 parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return newBuilder().mergeDelimitedFrom(input).buildParsed();
     }
-    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest parseDelimitedFrom(
+    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequestV4 parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return newBuilder().mergeDelimitedFrom(input, extensionRegistry)
                .buildParsed();
     }
-    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest parseFrom(
+    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequestV4 parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest parseFrom(
+    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequestV4 parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -3289,25 +3289,25 @@ public final class SdcFrame {
     
     public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest prototype) {
+    public static Builder newBuilder(com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequestV4 prototype) {
       return newBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() { return newBuilder(this); }
     
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
-      private com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest result;
+      private com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequestV4 result;
       
-      // Construct using com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest.newBuilder()
+      // Construct using com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequestV4.newBuilder()
       private Builder() {}
       
       private static Builder create() {
         Builder builder = new Builder();
-        builder.result = new com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest();
+        builder.result = new com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequestV4();
         return builder;
       }
       
-      protected com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest internalGetResult() {
+      protected com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequestV4 internalGetResult() {
         return result;
       }
       
@@ -3316,7 +3316,7 @@ public final class SdcFrame {
           throw new IllegalStateException(
             "Cannot call clear() after build().");
         }
-        result = new com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest();
+        result = new com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequestV4();
         return this;
       }
       
@@ -3326,24 +3326,24 @@ public final class SdcFrame {
       
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest.getDescriptor();
+        return com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequestV4.getDescriptor();
       }
       
-      public com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest getDefaultInstanceForType() {
-        return com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest.getDefaultInstance();
+      public com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequestV4 getDefaultInstanceForType() {
+        return com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequestV4.getDefaultInstance();
       }
       
       public boolean isInitialized() {
         return result.isInitialized();
       }
-      public com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest build() {
+      public com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequestV4 build() {
         if (result != null && !isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return buildPartial();
       }
       
-      private com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest buildParsed()
+      private com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequestV4 buildParsed()
           throws com.google.protobuf.InvalidProtocolBufferException {
         if (!isInitialized()) {
           throw newUninitializedMessageException(
@@ -3352,7 +3352,7 @@ public final class SdcFrame {
         return buildPartial();
       }
       
-      public com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest buildPartial() {
+      public com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequestV4 buildPartial() {
         if (result == null) {
           throw new IllegalStateException(
             "build() has already been called on this Builder.");
@@ -3365,22 +3365,22 @@ public final class SdcFrame {
           result.resourceKey_ =
             java.util.Collections.unmodifiableList(result.resourceKey_);
         }
-        com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest returnMe = result;
+        com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequestV4 returnMe = result;
         result = null;
         return returnMe;
       }
       
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest) {
-          return mergeFrom((com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest)other);
+        if (other instanceof com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequestV4) {
+          return mergeFrom((com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequestV4)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
       
-      public Builder mergeFrom(com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest other) {
-        if (other == com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest.getDefaultInstance()) return this;
+      public Builder mergeFrom(com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequestV4 other) {
+        if (other == com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequestV4.getDefaultInstance()) return this;
         if (other.hasAgentId()) {
           setAgentId(other.getAgentId());
         }
@@ -3640,28 +3640,28 @@ public final class SdcFrame {
     }
   }
   
-  public static final class RegistrationResponse extends
+  public static final class RegistrationResponseV4 extends
       com.google.protobuf.GeneratedMessage {
-    // Use RegistrationResponse.newBuilder() to construct.
-    private RegistrationResponse() {}
+    // Use RegistrationResponseV4.newBuilder() to construct.
+    private RegistrationResponseV4() {}
     
-    private static final RegistrationResponse defaultInstance = new RegistrationResponse();
-    public static RegistrationResponse getDefaultInstance() {
+    private static final RegistrationResponseV4 defaultInstance = new RegistrationResponseV4();
+    public static RegistrationResponseV4 getDefaultInstance() {
       return defaultInstance;
     }
     
-    public RegistrationResponse getDefaultInstanceForType() {
+    public RegistrationResponseV4 getDefaultInstanceForType() {
       return defaultInstance;
     }
     
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return com.google.dataconnector.protocol.proto.SdcFrame.internal_static_sdc_frame_RegistrationResponse_descriptor;
+      return com.google.dataconnector.protocol.proto.SdcFrame.internal_static_sdc_frame_RegistrationResponseV4_descriptor;
     }
     
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return com.google.dataconnector.protocol.proto.SdcFrame.internal_static_sdc_frame_RegistrationResponse_fieldAccessorTable;
+      return com.google.dataconnector.protocol.proto.SdcFrame.internal_static_sdc_frame_RegistrationResponseV4_fieldAccessorTable;
     }
     
     public enum ResultCode
@@ -3705,7 +3705,7 @@ public final class SdcFrame {
       }
       public static final com.google.protobuf.Descriptors.EnumDescriptor
           getDescriptor() {
-        return com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse.getDescriptor().getEnumTypes().get(0);
+        return com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4.getDescriptor().getEnumTypes().get(0);
       }
       
       private static final ResultCode[] VALUES = {
@@ -3738,12 +3738,12 @@ public final class SdcFrame {
     public boolean hasStatusMessage() { return hasStatusMessage; }
     public java.lang.String getStatusMessage() { return statusMessage_; }
     
-    // required .sdc_frame.RegistrationResponse.ResultCode result = 2;
+    // required .sdc_frame.RegistrationResponseV4.ResultCode result = 2;
     public static final int RESULT_FIELD_NUMBER = 2;
     private boolean hasResult;
-    private com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse.ResultCode result_ = com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse.ResultCode.OK;
+    private com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4.ResultCode result_ = com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4.ResultCode.OK;
     public boolean hasResult() { return hasResult; }
-    public com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse.ResultCode getResult() { return result_; }
+    public com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4.ResultCode getResult() { return result_; }
     
     // optional .sdc_frame.ServerSuppliedConf serverSuppliedConf = 3;
     public static final int SERVERSUPPLIEDCONF_FIELD_NUMBER = 3;
@@ -3794,57 +3794,57 @@ public final class SdcFrame {
       return size;
     }
     
-    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse parseFrom(
+    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4 parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse parseFrom(
+    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4 parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse parseFrom(byte[] data)
+    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4 parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse parseFrom(
+    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4 parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse parseFrom(java.io.InputStream input)
+    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4 parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse parseFrom(
+    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4 parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input, extensionRegistry)
                .buildParsed();
     }
-    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse parseDelimitedFrom(java.io.InputStream input)
+    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4 parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return newBuilder().mergeDelimitedFrom(input).buildParsed();
     }
-    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse parseDelimitedFrom(
+    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4 parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return newBuilder().mergeDelimitedFrom(input, extensionRegistry)
                .buildParsed();
     }
-    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse parseFrom(
+    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4 parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse parseFrom(
+    public static com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4 parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -3854,25 +3854,25 @@ public final class SdcFrame {
     
     public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse prototype) {
+    public static Builder newBuilder(com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4 prototype) {
       return newBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() { return newBuilder(this); }
     
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
-      private com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse result;
+      private com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4 result;
       
-      // Construct using com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse.newBuilder()
+      // Construct using com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4.newBuilder()
       private Builder() {}
       
       private static Builder create() {
         Builder builder = new Builder();
-        builder.result = new com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse();
+        builder.result = new com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4();
         return builder;
       }
       
-      protected com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse internalGetResult() {
+      protected com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4 internalGetResult() {
         return result;
       }
       
@@ -3881,7 +3881,7 @@ public final class SdcFrame {
           throw new IllegalStateException(
             "Cannot call clear() after build().");
         }
-        result = new com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse();
+        result = new com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4();
         return this;
       }
       
@@ -3891,24 +3891,24 @@ public final class SdcFrame {
       
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse.getDescriptor();
+        return com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4.getDescriptor();
       }
       
-      public com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse getDefaultInstanceForType() {
-        return com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse.getDefaultInstance();
+      public com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4 getDefaultInstanceForType() {
+        return com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4.getDefaultInstance();
       }
       
       public boolean isInitialized() {
         return result.isInitialized();
       }
-      public com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse build() {
+      public com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4 build() {
         if (result != null && !isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return buildPartial();
       }
       
-      private com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse buildParsed()
+      private com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4 buildParsed()
           throws com.google.protobuf.InvalidProtocolBufferException {
         if (!isInitialized()) {
           throw newUninitializedMessageException(
@@ -3917,27 +3917,27 @@ public final class SdcFrame {
         return buildPartial();
       }
       
-      public com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse buildPartial() {
+      public com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4 buildPartial() {
         if (result == null) {
           throw new IllegalStateException(
             "build() has already been called on this Builder.");
         }
-        com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse returnMe = result;
+        com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4 returnMe = result;
         result = null;
         return returnMe;
       }
       
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse) {
-          return mergeFrom((com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse)other);
+        if (other instanceof com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4) {
+          return mergeFrom((com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
       
-      public Builder mergeFrom(com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse other) {
-        if (other == com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse.getDefaultInstance()) return this;
+      public Builder mergeFrom(com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4 other) {
+        if (other == com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4.getDefaultInstance()) return this;
         if (other.hasStatusMessage()) {
           setStatusMessage(other.getStatusMessage());
         }
@@ -3978,7 +3978,7 @@ public final class SdcFrame {
             }
             case 16: {
               int rawValue = input.readEnum();
-              com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse.ResultCode value = com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse.ResultCode.valueOf(rawValue);
+              com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4.ResultCode value = com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4.ResultCode.valueOf(rawValue);
               if (value == null) {
                 unknownFields.mergeVarintField(2, rawValue);
               } else {
@@ -4021,14 +4021,14 @@ public final class SdcFrame {
         return this;
       }
       
-      // required .sdc_frame.RegistrationResponse.ResultCode result = 2;
+      // required .sdc_frame.RegistrationResponseV4.ResultCode result = 2;
       public boolean hasResult() {
         return result.hasResult();
       }
-      public com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse.ResultCode getResult() {
+      public com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4.ResultCode getResult() {
         return result.getResult();
       }
-      public Builder setResult(com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse.ResultCode value) {
+      public Builder setResult(com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4.ResultCode value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -4038,7 +4038,7 @@ public final class SdcFrame {
       }
       public Builder clearResult() {
         result.hasResult = false;
-        result.result_ = com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse.ResultCode.OK;
+        result.result_ = com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4.ResultCode.OK;
         return this;
       }
       
@@ -4125,15 +4125,15 @@ public final class SdcFrame {
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_sdc_frame_HealthCheckInfo_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
-    internal_static_sdc_frame_RegistrationRequest_descriptor;
+    internal_static_sdc_frame_RegistrationRequestV4_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_sdc_frame_RegistrationRequest_fieldAccessorTable;
+      internal_static_sdc_frame_RegistrationRequestV4_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
-    internal_static_sdc_frame_RegistrationResponse_descriptor;
+    internal_static_sdc_frame_RegistrationResponseV4_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_sdc_frame_RegistrationResponse_fieldAccessorTable;
+      internal_static_sdc_frame_RegistrationResponseV4_fieldAccessorTable;
   
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -4174,19 +4174,19 @@ public final class SdcFrame {
       "c_frame.HealthCheckInfo.Source\022-\n\004type\030\003" +
       " \001(\0162\037.sdc_frame.HealthCheckInfo.Type\" \n",
       "\006Source\022\n\n\006CLIENT\020\001\022\n\n\006SERVER\020\002\"!\n\004Type\022" +
-      "\013\n\007REQUEST\020\001\022\014\n\010RESPONSE\020\002\"\272\001\n\023Registrat" +
-      "ionRequest\022\017\n\007agentId\030\001 \002(\t\022\027\n\017socksServ" +
-      "erPort\030\002 \002(\005\022\027\n\017healthCheckPort\030\003 \002(\005\022\035\n" +
-      "\025healthCheckGadgetUser\030\004 \003(\t\022+\n\013resource" +
-      "Key\030\005 \003(\0132\026.sdc_frame.ResourceKey\022\024\n\014res" +
-      "ourcesXml\030\006 \002(\t\"\343\001\n\024RegistrationResponse" +
-      "\022\025\n\rstatusMessage\030\001 \001(\t\022:\n\006result\030\002 \002(\0162" +
-      "*.sdc_frame.RegistrationResponse.ResultC" +
-      "ode\0229\n\022serverSuppliedConf\030\003 \001(\0132\035.sdc_fr",
-      "ame.ServerSuppliedConf\"=\n\nResultCode\022\006\n\002" +
-      "OK\020\001\022\025\n\021ERRORS_IN_REQUEST\020\002\022\020\n\014SERVER_ER" +
-      "ROR\020\003B)\n\'com.google.dataconnector.protoc" +
-      "ol.proto"
+      "\013\n\007REQUEST\020\001\022\014\n\010RESPONSE\020\002\"\274\001\n\025Registrat" +
+      "ionRequestV4\022\017\n\007agentId\030\001 \002(\t\022\027\n\017socksSe" +
+      "rverPort\030\002 \002(\005\022\027\n\017healthCheckPort\030\003 \002(\005\022" +
+      "\035\n\025healthCheckGadgetUser\030\004 \003(\t\022+\n\013resour" +
+      "ceKey\030\005 \003(\0132\026.sdc_frame.ResourceKey\022\024\n\014r" +
+      "esourcesXml\030\006 \002(\t\"\347\001\n\026RegistrationRespon" +
+      "seV4\022\025\n\rstatusMessage\030\001 \001(\t\022<\n\006result\030\002 " +
+      "\002(\0162,.sdc_frame.RegistrationResponseV4.R" +
+      "esultCode\0229\n\022serverSuppliedConf\030\003 \001(\0132\035.",
+      "sdc_frame.ServerSuppliedConf\"=\n\nResultCo" +
+      "de\022\006\n\002OK\020\001\022\025\n\021ERRORS_IN_REQUEST\020\002\022\020\n\014SER" +
+      "VER_ERROR\020\003B)\n\'com.google.dataconnector." +
+      "protocol.proto"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -4249,22 +4249,22 @@ public final class SdcFrame {
               new java.lang.String[] { "TimeStamp", "Source", "Type", },
               com.google.dataconnector.protocol.proto.SdcFrame.HealthCheckInfo.class,
               com.google.dataconnector.protocol.proto.SdcFrame.HealthCheckInfo.Builder.class);
-          internal_static_sdc_frame_RegistrationRequest_descriptor =
+          internal_static_sdc_frame_RegistrationRequestV4_descriptor =
             getDescriptor().getMessageTypes().get(7);
-          internal_static_sdc_frame_RegistrationRequest_fieldAccessorTable = new
+          internal_static_sdc_frame_RegistrationRequestV4_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_sdc_frame_RegistrationRequest_descriptor,
+              internal_static_sdc_frame_RegistrationRequestV4_descriptor,
               new java.lang.String[] { "AgentId", "SocksServerPort", "HealthCheckPort", "HealthCheckGadgetUser", "ResourceKey", "ResourcesXml", },
-              com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest.class,
-              com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequest.Builder.class);
-          internal_static_sdc_frame_RegistrationResponse_descriptor =
+              com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequestV4.class,
+              com.google.dataconnector.protocol.proto.SdcFrame.RegistrationRequestV4.Builder.class);
+          internal_static_sdc_frame_RegistrationResponseV4_descriptor =
             getDescriptor().getMessageTypes().get(8);
-          internal_static_sdc_frame_RegistrationResponse_fieldAccessorTable = new
+          internal_static_sdc_frame_RegistrationResponseV4_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_sdc_frame_RegistrationResponse_descriptor,
+              internal_static_sdc_frame_RegistrationResponseV4_descriptor,
               new java.lang.String[] { "StatusMessage", "Result", "ServerSuppliedConf", },
-              com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse.class,
-              com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponse.Builder.class);
+              com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4.class,
+              com.google.dataconnector.protocol.proto.SdcFrame.RegistrationResponseV4.Builder.class);
           return null;
         }
       };

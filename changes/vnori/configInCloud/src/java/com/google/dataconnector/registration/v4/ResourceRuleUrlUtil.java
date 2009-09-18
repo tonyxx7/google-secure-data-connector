@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 package com.google.dataconnector.registration.v4;
 
 import java.net.URI;
@@ -21,7 +21,7 @@ import java.util.List;
 
 /**
  * Utility methods to handle Url in ResourceRules
- * 
+ *
  * @author vnori@google.com (Vasu Nori)
  */
 public class ResourceRuleUrlUtil {
@@ -30,7 +30,7 @@ public class ResourceRuleUrlUtil {
     HTTP,
     HTTPS,
     SOCKET;
-    
+
     public static List<String> getValidValues() {
       Scheme[] schemes = Scheme.values();
       int len = schemes.length;
@@ -41,14 +41,23 @@ public class ResourceRuleUrlUtil {
       return validValues;
     }
   }
-  
+
+  /**
+   * return the scheme from given given URL. an exception is thrown
+   * if it is not http or https or socket
+   *
+   * @param resourceRuleUrl the string representing the url
+   * @return the Scheme enum object
+   * @throws ResourceUrlException thrown if the url is not URI format or if the scheme is
+   * not http or https or socket
+   */
   public Scheme getSchemeInUrl(String resourceRuleUrl) throws ResourceUrlException {
     try {
       URI uri = new URI(resourceRuleUrl);
       String scheme = uri.getScheme();
       return Scheme.valueOf(scheme.toUpperCase());
     } catch (IllegalArgumentException e) {
-      throw new ResourceUrlException("resource url can only start with " + 
+      throw new ResourceUrlException("resource url can only start with " +
           Scheme.getValidValues());
     } catch (URISyntaxException e) {
       throw new ResourceUrlException("badly formed resource url " + resourceRuleUrl);
@@ -56,7 +65,7 @@ public class ResourceRuleUrlUtil {
   }
 
   /**
-   * extract the hostname from the given url. 
+   * extract the hostname from the given url.
    * by using URI, the given URL will not be resolved.
    */
   public String getHostnameFromRule(String resourceRuleUrl) throws ResourceUrlException {
@@ -71,7 +80,7 @@ public class ResourceRuleUrlUtil {
   }
 
   /**
-   * Use URI util to extract the port from the given url. 
+   * Use URI util to extract the port from the given url.
    * by using URI, the given URL will not be resolved.
    */
   public int getPortFromRule(String resourceRuleUrl) throws ResourceUrlException {

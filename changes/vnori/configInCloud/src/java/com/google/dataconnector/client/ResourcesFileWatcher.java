@@ -46,6 +46,15 @@ public class ResourcesFileWatcher extends Thread {
   private FileUtil fileUtil;
   private SystemUtil systemUtil;
 
+  /**
+   * default constructor
+   *
+   * @param localConf the {@link LocalConf} object for this agent
+   * @param registration the {@link Registration} object used by this thread to invoke registration
+   * process, if required
+   * @param fileUtil
+   * @param systemUtil
+   */
   @Inject
   public ResourcesFileWatcher(LocalConf localConf, Registration registration,
       FileUtil fileUtil, SystemUtil systemUtil) {
@@ -81,9 +90,9 @@ public class ResourcesFileWatcher extends Thread {
         // exit
         break;
       } catch (RegistrationException e) {
-        LOG.fatal("re-registration of resources failed.", e);
-
-        // exit the thread.
+        LOG.fatal("re-registration of resources failed. exiting..", e);
+        //TODO(mtp): maybe this should be retried
+        System.exit(-1);
         break;
       } finally {
         LOG.info("FileWatcher thread exiting.." +

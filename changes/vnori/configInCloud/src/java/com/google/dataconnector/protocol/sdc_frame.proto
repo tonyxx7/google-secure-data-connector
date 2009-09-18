@@ -100,8 +100,8 @@ message HealthCheckInfo {
   optional Type type = 3;
 }
 
-// registration request
-message RegistrationRequest {
+// registration request for v4 agents
+message RegistrationRequestV4 {
   required string agentId = 1;
   required int32 socksServerPort = 2;
   required int32 healthCheckPort = 3;
@@ -110,7 +110,8 @@ message RegistrationRequest {
   required string resourcesXml = 6;
 }
 
-message RegistrationResponse {
+// registration response for V4 agents
+message RegistrationResponseV4 {
 
   enum ResultCode {
     OK = 1;

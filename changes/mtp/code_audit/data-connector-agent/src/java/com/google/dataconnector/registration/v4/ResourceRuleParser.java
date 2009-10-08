@@ -43,10 +43,10 @@ import javax.xml.stream.XMLStreamReader;
  */
 public class ResourceRuleParser {
   private static final Logger LOG = Logger.getLogger(ResourceRuleParser.class);
-  private static final String[] AGENT_ID_TAGS = new String[] {"clientid"};
+  private static final String AGENT_ID_TAG = "clientid";
+  private static final String URL_TAG = "url";
   private static final String[] DEPRECATED_AGENT_ID_TAGS = new String[] {"agentid"};
   private static final String[] DEPRECATED_URL_TAGS = new String[] {"pattern"};
-  private static final String[] URL_TAGS = new String[] {"url"};
 
   private final FileUtil fileUtil;
 
@@ -79,8 +79,8 @@ public class ResourceRuleParser {
         case XMLStreamConstants.START_ELEMENT:
           // look for url and agentId elements.
           String currentTag = xmlStreamReader.getLocalName();
-          boolean urlFound = equalsTagButWarnIfLegacy(currentTag, URL_TAGS, DEPRECATED_URL_TAGS);
-          boolean agentIdFound = equalsTagButWarnIfLegacy(currentTag, AGENT_ID_TAGS,
+          boolean urlFound = equalsTagButWarnIfLegacy(currentTag, URL_TAG, DEPRECATED_URL_TAGS);
+          boolean agentIdFound = equalsTagButWarnIfLegacy(currentTag, AGENT_ID_TAG,
               DEPRECATED_AGENT_ID_TAGS);
 
           if (urlFound || agentIdFound) {
@@ -126,22 +126,21 @@ public class ResourceRuleParser {
    * Determine if the tag is in a set of expected values.  Warn if it is among the deprecated.
    *
    * @param tag The current tag to inspect.
-   * @param modernNames The accepted, modern names for the tag, including synonyms.
+   * @param modernName The accepted, modern name for the tag.
    * @param deprecatedNames The deprecated names for the tag that will elicit a warning.
    * @return The truth value of whether the tag is in either list.
    */
-  private boolean equalsTagButWarnIfLegacy(final String tag, final String[] modernNames,
+  private boolean equalsTagButWarnIfLegacy(final String tag, final String modernName,
       final String[] deprecatedNames) {
 
     final String sanitizedTag = tag.toLowerCase();
 
-    if (Arrays.asList(modernNames).contains(sanitizedTag)) {
+    if (modernName.equals(sanitizedTag)) {
       return true;
     }
 
     if (Arrays.asList(deprecatedNames).contains(sanitizedTag)) {
-      LOG.warn("Tag " + tag + " is deprecated; please migrate to " + modernNames[0] +
-          " forthwith.");
+      LOG.warn("Tag " + tag + " is deprecated; please migrate to " + modernName + " forthwith.");
       return true;
     }
     return false;

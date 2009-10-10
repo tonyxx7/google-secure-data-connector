@@ -80,7 +80,7 @@ public class HealthCheckHandler extends Thread implements Dispatchable {
   public void dispatch(final FrameInfo frameInfo) throws FramingException {
 
     try {
-      final HealthCheckInfo healthCheckInfo = HealthCheckInfo.parseFrom(frameInfo.getPayload());
+      HealthCheckInfo.parseFrom(frameInfo.getPayload());
       // Assignment is thread safe.
       lastHealthCheckReceivedStamp = clock.currentTimeMillis();
     } catch (InvalidProtocolBufferException e) {

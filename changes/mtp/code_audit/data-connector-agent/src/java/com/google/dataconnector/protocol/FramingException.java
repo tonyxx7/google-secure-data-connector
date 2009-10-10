@@ -22,6 +22,7 @@ package com.google.dataconnector.protocol;
  * @author rayc@google.com (Ray Colline)
  */
 public class FramingException extends Exception {
+  private static final long serialVersionUID = -4056983786604302186L;
 
   /**
    * Builds the exception with the specified message.

@@ -22,6 +22,7 @@ package com.google.dataconnector.registration.v4;
  * @author vnori@google.com (Vasu Nori)
  */
 public class ResourceUrlException extends Exception {
+  private static final long serialVersionUID = 1614409953411919590L;
 
   /**
    * Creates the exception with the specified error message.

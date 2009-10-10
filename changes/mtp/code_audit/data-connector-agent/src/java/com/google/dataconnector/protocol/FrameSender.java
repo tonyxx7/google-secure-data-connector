@@ -133,7 +133,8 @@ public class FrameSender extends Thread {
     try {
       while (true) {
         // Wait for a frame to become available.
-        final FrameInfo frameInfo = FrameInfo.newBuilder(sendQueue.take()).setSequence(sequence).build();
+        final FrameInfo frameInfo = FrameInfo.newBuilder(sendQueue.take()).setSequence(sequence)
+            .build();
         writeOneFrame(frameInfo);
       }
     } catch (InterruptedException e) {

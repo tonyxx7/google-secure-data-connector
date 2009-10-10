@@ -28,7 +28,7 @@ public class FramingException extends Exception {
    *
    * @param msg the error message.
    */
-  public FramingException(String msg) {
+  public FramingException(final String msg) {
     super(msg);
   }
 
@@ -37,7 +37,7 @@ public class FramingException extends Exception {
    *
    * @param cause the underlying cause of the exception.
    */
-  public FramingException(Throwable cause) {
+  public FramingException(final Throwable cause) {
     super(cause);
   }
 
@@ -47,7 +47,7 @@ public class FramingException extends Exception {
    * @param msg A string representing the error message.
    * @param cause the underlying cause of the exception.
    */
-  public FramingException(String msg, Throwable cause) {
+  public FramingException(final String msg, final Throwable cause) {
     super(msg, cause);
   }
 }

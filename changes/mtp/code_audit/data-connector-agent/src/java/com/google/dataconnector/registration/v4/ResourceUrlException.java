@@ -28,7 +28,7 @@ public class ResourceUrlException extends Exception {
    *
    * @param msg the error message.
    */
-  public ResourceUrlException(String msg) {
+  public ResourceUrlException(final String msg) {
     super(msg);
   }
 
@@ -37,7 +37,7 @@ public class ResourceUrlException extends Exception {
    *
    * @param cause the throwable object to be wrapped this exception obj
    */
-  public ResourceUrlException(Throwable cause) {
+  public ResourceUrlException(final Throwable cause) {
     super(cause);
   }
 
@@ -47,7 +47,7 @@ public class ResourceUrlException extends Exception {
    * @param msg the error message.
    * @param cause the underlying cause.
    */
-  public ResourceUrlException(String msg, Throwable cause) {
+  public ResourceUrlException(final String msg, final Throwable cause) {
     super(msg, cause);
   }
 }

@@ -44,8 +44,8 @@ import com.google.dataconnector.util.SystemUtil;
  */
 public class ResourcesFileWatcherTest extends TestCase {
   private static final String TEST_FILE = "test_rules_file";
-  
-  private LocalConf localConf; 
+
+  private LocalConf localConf;
   private Registration registration;
   private FrameSender frameSender;
   private FileUtil fileUtil;
@@ -56,7 +56,7 @@ public class ResourcesFileWatcherTest extends TestCase {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    
+
     localConf = new LocalConf();
     localConf.setRulesFile(TEST_FILE);
 
@@ -71,12 +71,12 @@ public class ResourcesFileWatcherTest extends TestCase {
   @Override
   protected void tearDown() throws Exception {
     super.tearDown();
-    
+
     verifyAll();
   }
 
   /**
-   * No change in content, so no new registration should result. 
+   * No change in content, so no new registration should result.
    */
   public void testRun_noChangeNoReRegistration() throws InterruptedException, IOException {
     // Expected operation:
@@ -93,7 +93,7 @@ public class ResourcesFileWatcherTest extends TestCase {
     expectLastCall().andThrow(new InterruptedException());
 
     replayAll();
-    
+
     // Test now.
     ResourcesFileWatcher watcher = new ResourcesFileWatcher(localConf, registration,
         fileUtil, systemUtil);
@@ -104,7 +104,7 @@ public class ResourcesFileWatcherTest extends TestCase {
   }
 
   /**
-   * The file is modified, so re-registration occurs. 
+   * The file is modified, so re-registration occurs.
    */
   public void testRun_changeRequiresReRegistration() throws InterruptedException,
       RegistrationException, IOException {
@@ -122,9 +122,9 @@ public class ResourcesFileWatcherTest extends TestCase {
     expectLastCall().andThrow(new InterruptedException());
 
     registration.sendRegistrationInfo(frameSender);
-    
+
     replayAll();
-    
+
     // Test now.
     ResourcesFileWatcher watcher = new ResourcesFileWatcher(localConf, registration,
         fileUtil, systemUtil);
@@ -133,9 +133,9 @@ public class ResourcesFileWatcherTest extends TestCase {
 
     // Verify done in tearDown().
   }
-  
+
   /**
-   * The file is modified, so re-registration occurs. 
+   * The file is modified, so re-registration occurs.
    */
   public void testRun_failedReRegistrationRetries() throws InterruptedException,
       RegistrationException, IOException {
@@ -155,14 +155,14 @@ public class ResourcesFileWatcherTest extends TestCase {
     registration.sendRegistrationInfo(frameSender);
     expectLastCall().andThrow(new RegistrationException(""));
     registration.sendRegistrationInfo(frameSender);
-    
+
     systemUtil.sleep(localConf.getFileWatcherThreadSleepTimer() * 60 * 1000L);
     // Exit loop with fake exception.
     systemUtil.sleep(localConf.getFileWatcherThreadSleepTimer() * 60 * 1000L);
     expectLastCall().andThrow(new InterruptedException());
-    
+
     replayAll();
-    
+
     // Test now.
     ResourcesFileWatcher watcher = new ResourcesFileWatcher(localConf, registration,
         fileUtil, systemUtil);
@@ -171,7 +171,7 @@ public class ResourcesFileWatcherTest extends TestCase {
 
     // Verify done in tearDown().
   }
-  
+
   private void replayAll() {
     replay(frameSender);
     replay(fileUtil);
@@ -180,13 +180,13 @@ public class ResourcesFileWatcherTest extends TestCase {
     replay(systemUtil);
     replay(fileInputStream);
   }
-  
+
   private void verifyAll() {
     verify(frameSender);
     verify(fileUtil);
     verify(registration);
     verify(fileHandle);
-    verify(systemUtil);   
+    verify(systemUtil);
     verify(fileInputStream);
   }
 }

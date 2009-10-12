@@ -48,7 +48,7 @@ public class FileUtil {
     // Write out tempfile.
     final String tempFilename = filename + "-" + System.currentTimeMillis() + "-" +
         new Random().nextInt();
-    
+
     final FileWriter fileWriter = new FileWriter(new File(tempFilename));
     fileWriter.write(contents);
     fileWriter.close();

@@ -38,7 +38,7 @@ import com.google.inject.Singleton;
 
 /**
  * <p>A watcher thread that keeps track of the resource rules message digest.</p>
- * 
+ *
  * <p>If the value changes, the client re-registers with the server.</p>
  *
  * @author mtp@google.com (Matt T. Proud)
@@ -82,14 +82,14 @@ public class ResourcesFileWatcher extends Thread {
     Preconditions.checkNotNull(frameSender);
 
     byte[] lastDigest = null;
-    
+
     try {
       final MessageDigest md5Digest = MessageDigest.getInstance("MD5");
       while (true) {
         final String resourcesFile = localConf.getRulesFile();
         final FileInputStream currentStream = fileUtil.getFileInputStream(resourcesFile);
         final DigestInputStream digestInputStream = new DigestInputStream(currentStream, md5Digest);
-  
+
         while (digestInputStream.read() != -1) {
         }
 
@@ -101,8 +101,8 @@ public class ResourcesFileWatcher extends Thread {
         if (lastDigest == null) {
           lastDigest = currentDigest;
           continue;
-        }       
-        
+        }
+
         if (!MessageDigest.isEqual(lastDigest, currentDigest)) {
           try {
             LOG.info("Detected change in the content of resources file " + resourcesFile +

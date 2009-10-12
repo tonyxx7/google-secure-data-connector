@@ -28,7 +28,7 @@ import java.io.File;
 public class LocalConfValidator {
   private static final Logger log = Logger.getLogger(LocalConfValidator.class);
   private static final int MAX_PORT = 65535;
-  
+
   private final FileUtil fileUtil;
 
   /**

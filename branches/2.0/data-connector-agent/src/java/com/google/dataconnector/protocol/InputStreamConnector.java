@@ -38,7 +38,7 @@ public class InputStreamConnector extends Thread {
   private static final Logger LOG = Logger.getLogger(InputStreamConnector.class);
 
   private InputStream inputStream;
-  private int connectionId;
+  private long connectionId;
   private FrameSender frameSender;
   private ConnectorStateCallback connectorStateCallback;
 
@@ -53,7 +53,7 @@ public class InputStreamConnector extends Thread {
     Preconditions.checkNotNull(connectionId, "must set connectionId before calling start()");
 
       try {
-        byte[] buffer = new byte[65536];
+        final byte[] buffer = new byte[65536];
         while (true) {
           int bytesRead;
           bytesRead = inputStream.read(buffer);
@@ -85,19 +85,19 @@ public class InputStreamConnector extends Thread {
     LOG.debug("removed connectionId " + connectionId);
   }
 
-  public void setInputStream(InputStream inputStream) {
+  public void setInputStream(final InputStream inputStream) {
     this.inputStream = inputStream;
   }
 
-  public void setConnectionId(int connectionId) {
+  public void setConnectionId(final long connectionId) {
     this.connectionId = connectionId;
   }
 
-  public void setFrameSender(FrameSender frameSender) {
+  public void setFrameSender(final FrameSender frameSender) {
     this.frameSender = frameSender;
   }
 
-  public void setConnectorStateCallback(ConnectorStateCallback connectorStateCallback) {
+  public void setConnectorStateCallback(final ConnectorStateCallback connectorStateCallback) {
     this.connectorStateCallback = connectorStateCallback;
   }
 }

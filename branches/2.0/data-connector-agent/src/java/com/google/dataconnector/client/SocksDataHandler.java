@@ -68,18 +68,18 @@ public class SocksDataHandler implements Dispatchable {
   private FrameSender frameSender;
 
   // Local fields
-  private ConcurrentMap<Integer, BlockingQueue<SocketDataInfo>> outputQueueMap;
+  private final ConcurrentMap<Long, BlockingQueue<SocketDataInfo>> outputQueueMap;
 
   public interface ConnectionStateUpdatable {
-     public void removeConnection(int connectionId);
+     public void removeConnection(final long connectionId);
   }
 
   @Inject
-  public SocksDataHandler(LocalConf localConf, SocketFactory socketFactory,
-      @Named("localhost") InetAddress localHostAddress, ThreadPoolExecutor threadPoolExecutor,
-      Injector injector) {
+  public SocksDataHandler(final LocalConf localConf, final SocketFactory socketFactory,
+      final @Named("localhost") InetAddress localHostAddress,
+      final ThreadPoolExecutor threadPoolExecutor, final Injector injector) {
 
-    outputQueueMap = new ConcurrentHashMap<Integer, BlockingQueue<SocketDataInfo>>();
+    outputQueueMap = new ConcurrentHashMap<Long, BlockingQueue<SocketDataInfo>>();
     this.localConf = localConf;
     this.socketFactory = socketFactory;
     this.localHostAddress = localHostAddress;
@@ -96,22 +96,22 @@ public class SocksDataHandler implements Dispatchable {
    * a bad state.
    */
   @Override
-  public void dispatch(FrameInfo frameInfo) throws FramingException {
+  public void dispatch(final FrameInfo frameInfo) throws FramingException {
     Preconditions.checkNotNull(frameSender, "Must define frameSender before calling dispatch");
     try {
-      SocketDataInfo socketDataInfo = SocketDataInfo.parseFrom(frameInfo.getPayload());
-      int connectionId = (int) socketDataInfo.getConnectionId();
+      final SocketDataInfo socketDataInfo = SocketDataInfo.parseFrom(frameInfo.getPayload());
+      final long connectionId = socketDataInfo.getConnectionId();
 
       // Handle incoming start request.
       if (socketDataInfo.getState() == SocketDataInfo.State.START) {
         LOG.info("Starting new connection. ID " + connectionId);
-        Socket socket = socketFactory.createSocket();
+        final Socket socket = socketFactory.createSocket();
         socket.connect(new InetSocketAddress(localHostAddress, localConf.getSocksServerPort()));
 
-        ConnectionRemover connectionRemoverCallback = new ConnectionRemover();
+        final ConnectionRemover connectionRemoverCallback = new ConnectionRemover();
 
         // TODO(rayc) Create a pool of connectors instead of making a new instance each time.
-        InputStreamConnector inputStreamConnector =
+        final InputStreamConnector inputStreamConnector =
             injector.getInstance(InputStreamConnector.class);
         inputStreamConnector.setConnectionId(connectionId);
         inputStreamConnector.setInputStream(socket.getInputStream());
@@ -120,7 +120,7 @@ public class SocksDataHandler implements Dispatchable {
         inputStreamConnector.setName("Inputconnector-" + connectionId);
 
         // TODO(rayc) Create a pool of connectors instead of making a new instance each time.
-        OutputStreamConnector outputStreamConnector =
+        final OutputStreamConnector outputStreamConnector =
             injector.getInstance(OutputStreamConnector.class);
         outputStreamConnector.setConnectionId(connectionId);
         outputStreamConnector.setOutputStream(socket.getOutputStream());
@@ -135,7 +135,7 @@ public class SocksDataHandler implements Dispatchable {
       // Deal with continuing connections or close connections.
       } else if (socketDataInfo.getState() == SocketDataInfo.State.CONTINUE ||
           socketDataInfo.getState() == SocketDataInfo.State.CLOSE) {
-        if (outputQueueMap.containsKey((int) socketDataInfo.getConnectionId())) {
+        if (outputQueueMap.containsKey(socketDataInfo.getConnectionId())) {
           outputQueueMap.get(connectionId).put(socketDataInfo);
         }
       // Unknown states.
@@ -158,7 +158,7 @@ public class SocksDataHandler implements Dispatchable {
     }
   }
 
-  public void setFrameSender(FrameSender frameSender) {
+  public void setFrameSender(final FrameSender frameSender) {
     this.frameSender = frameSender;
   }
 
@@ -174,7 +174,7 @@ public class SocksDataHandler implements Dispatchable {
      * Removes connection from the queueMap so its no longer tracked.
      */
     @Override
-    public void close(int connectionId) {
+    public void close(final long connectionId) {
       // We never know if the input or output side will detect closure first.
       // We defensively call from both sides.  In the event we are called twice we check to see
       // if we have already cleaned up.

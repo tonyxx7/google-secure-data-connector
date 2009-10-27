@@ -90,6 +90,14 @@ public class Client {
     }
     startup(injector);
   }
+  
+  /**
+   * Shutdown agent.
+   */
+  public void shutdown() {
+    secureDataConnection.shutdown();
+    healthCheckRequestHandler.shutdown();
+  }
 
     
   /**

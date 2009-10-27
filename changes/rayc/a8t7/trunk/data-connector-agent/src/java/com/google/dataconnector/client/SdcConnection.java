@@ -27,6 +27,7 @@ import com.google.dataconnector.registration.v4.Registration;
 import com.google.dataconnector.util.ConnectionException;
 import com.google.dataconnector.util.LocalConf;
 import com.google.dataconnector.util.SSLSocketFactoryInit;
+import com.google.dataconnector.util.Stoppable;
 import com.google.inject.Inject;
 import com.google.protobuf.InvalidProtocolBufferException;
 
@@ -52,7 +53,7 @@ import javax.security.cert.X509Certificate;
  * @author rayc@google.com (Ray Colline)
  * @author vnori@google.com (Vasu Nori)
  */
-public class SdcConnection implements FailCallback {
+public class SdcConnection implements FailCallback, Stoppable {
 
   // Logging instance
   private static final Logger LOG = Logger.getLogger(SdcConnection.class);
@@ -290,12 +291,8 @@ public class SdcConnection implements FailCallback {
    */
   @Override
   public void handleFailure() {
-    Preconditions.checkNotNull(socket, "Socket should not be null when handleFailure is called.");
-    try {
-      LOG.error("Closing SDC connection due to health check failure.");
-      socket.close();
-    } catch (IOException e) {
-      LOG.fatal("Could not close socket upon health check failure!");
-    }
+    LOG.error("Closing SDC connection due to health check failure.");
+    this.shutdown();
   }
+  
 }

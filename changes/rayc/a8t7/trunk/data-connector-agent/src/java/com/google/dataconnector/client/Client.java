@@ -102,7 +102,7 @@ public class Client {
    */
   public void startup(final Injector injector) {
     // Set log4j properties.  We do not expect this file to change often so we do not use the
-    // cooler yet more resource intensive "configureAndWatch".
+    // cooler, yet more resource intensive, "configureAndWatch".
     PropertyConfigurator.configure(localConf.getLog4jPropertiesFile());
     if (localConf.getDebug()) {
       Logger.getRootLogger().setLevel(Level.DEBUG);
@@ -118,15 +118,9 @@ public class Client {
     try {
       secureDataConnection.connect();
     } catch (ConnectionException e) {
-      log.fatal("Connect error", e);
+      log.fatal("Connection failed.", e);
     } finally {
       shutdownManager.shutdownAll();
-      try {
-        Thread.sleep(23423432432L);
-      } catch (InterruptedException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
     }
   }
 

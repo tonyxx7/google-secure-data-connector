@@ -164,7 +164,16 @@ public class Client {
     // Bootstrap logging system
     PropertyConfigurator.configure(getBootstrapLoggingProperties());
 
-    Injector injector = ClientGuiceModule.getInjector();
+    final Injector injector = ClientGuiceModule.getInjector();
+    // Add shutdown hook to call shutdown if control c or OS SIGTERM is received.
+    Runtime.getRuntime().addShutdownHook(new Thread() {
+      @Override
+      public void run() {
+        injector.getInstance(ShutdownManager.class).shutdownAll();
+      }
+    });
+    
+    // Start client.
     injector.getInstance(Client.class).startup(args, injector);
   }
 }

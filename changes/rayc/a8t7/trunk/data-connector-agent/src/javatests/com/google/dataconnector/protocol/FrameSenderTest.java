@@ -18,8 +18,12 @@ package com.google.dataconnector.protocol;
 
 import com.google.dataconnector.protocol.proto.SdcFrame.AuthorizationInfo;
 import com.google.dataconnector.protocol.proto.SdcFrame.FrameInfo;
+import com.google.dataconnector.util.ShutdownManager;
+import com.google.dataconnector.util.Stoppable;
 
 import junit.framework.TestCase;
+
+import org.easymock.classextension.EasyMock;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -39,6 +43,7 @@ public class FrameSenderTest extends TestCase {
   private AuthorizationInfo expectedAuthorizationInfo;
   private FrameInfo expectedFrameInfo1;
   private BlockingQueue<FrameInfo> queue;
+  private ShutdownManager shutdownManager;
 
   @Override
   protected void setUp() throws Exception {
@@ -51,11 +56,17 @@ public class FrameSenderTest extends TestCase {
        .setType(FrameInfo.Type.AUTHORIZATION)
        .setPayload(expectedAuthorizationInfo.toByteString())
        .build();
+    
+    shutdownManager = EasyMock.createMock(ShutdownManager.class);
+    shutdownManager.addStoppable(EasyMock.eq(FrameSender.class.getName()), 
+        EasyMock.isA(Stoppable.class));
+    EasyMock.expectLastCall();
+    EasyMock.replay(shutdownManager);
   }
 
   public void testSendRawFrameInfo() throws Exception {
     queue = new LinkedBlockingQueue<FrameInfo>();
-    FrameSender frameSender = new FrameSender(queue);
+    FrameSender frameSender = new FrameSender(queue, shutdownManager);
     frameSender.setOutputStream(null);
     frameSender.sendFrame(expectedFrameInfo1);
     FrameInfo actualFrameInfo = queue.take();
@@ -64,7 +75,7 @@ public class FrameSenderTest extends TestCase {
 
   public void testSendFrameTypePayload() throws Exception {
     queue = new LinkedBlockingQueue<FrameInfo>();
-    FrameSender frameSender = new FrameSender(queue);
+    FrameSender frameSender = new FrameSender(queue, shutdownManager);
     frameSender.setOutputStream(null);
     frameSender.sendFrame(FrameInfo.Type.AUTHORIZATION, expectedAuthorizationInfo.toByteString());
     FrameInfo actualFrameInfo = queue.take();
@@ -73,7 +84,7 @@ public class FrameSenderTest extends TestCase {
 
   public void testWriteOneFrame() throws Exception {
     bos = new ByteArrayOutputStream();
-    FrameSender frameSender = new FrameSender(queue);
+    FrameSender frameSender = new FrameSender(queue, shutdownManager);
     frameSender.setOutputStream(bos);
     frameSender.writeOneFrame(expectedFrameInfo1);
     byte[] output = bos.toByteArray();

@@ -71,6 +71,7 @@ public class HealthCheckHandler extends Thread implements Dispatchable {
   @Inject
   public HealthCheckHandler(final ClockUtil clock) {
     this.clock = clock;
+    this.setName(this.getClass().getName());
   }
 
   /**

@@ -17,7 +17,6 @@
 package com.google.dataconnector.util;
 
 import com.google.common.collect.Maps;
-import com.google.gdata.util.common.base.Preconditions;
 import com.google.inject.Singleton;
 
 import org.apache.log4j.Logger;
@@ -28,7 +27,7 @@ import java.util.Map;
 
 /**
  * Collects all threads and objects that need to be shutdown.  This may be for exiting but it 
- * could also be for collection cleanup.  Register your {@link Stoppable} instances here and
+ * could also be for other cleanups.  Register your {@link Stoppable} instances here and
  * call {@link #shutdownGroup(String)} or {@link #shutdownAll()} when you need to terminate
  * them.
  * 
@@ -38,7 +37,7 @@ import java.util.Map;
 public class ShutdownManager {
 
   private static final Logger LOG = Logger.getLogger(ShutdownManager.class);
-
+  
   private static final String DEFAULT = "__default__";
   
   private Map<String, List<Pair<String, Stoppable>>> stoppableGroups = Maps.newHashMap();

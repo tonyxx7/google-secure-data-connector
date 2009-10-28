@@ -58,6 +58,7 @@ public class HealthCheckRequestHandlerTest extends TestCase {
     shutdownManager.addStoppable(EasyMock.eq(HealthCheckRequestHandler.class.getName()), 
         EasyMock.isA(Stoppable.class));
     EasyMock.expectLastCall();
+    EasyMock.replay(shutdownManager);
     
     // Successful case.
     InputStream is = new ByteArrayInputStream(("GET /healthcheck\n").getBytes());
@@ -82,6 +83,6 @@ public class HealthCheckRequestHandlerTest extends TestCase {
         fail(e.getMessage());
       }
     }
-    EasyMock.verify(mockServerSocket);
+    EasyMock.verify(mockServerSocket, shutdownManager);
   }
 }

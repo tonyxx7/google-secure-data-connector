@@ -187,6 +187,7 @@ public class ResourcesFileWatcherTest extends TestCase {
     replay(fileHandle);
     replay(systemUtil);
     replay(fileInputStream);
+    replay(shutdownManager);
   }
 
   private void verifyAll() {
@@ -196,5 +197,6 @@ public class ResourcesFileWatcherTest extends TestCase {
     verify(fileHandle);
     verify(systemUtil);
     verify(fileInputStream);
+    verify(shutdownManager);
   }
 }

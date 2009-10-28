@@ -34,7 +34,7 @@ public class ShutdownManagerTest extends TestCase {
   private static final String CLASS_NAME1 = "class1";
   private static final String CLASS_NAME2 = "class2";
   
-  public void testAddStoppableDefault() {
+  public void testAddStoppableDefaultAndShutdownAll() {
     
     // Setup
     List<MockStoppable> stoppables = Lists.newArrayList();
@@ -56,7 +56,7 @@ public class ShutdownManagerTest extends TestCase {
     }
   }
   
-  public void testGroupShutdown() {
+  public void testGroupAddStoppableAndShutdownGroup() {
     // Setup
     MockStoppable stoppable1 = new MockStoppable();
     MockStoppable stoppable2 = new MockStoppable();

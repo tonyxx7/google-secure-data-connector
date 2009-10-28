@@ -16,7 +16,6 @@
  */
 package com.google.dataconnector.client;
 
-import com.google.common.base.Preconditions;
 import com.google.dataconnector.client.HealthCheckHandler.FailCallback;
 import com.google.dataconnector.protocol.FrameReceiver;
 import com.google.dataconnector.protocol.FrameSender;
@@ -27,6 +26,7 @@ import com.google.dataconnector.registration.v4.Registration;
 import com.google.dataconnector.util.ConnectionException;
 import com.google.dataconnector.util.LocalConf;
 import com.google.dataconnector.util.SSLSocketFactoryInit;
+import com.google.dataconnector.util.ShutdownManager;
 import com.google.dataconnector.util.Stoppable;
 import com.google.inject.Inject;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -77,6 +77,7 @@ public class SdcConnection implements FailCallback, Stoppable {
   private final SocksDataHandler socksDataHandler;
   private final HealthCheckHandler healthCheckHandler;
   private final ResourcesFileWatcher resourcesFileWatcher;
+  private final ShutdownManager shutdownManager;
 
   // Fields
   private SSLSocket socket;
@@ -100,7 +101,8 @@ public class SdcConnection implements FailCallback, Stoppable {
       final Registration registration,
       final SocksDataHandler socksDataHandler,
       final HealthCheckHandler healthCheckHandler,
-      final ResourcesFileWatcher resourcesFileWatcher) {
+      final ResourcesFileWatcher resourcesFileWatcher,
+      final ShutdownManager shutdownManager) {
     this.localConf = localConf;
     this.sslSocketFactoryInit = sslSocketFactoryInit;
     this.frameReceiver = frameReceiver;
@@ -109,6 +111,7 @@ public class SdcConnection implements FailCallback, Stoppable {
     this.socksDataHandler = socksDataHandler;
     this.healthCheckHandler = healthCheckHandler;
     this.resourcesFileWatcher = resourcesFileWatcher;
+    this.shutdownManager = shutdownManager;
   }
 
   /**
@@ -173,10 +176,11 @@ public class SdcConnection implements FailCallback, Stoppable {
       // a thread to watch for changes in the resources.xml file
       // make this thread a daemon - so it can't hold up the process from exiting
       LOG.info("starting a thread to watch resources file");
-      resourcesFileWatcher.setDaemon(true);
       resourcesFileWatcher.setFrameSender(frameSender);
       resourcesFileWatcher.start();
 
+      // Add to shutdown manager so it gets gracefully shutdown.
+      shutdownManager.addStoppable(this.getClass().getName(), this);
       frameReceiver.startDispatching();
     } catch (IOException e) {
       throw new ConnectionException(e);
@@ -188,12 +192,10 @@ public class SdcConnection implements FailCallback, Stoppable {
   /** 
    * Kills active SDC connection and cleans up resources.
    */
+  @Override
   public void shutdown() {
-    healthCheckHandler.interrupt(); 
-    resourcesFileWatcher.interrupt(); 
     try {
-      // should cause frame sender to exit its loop and will cause frame receiver
-      // to throw an IOException.
+      // should cause frame receiver to exit its loop as the read call will throw an IOException.
       socket.close();
     } catch (IOException e) {
       LOG.debug("Socket exception when closing.", e);
@@ -292,6 +294,7 @@ public class SdcConnection implements FailCallback, Stoppable {
   @Override
   public void handleFailure() {
     LOG.error("Closing SDC connection due to health check failure.");
+    // Will cause connect() to unblock.
     this.shutdown();
   }
   

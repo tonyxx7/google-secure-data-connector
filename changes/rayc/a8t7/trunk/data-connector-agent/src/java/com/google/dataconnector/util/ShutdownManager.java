@@ -18,6 +18,7 @@ package com.google.dataconnector.util;
 
 import com.google.common.collect.Maps;
 import com.google.gdata.util.common.base.Preconditions;
+import com.google.inject.Singleton;
 
 import org.apache.log4j.Logger;
 
@@ -25,6 +26,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Collects all threads and objects that need to be shutdown.  This may be for exiting but it 
+ * could also be for collection cleanup.  Register your {@link Stoppable} instances here and
+ * call {@link #shutdownGroup(String)} or {@link #shutdownAll()} when you need to terminate
+ * them.
+ * 
+ * @author rayc@google.com (Ray Colline)
+ */
+@Singleton
 public class ShutdownManager {
 
   private static final Logger LOG = Logger.getLogger(ShutdownManager.class);
@@ -58,7 +68,8 @@ public class ShutdownManager {
   }
   
   /**
-   * Loop through all registered stoppables and issue a shutdown.
+   * Loop through all registered stoppables and issue a shutdown.  If no stoppables are registered,
+   * we do nothing and return.  This allows defensive calls to shutdown.
    */
   public void shutdownAll() {
     for (String group : stoppableGroups.keySet()) {
@@ -67,13 +78,16 @@ public class ShutdownManager {
   }
   
   /**
-   * For a given group, loop through all registered stoppables and issue a shutdown.
+   * For a given group, loop through all registered stoppables and issue a shutdown. If group
+   * does not exist in map, we do nothing and just return as this allows defensive cleanups.
    * 
    * @param groupName
    */
   public void shutdownGroup(String groupName) {
-    Preconditions.checkArgument(stoppableGroups.containsKey(groupName), 
-        groupName + " does not exist");
+    if (!stoppableGroups.containsKey(groupName)) {
+      return;
+    }
+    
     for (Pair<String, Stoppable> stoppablePair : stoppableGroups.get(groupName)) {
       try {
         stoppablePair.second().shutdown();
@@ -82,5 +96,8 @@ public class ShutdownManager {
         LOG.warn("Stop failed for " + stoppablePair.first(), e);
       }
     }
+    // We are a singleton therefore we must clean up any references we have attempted to shutdown
+    // so they get GCed.
+    stoppableGroups.remove(groupName);
   }
 }

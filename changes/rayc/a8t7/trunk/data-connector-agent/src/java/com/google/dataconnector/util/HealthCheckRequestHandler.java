@@ -38,11 +38,15 @@ public class HealthCheckRequestHandler extends Thread implements Stoppable {
 
   public static Logger LOG = Logger.getLogger(HealthCheckRequestHandler.class.getName());
 
+  // Injected dependencies 
   private final ServerSocket serverSocket;
+  private final ShutdownManager shutdownManager;
 
   @Inject
-  public HealthCheckRequestHandler(final ServerSocket serverSocket) {
+  public HealthCheckRequestHandler(final ServerSocket serverSocket,
+      final ShutdownManager shutdownManager) {
     this.serverSocket = serverSocket;
+    this.shutdownManager = shutdownManager;
   }
 
   /**
@@ -80,7 +84,10 @@ public class HealthCheckRequestHandler extends Thread implements Stoppable {
    */
   @Override
   public void run() {
-    setName("HealthCheckRequestHandler");
+    // Add to shutdown manager for graceful shutdown.
+    shutdownManager.addStoppable(this.getClass().getName(), this);
+    
+    setName(this.getClass().getName());
     try {
       while (true) {
         Socket incomingSocket = serverSocket.accept();
@@ -118,6 +125,7 @@ public class HealthCheckRequestHandler extends Thread implements Stoppable {
   /**
    * Shuts down the health check handler thread.
    */
+  @Override
   public void shutdown() {
     try {
       serverSocket.close();

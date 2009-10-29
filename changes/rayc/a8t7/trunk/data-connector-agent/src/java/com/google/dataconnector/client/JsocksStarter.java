@@ -111,8 +111,13 @@ public class JsocksStarter extends Thread implements Stoppable {
    */
   @Override
   public void shutdown() {
-    Preconditions.checkNotNull(proxyServer, "ProxyServer not started yet!");
+    if (proxyServer == null) {
+      LOG.warn("Jsocks was never started, however jsocks starter thread was.  Shutting down");
+      this.interrupt(); // interrupt thread wherever it may be which should cause a stop.
+      return;
+    }
+    // Actually stop server.
     proxyServer.stop();
-    this.interrupt(); 
+    this.interrupt();  // Jsocks recommends interrupting this thread after calling stop.
   }
 }

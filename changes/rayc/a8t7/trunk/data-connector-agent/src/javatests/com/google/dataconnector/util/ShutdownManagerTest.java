@@ -31,8 +31,6 @@ public class ShutdownManagerTest extends TestCase {
   
   private static final String GROUP1 = "group1";
   private static final String GROUP2 = "group2";
-  private static final String CLASS_NAME1 = "class1";
-  private static final String CLASS_NAME2 = "class2";
   
   public void testAddStoppableDefaultAndShutdownAll() {
     
@@ -43,7 +41,7 @@ public class ShutdownManagerTest extends TestCase {
     for (int count = 1; count <= 5; count++) {
       MockStoppable stoppable = new MockStoppable();
       stoppables.add(stoppable);
-      shutdownManager.addStoppable("test" + count, stoppable);
+      shutdownManager.addStoppable(stoppable);
     }
     
     // Execute
@@ -62,8 +60,8 @@ public class ShutdownManagerTest extends TestCase {
     MockStoppable stoppable2 = new MockStoppable();
     
     ShutdownManager shutdownManager = new ShutdownManager();
-    shutdownManager.addStoppable(CLASS_NAME1, stoppable1, GROUP1);
-    shutdownManager.addStoppable(CLASS_NAME2, stoppable2, GROUP2);
+    shutdownManager.addStoppable(stoppable1, GROUP1);
+    shutdownManager.addStoppable(stoppable2, GROUP2);
     
     // Execute
     shutdownManager.shutdownGroup(GROUP1);

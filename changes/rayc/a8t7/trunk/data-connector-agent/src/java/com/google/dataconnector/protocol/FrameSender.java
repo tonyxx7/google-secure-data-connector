@@ -137,7 +137,7 @@ public class FrameSender extends Thread implements Stoppable {
   public void run() {
 
     // Add this thread to the shutdown manager. 
-    shutdownManager.addStoppable(this.getClass().getName(), this);
+    shutdownManager.addStoppable(this);
     
     // Setup thread info
     this.setName(this.getClass().getName());

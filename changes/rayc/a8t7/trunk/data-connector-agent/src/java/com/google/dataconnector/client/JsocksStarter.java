@@ -97,7 +97,7 @@ public class JsocksStarter extends Thread implements Stoppable {
   public void run() {
     
     // Add to shutdown manager
-    shutdownManager.addStoppable(this.getClass().getName(), this); 
+    shutdownManager.addStoppable(this); 
     
     // JSOCKS is configured in a static context
     SOCKS.serverInit(socksProperties);

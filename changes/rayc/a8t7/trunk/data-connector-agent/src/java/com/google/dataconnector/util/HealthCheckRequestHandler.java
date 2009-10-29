@@ -85,7 +85,7 @@ public class HealthCheckRequestHandler extends Thread implements Stoppable {
   @Override
   public void run() {
     // Add to shutdown manager for graceful shutdown.
-    shutdownManager.addStoppable(this.getClass().getName(), this);
+    shutdownManager.addStoppable(this);
     
     setName(this.getClass().getName());
     try {

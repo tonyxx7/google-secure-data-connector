@@ -180,7 +180,7 @@ public class SdcConnection implements FailCallback, Stoppable {
       resourcesFileWatcher.start();
 
       // Add to shutdown manager so it gets gracefully shutdown.
-      shutdownManager.addStoppable(this.getClass().getName(), this);
+      shutdownManager.addStoppable(this);
       frameReceiver.startDispatching();
     } catch (IOException e) {
       throw new ConnectionException(e);

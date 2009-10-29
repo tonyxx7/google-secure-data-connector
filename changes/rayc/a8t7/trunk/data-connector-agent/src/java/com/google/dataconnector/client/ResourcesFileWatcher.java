@@ -92,7 +92,7 @@ public class ResourcesFileWatcher extends Thread implements Stoppable {
     Preconditions.checkNotNull(frameSender);
     
     // Add this thread to the shutdown manager so it gets cleaned up.
-    shutdownManager.addStoppable(this.getClass().getName(), this);
+    shutdownManager.addStoppable(this);
 
     byte[] lastDigest = null;
 

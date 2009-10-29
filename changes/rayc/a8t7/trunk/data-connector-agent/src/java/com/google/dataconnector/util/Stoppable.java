@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * $Id: HealthCheckRequestHandler.java 486 2009-10-12 21:00:48Z matt.proud $
+ * $Id$
  */
 package com.google.dataconnector.util;
 

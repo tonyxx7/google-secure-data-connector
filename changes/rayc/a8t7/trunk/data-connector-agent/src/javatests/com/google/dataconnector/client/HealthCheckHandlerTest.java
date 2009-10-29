@@ -72,8 +72,7 @@ public class HealthCheckHandlerTest extends TestCase {
         .build();
     
     shutdownManager = EasyMock.createMock(ShutdownManager.class);
-    shutdownManager.addStoppable(EasyMock.eq(HealthCheckHandler.class.getName()), 
-        EasyMock.isA(Stoppable.class));
+    shutdownManager.addStoppable(EasyMock.isA(Stoppable.class));
     EasyMock.expectLastCall();
   }
 

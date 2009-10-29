@@ -99,7 +99,7 @@ public class HealthCheckHandler extends Thread implements Dispatchable, Stoppabl
     Preconditions.checkNotNull(failCallback, "Must define remoteFailSwitch before starting.");
 
     // Add to shutdown manager
-    shutdownManager.addStoppable(this.getClass().getName(), this);
+    shutdownManager.addStoppable(this);
     
     try {
       // don't start doing anything until the config info is received from the SDC server

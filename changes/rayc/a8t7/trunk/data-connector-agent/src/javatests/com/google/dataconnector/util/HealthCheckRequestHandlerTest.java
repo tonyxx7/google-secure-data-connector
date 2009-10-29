@@ -55,8 +55,7 @@ public class HealthCheckRequestHandlerTest extends TestCase {
   public void testHealthCheckRequestHandlerProcessingRequest() throws IOException {
 
     ShutdownManager shutdownManager = EasyMock.createMock(ShutdownManager.class);
-    shutdownManager.addStoppable(EasyMock.eq(HealthCheckRequestHandler.class.getName()), 
-        EasyMock.isA(Stoppable.class));
+    shutdownManager.addStoppable(EasyMock.isA(Stoppable.class));
     EasyMock.expectLastCall();
     EasyMock.replay(shutdownManager);
     

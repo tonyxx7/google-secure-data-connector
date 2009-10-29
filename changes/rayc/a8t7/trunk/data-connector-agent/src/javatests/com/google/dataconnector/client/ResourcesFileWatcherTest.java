@@ -72,7 +72,7 @@ public class ResourcesFileWatcherTest extends TestCase {
     fileUtil = EasyMock.createMock(FileUtil.class);
     fileInputStream = EasyMock.createMock(FileInputStream.class);
     shutdownManager = EasyMock.createMock(ShutdownManager.class);
-    shutdownManager.addStoppable(eq(ResourcesFileWatcher.class.getName()), isA(Stoppable.class));
+    shutdownManager.addStoppable(isA(Stoppable.class));
     expectLastCall();
   }
 

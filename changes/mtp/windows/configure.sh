@@ -290,7 +290,6 @@ dump_variable_to_shlib VERSION
 # $1 --- The file to edit.
 # $2 --- The variable to dump.
 substitute_macro() {
-  echo sed -i "${1}" -e 's^__'${2}'__^'${!2}'^'
   sed -i "${1}" -e 's^__'${2}'__^'${!2}'^'
 }
 

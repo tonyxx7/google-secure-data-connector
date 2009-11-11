@@ -52,8 +52,8 @@ REM ARGUMENT DEFINTION
 REM 
 
 set ENTRYPOINT_CLASS=com.google.dataconnector.client.Client
-set LOCALCONFIG_FILE=etc\localConfig.xml-mtp
-set RULES_FILE=etc\resourceRules.xml-mtp
+set LOCALCONFIG_FILE=etc\localConfig.xml
+set RULES_FILE=etc\resourceRules.xml
 set LOGGING_PROPERTIES=etc\log4j.properties
 
 REM

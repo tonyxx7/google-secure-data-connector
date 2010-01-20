@@ -42,5 +42,5 @@ install.user=__USER__
 install.group=__GROUP__
 agent.jarfile=${build}/agent-sdconly.jar
 agent-src.jarfile=${build}/agent-src.jar
-agent-deploy.jarfile=${build}/agent.jar
+agent-deploy.jarfile=${build}/sdc-agent.jar
 generated.protocol.jarfile=${build}/protocol-generated.jar

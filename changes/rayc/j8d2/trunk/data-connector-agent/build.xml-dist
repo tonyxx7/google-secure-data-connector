@@ -29,7 +29,7 @@ $Id$
 
 <project
     name="secure-data-connector"
-    default="compile"
+    default="deploy-jar"
     basedir=".">
 
   <taskdef resource="net/sf/antcontrib/antcontrib.properties">

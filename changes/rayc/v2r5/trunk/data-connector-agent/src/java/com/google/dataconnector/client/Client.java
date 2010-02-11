@@ -77,14 +77,16 @@ public class Client {
   }
 
   /**
-   * Starts the client in a loop that exponentially backs off.  It is also possible to configure
-   * the agent to only run once and exit.  This is useful for those who want to wrap their
-   * own logic around restarting the agent. 
+   * Reads flags and config files, validates configuration and starts agent.
    */
-  public void startup(final String[] args) {
+  public void parseFlagsValidateAndConnect(final String[] args) {
+    
     // validate the localConf.xml file and the input args
     try {
-      populateAndValidateLocalConf(args);
+      BeanCliHelper beanCliHelper = new BeanCliHelper();
+      beanCliHelper.register(localConf);
+      beanCliHelper.parse(args);
+      new LocalConfValidator().validate(localConf);
     } catch (LocalConfException e) {
       LOG.fatal("Configuration error", e);
       return;
@@ -100,23 +102,11 @@ public class Client {
       Logger.getRootLogger().setLevel(Level.DEBUG);
     }
     
-    connect();
-    
-    // Check to see if we connected successfully.
-    if (secureDataConnection.hasConnectedSuccessfully()) {
-      unsuccessfulAttempts = 0;
-    } else { // Failed connection
-      unsuccessfulAttempts++;
-    }
-  }
-  
-  public void connect() {
-    
-
-    // start main processing thread - to initiate connection/registration with the SDC server
+    // Connect
     try {
       // start jsocks thread
       jsocksStarter.startJsocksProxy();
+      // start main processing thread - to initiate connection/registration with the SDC server
       secureDataConnection.connect();
     } catch (ConnectionException e) {
       LOG.fatal("Connection failed.", e);
@@ -124,38 +114,17 @@ public class Client {
       shutdownManager.shutdownAll();
     }
     
+    // Check whether connection was successful or not.
+    if (secureDataConnection.hasConnectedSuccessfully()) {
+      unsuccessfulAttempts = 0;
+    } else if (localConf.getStartOnce()) {
+      LOG.info("Configured only to start once. Quitting!");
+      unsuccessfulAttempts = -1; // Sentinel value meaning we should quit.
+    } else { // Failed connection
+      unsuccessfulAttempts++;
+    }
   }
-
-  /**
-   * validate the localConf.xml file and the input args
-   * @throws ConfigurationBeanException
-   * @throws LocalConfException
-   */
-  private void populateAndValidateLocalConf(final String[] args)
-      throws ConfigurationBeanException, LocalConfException {
-    // Load configuration file and command line flags into beans
-    BeanCliHelper beanCliHelper = new BeanCliHelper();
-    beanCliHelper.register(localConf);
-    beanCliHelper.parse(args);
-    new LocalConfValidator().validate(localConf);
-  }
-
-  /**
-   * Returns a base set of logging properties so we can log fatal errors before config parsing is
-   * done.
-   *
-   * @return Properties a basic console logging setup.
-   */
-  public static Properties getBootstrapLoggingProperties() {
-    final Properties props = new Properties();
-    props.setProperty("log4j.rootLogger","info, A");
-    props.setProperty("log4j.appender.A", "org.apache.log4j.ConsoleAppender");
-    props.setProperty("log4j.appender.Ant d.layout", "org.apache.log4j.PatternLayout");
-    props.setProperty("log4j.appender.A.layout.ConversionPattern", "%d [%t] %-5p %c %x - %m%n");
-    return props;
-  }
-
-
+  
   /**
    * Entry point for the Secure Data Connector binary.  Sets up logging, parses flags and
    * creates ClientConf.
@@ -176,7 +145,7 @@ public class Client {
       }
     });
     
-    // Start client in loop and back off.
+    // Starts the client in a loop that exponentially backs off. 
     while (true) {
       try {
         // Only try to back-off if we have unsuccessful connections.
@@ -194,12 +163,30 @@ public class Client {
           LOG.info("Starting agent after " + unsuccessfulAttempts + " unsuccessful attempts." +
               "  Next connect in " + backOffTime + " milliseconds.");
           LOG.debug("Threads: " + Thread.activeCount());
+        } else if (unsuccessfulAttempts == -1) {
+          // We are being told to quit probably because we were only configured to start once.
+          break; 
         }
-        injector.getInstance(Client.class).startup(args);
+        injector.getInstance(Client.class).parseFlagsValidateAndConnect(args);
       } catch (Exception e) {
         LOG.error("Agent died.", e);
         shutdownManager.shutdownAll();
       }
     }
+  }
+  
+  /**
+   * Returns a base set of logging properties so we can log fatal errors before config parsing is
+   * done.
+   *
+   * @return Properties a basic console logging setup.
+   */
+  public static Properties getBootstrapLoggingProperties() {
+    final Properties props = new Properties();
+    props.setProperty("log4j.rootLogger","info, A");
+    props.setProperty("log4j.appender.A", "org.apache.log4j.ConsoleAppender");
+    props.setProperty("log4j.appender.Ant d.layout", "org.apache.log4j.PatternLayout");
+    props.setProperty("log4j.appender.A.layout.ConversionPattern", "%d [%t] %-5p %c %x - %m%n");
+    return props;
   }
 }

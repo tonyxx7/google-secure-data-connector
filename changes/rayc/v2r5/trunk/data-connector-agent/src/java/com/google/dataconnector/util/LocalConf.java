@@ -72,7 +72,7 @@ public class LocalConf {
   private Boolean debug = DEBUG;
   @Flag(help = "Allow unverified certificates")
   private Boolean allowUnverifiedCertificates = false;
-  @Deprecated
+  @Deprecated // We do not want to break any one's existing conf file even though this is a no-op.
   @Flag(help = "the users who can access the healthcheck gadget")
   private String healthCheckGadgetUsers;
   @Flag(help = "log4j properties File")
@@ -225,12 +225,12 @@ public class LocalConf {
     return allowUnverifiedCertificates;
   }
 
-  @Deprecated
+  @Deprecated // We do not want to break any one's existing conf file even though this is a no-op.
   public String getHealthCheckGadgetUsers() {
     return healthCheckGadgetUsers;
   }
 
-  @Deprecated
+  @Deprecated // We do not want to break any one's existing conf file even though this is a no-op.
   public void setHealthCheckGadgetUsers(final String healthCheckGadgetUsers) {
     this.healthCheckGadgetUsers = healthCheckGadgetUsers;
   }

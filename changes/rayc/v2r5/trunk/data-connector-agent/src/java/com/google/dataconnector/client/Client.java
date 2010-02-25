@@ -151,8 +151,8 @@ public class Client {
         // Only try to back-off if we have unsuccessful connections.
         if (unsuccessfulAttempts > 0) {
           long backOffTime = MAX_BACKOFF_TIME < (long) Math.pow(2, unsuccessfulAttempts) * 1000L ? 
-              MAX_BACKOFF_TIME :  // only sleep a maximum of max backoff time.
-                (long) Math.pow(2, unsuccessfulAttempts)* 1000L;
+              MAX_BACKOFF_TIME :  // only sleep a maximum of max back-off time.
+                  (long) Math.pow(2, unsuccessfulAttempts)* 1000L; // else exponentially back-off
           try {
             // Sleep for the amount of time needed.
             Thread.sleep(backOffTime);
@@ -161,14 +161,13 @@ public class Client {
             break;
           }
           LOG.info("Starting agent after " + unsuccessfulAttempts + " unsuccessful attempts." +
-              "  Next connect in " + backOffTime + " milliseconds.");
-          LOG.debug("Threads: " + Thread.activeCount());
+              " Next connect in " + backOffTime + " milliseconds.");
         } else if (unsuccessfulAttempts == -1) {
           // We are being told to quit probably because we were only configured to start once.
           break; 
         }
         injector.getInstance(Client.class).parseFlagsValidateAndConnect(args);
-      } catch (Exception e) {
+      } catch (Exception e) { // This is an outside server loop. Catch everything.
         LOG.error("Agent died.", e);
         shutdownManager.shutdownAll();
       }

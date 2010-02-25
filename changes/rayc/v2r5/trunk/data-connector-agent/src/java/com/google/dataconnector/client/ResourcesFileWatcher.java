@@ -52,7 +52,6 @@ public class ResourcesFileWatcher extends Thread implements Stoppable {
   private final Registration registration;
   private final FileUtil fileUtil;
   private final SystemUtil systemUtil;
-  private ShutdownManager shutdownManager;
 
   // Runtime dependencies.
   private FrameSender frameSender;
@@ -74,11 +73,13 @@ public class ResourcesFileWatcher extends Thread implements Stoppable {
     this.registration = registration;
     this.fileUtil = fileUtil;
     this.systemUtil = systemUtil;
-    this.shutdownManager = shutdownManager;
     
     // Set thread info
     this.setName(this.getClass().getName());
     this.setDaemon(true);
+    
+    // Add this thread to the shutdown manager so it gets cleaned up.
+    shutdownManager.addStoppable(this);
   }
 
   public void setFrameSender(final FrameSender frameSender) {
@@ -89,9 +90,6 @@ public class ResourcesFileWatcher extends Thread implements Stoppable {
   public void run() {
     Preconditions.checkNotNull(frameSender);
     
-    // Add this thread to the shutdown manager so it gets cleaned up.
-    shutdownManager.addStoppable(this);
-
     byte[] lastDigest = null;
 
     try {

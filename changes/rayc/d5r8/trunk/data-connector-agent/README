@@ -1,0 +1,53 @@
+$Id$
+
+= Secure Data Connector Install Instructions for GNU/Linux or Cygwin
+
+Prerequisites:
+
+If you want to make changes to the SDC protocol defintion file it will
+require the Google Protocol Buffer compiler. Make sure its in the path.
+It can be downloaded from here:
+  - http://code.google.com/p/protobuf/downloads/list
+  - follow the README to install.
+  - We include the generated protocol buffer classes should protoc be
+    unavailable.
+
+Read these docs:
+  - http://code.google.com/securedataconnector/docs/1.0/config.html
+
+1) ant
+
+This compiles all the source and dependencies into one jar.
+
+2) Read and perform "Configuring Google Apps Domain Parameters" in the
+"Configuring" section of the User's Guide:
+   URL: http://code.google.com/securedataconnector/docs/1.0/config.html
+
+3) Read and perfom "Configuring the Connection to Google Apps" in the
+"Configuring" section of the User's Guide:
+   URL: http://code.google.com/securedataconnector/docs/1.0/config.html
+   - copy config/localConfiguration.xml-dist to config/localConfiguration.xml
+     eg: cp config/localConfiguration.xml-dist  config/localConfiguration.xml
+   - edit config/localConfiguration.xml and set values according to your
+   needs and requirements.
+
+4) Read and perform "Configuring Resource Rules" in the "Configuring"
+section of the User's Guide:
+   URL: http://code.google.com/securedataconnector/docs/1.0/config.html#ConfiguringResourceRules
+   - copy config/resourceRules.xml-dist to config/resourceRules.xml
+     eg: cp config/resourceRules.xml-dist  config/resourceRules.xml
+   - edit config/resourceRules.xml and set values according to your
+   needs and requirements.
+
+5) start agent and verify connectivity in the log.
+  sh runclient.sh
+  tail -f logs/agent.log
+
+Other useful targets:
+
+1) ant clean (returns to prebuilt but configured state)
+2) ant test (runs unit tests)
+
+= Secure Data Connector Install Instructions for Windows
+
+There are no instructions yet.  However we have provided a runclient.bat.

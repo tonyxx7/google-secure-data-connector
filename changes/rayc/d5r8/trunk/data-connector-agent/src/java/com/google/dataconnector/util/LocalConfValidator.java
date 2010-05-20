@@ -108,7 +108,7 @@ public class LocalConfValidator {
        * Multiple sub-domains are permitted
        * Domain name may only contain letters, digits and hyphen
        * Domain name and sub-domain name may not begin and/or end with a hyphen
-       * Domain name and sub-domain must be between 2 to 63 characters long
+       * Domain name and sub-domain must be 1 character long
        * Top-level domain may only contain letters
        * Top-level domain must be between 2 to 6 characters long
        * Sub-domain names, the domain name and the top-level domain name are separated by
